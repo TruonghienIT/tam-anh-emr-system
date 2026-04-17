@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TamAnh_EMR_System.Model
 {
-    public class DoctorModel
+    public class Doctor
     {
         public int Id { get; set; }
         public int UserId { get; set; }
@@ -15,7 +15,7 @@ namespace TamAnh_EMR_System.Model
         public string Phone { get; set; }
         public string Email { get; set; }
 
-        public UserModel User { get; set; }
+        public User User { get; set; }
         public ICollection<MedicalRecord> MedicalRecords { get; set; }
         public ICollection<Appointment> Appointments { get; set; }
     }

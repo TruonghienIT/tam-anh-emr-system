@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 
 namespace TamAnh_EMR_System.Model
 {
-    public class UserModel
+    public class User
     {
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DoctorModel Doctor { get; set; }
-        public PatientModel Patient { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
+        public Patient Patient { get; set; }
+        public Doctor Doctor { get; set; }
+        public Receptionist Receptionist { get; set; }
     }
 }
