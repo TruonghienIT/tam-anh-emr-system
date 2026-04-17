@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using TamAnh_EMR_System.View;
 
 namespace TamAnh_EMR_System
 {
@@ -9,6 +10,13 @@ namespace TamAnh_EMR_System
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var loginView = new LoginView();
+            loginView.Show();
+        }
     }
 
 }

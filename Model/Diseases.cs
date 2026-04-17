@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace TamAnh_EMR_System.Model
 {
-    public class Disease
+    public class Diseases
     {
         public string IcdCode { get; set; }
         public string DiseaseName { get; set; }
 
-        public ICollection<MedicalRecord> MedicalRecords { get; set; }
+        public ICollection<MedicalRecords> MedicalRecords { get; set; }
     }
 }

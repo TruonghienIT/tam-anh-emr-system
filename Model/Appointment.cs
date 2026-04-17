@@ -18,8 +18,8 @@ namespace TamAnh_EMR_System.Model
         public string Status { get; set; }
         public string Reason { get; set; }
 
-        public Patient Patient { get; set; }
-        public Doctor Doctor { get; set; }
-        public Receptionist Receptionist { get; set; }
+        public Patients Patient { get; set; }
+        public Doctors Doctor { get; set; }
+        public Receptionists Receptionist { get; set; }
     }
 }

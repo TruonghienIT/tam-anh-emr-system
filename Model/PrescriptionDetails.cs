@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TamAnh_EMR_System.Model
 {
-    public class PrescriptionDetail
+    public class PrescriptionDetails
     {
         public int Id { get; set; }
         public int RecordId { get; set; }
@@ -16,7 +16,7 @@ namespace TamAnh_EMR_System.Model
         public string Frequency { get; set; }
         public string Notes { get; set; }
 
-        public MedicalRecord MedicalRecord { get; set; }
-        public Medicine Medicine { get; set; }
+        public MedicalRecords MedicalRecord { get; set; }
+        public Medicines Medicine { get; set; }
     }
 }

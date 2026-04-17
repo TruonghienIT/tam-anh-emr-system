@@ -207,6 +207,7 @@
 
                     <Button x:Name="btnLogin"
                             Command="{Binding LoginCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                             BorderThickness="0"
                             Content="LOGIN"
                             Foreground="White"

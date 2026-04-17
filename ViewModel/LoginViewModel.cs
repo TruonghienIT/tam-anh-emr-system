@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using TamAnh_EMR_System.Helper;
+using TamAnh_EMR_System.Model;
+using TamAnh_EMR_System.Repositories;
+using TamAnh_EMR_System.View;
 
 namespace TamAnh_EMR_System.ViewModel
 {
@@ -15,6 +22,7 @@ namespace TamAnh_EMR_System.ViewModel
         private string _errorMessage;
         private bool _isViewVisible = true;
 
+        private IUserRepository userRepository;
         public string Username 
         { 
             get => _username; 
@@ -42,15 +50,6 @@ namespace TamAnh_EMR_System.ViewModel
                 OnPropertyChanged(nameof(ErrorMessage));
             }
         }
-        public bool IsViewVisible 
-        { 
-            get => _isViewVisible;
-            set
-            {
-                _isViewVisible = value;
-                OnPropertyChanged(nameof(IsViewVisible));
-            }
-        }
 
         public  ICommand LoginCommand
         {
@@ -71,6 +70,7 @@ namespace TamAnh_EMR_System.ViewModel
 
         public LoginViewModel()
         {
+            userRepository = new UserRepository();
             LoginCommand = new ViewModelCommand(ExecuteLoginCommand, CanExecuteLoginCommand);
             RecoverPasswordCommand = new ViewModelCommand(p => ExecuteRecoverPassCommand("", ""));
         }
@@ -87,7 +87,54 @@ namespace TamAnh_EMR_System.ViewModel
 
         private void ExecuteLoginCommand(object obj)
         {
-            throw new NotImplementedException();
+            var user = userRepository.AuthenticateUser(new NetworkCredential(Username, Password));
+            if (user != null)
+            {
+                UserSession.CurrentUser = user;
+
+                Thread.CurrentPrincipal = new GenericPrincipal( 
+                    new GenericIdentity (user.Username), 
+                    new[] { user.Role });
+
+                Window window = null;
+
+                switch (user.Role.Trim().ToLower())
+                {
+                    case "admin":
+                        window = new AdminView();
+                        break;
+
+                    case "doctor":
+                        window = new DoctorView();
+                        break;
+
+                    case "receptionist":
+                        window = new ReceptionistView();
+                        break;
+
+                    default:
+                        MessageBox.Show("Role không hợp lệ!");
+                        return;
+                }
+
+                if (window == null)
+                {
+                    MessageBox.Show("Role không hợp lệ!");
+                    return;
+                }
+                window.Show();
+
+                Application.Current.MainWindow = window;
+
+                if (obj is Window loginWindow)
+                {
+                    loginWindow.Close();
+                }
+            }
+            else
+            {
+                ErrorMessage = "* Username || Password không hợp lệ";
+            }
         }
 
         private void ExecuteRecoverPassCommand(string username, string email)

@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace TamAnh_EMR_System
+namespace TamAnh_EMR_System.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for DoctorView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class DoctorView : Window
     {
-        public MainWindow()
+        public DoctorView()
         {
             InitializeComponent();
         }
