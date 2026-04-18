@@ -1,9 +1,11 @@
-﻿using System;
+﻿using FontAwesome.Sharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using TamAnh_EMR_System.Helper;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
@@ -15,6 +17,10 @@ namespace TamAnh_EMR_System.ViewModel
     {
         private string _username;
         private string _role;
+
+        private ViewModelBase _currentChildView;
+        private string _caption;
+        private IconChar _icon;
 
         public string Username
         {
@@ -35,10 +41,65 @@ namespace TamAnh_EMR_System.ViewModel
                 OnPropertyChanged(nameof(Role));
             }
         }
+
+        public ViewModelBase CurrentChildView 
+        { 
+            get => _currentChildView; 
+            set
+            {
+                _currentChildView = value;
+                OnPropertyChanged(nameof(CurrentChildView));
+            }
+        }
+        public string Caption 
+        { 
+            get => _caption; 
+            set
+            {
+                _caption = value;
+                OnPropertyChanged(nameof(Caption));
+            }
+        }
+        public IconChar Icon 
+        { 
+            get => _icon; 
+            set
+            {
+                _icon = value;
+                OnPropertyChanged(nameof(Icon));
+            }    
+        }
+
+        //Commands
+        public ICommand ShowHomeViewCommand { get; }
+        public ICommand ShowEmployeeViewCommand { get; }
+
         public AdminViewModel()
         {
+            //Initialize commands
+            ShowHomeViewCommand = new ViewModelCommand(ExecuteShowHomeViewCommand);
+            ShowEmployeeViewCommand = new ViewModelCommand(ExecuteShowEmployeeViewCommand);
+
+            //Default View
+            ExecuteShowHomeViewCommand(null);
+
             LoadCurrentUserData();
         }
+
+        private void ExecuteShowEmployeeViewCommand(object obj)
+        {
+            CurrentChildView = new EmployeeViewModel();
+            Caption = "Employee";
+            Icon = IconChar.UserDoctor;
+        }
+
+        private void ExecuteShowHomeViewCommand(object obj)
+        {
+            CurrentChildView = new HomeViewModel();
+            Caption = "Dashboard";
+            Icon = IconChar.Home;
+        }
+
         private void LoadCurrentUserData()
         {
             var user = UserSession.CurrentUser;
