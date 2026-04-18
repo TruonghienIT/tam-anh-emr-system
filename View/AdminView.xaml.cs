@@ -22,6 +22,11 @@ namespace TamAnh_EMR_System.View
         public AdminView()
         {
             InitializeComponent();
+            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+        }
+        private void pnlControlBar_MouseLeftButtonDown (object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
     }
 }

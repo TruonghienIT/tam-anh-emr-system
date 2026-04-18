@@ -4,9 +4,160 @@
             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             xmlns:local="clr-namespace:TamAnh_EMR_System.View"
+            xmlns:viewModel="clr-namespace:TamAnh_EMR_System.ViewModel"
+            xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
             mc:Ignorable="d"
-            Title="AdminView" Height="450" Width="800"
-            WindowStartupLocation="CenterScreen">
-    <Grid Background="Aqua">
+            Title="AdminView" Height="700" Width="1300"
+            WindowStartupLocation="CenterScreen"
+            WindowStyle="None"
+            Background="Transparent"
+            AllowsTransparency="True">
+
+    <Window.DataContext>
+        <viewModel:AdminViewModel/>
+    </Window.DataContext>
+
+    <Border CornerRadius="10"
+            BorderThickness="2">
+
+        <Border.BorderBrush>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="{StaticResource winBorderColor1}" Offset="0"/>
+                <GradientStop Color="{StaticResource winBorderColor2}" Offset="0.75"/>
+                <GradientStop Color="{StaticResource winBorderColor3}" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!--Navigation menu-->
+                <ColumnDefinition Width="250"/>
+                <!--Content section-->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!--Navigation menu-->
+            <Border
+                CornerRadius="10,0,0,10"
+                Grid.Column="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+                        <GradientStop Color="{StaticResource secondaryBackColor1}" Offset="0"/>
+                        <GradientStop Color="{StaticResource secondaryBackColor2}" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <StackPanel>
+
+                    <!--Logo-->
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Height="35"
+                        Margin="15,25,0,40">
+                        <Image Source="/Resource/Image/logo-ta.png"/>
+                        <TextBlock Text="TâmAnh"
+                                   Foreground="{StaticResource titleColor1}"
+                                   FontSize="20"
+                                   FontFamily="Montserrat"
+                                   FontWeight="Medium"
+                                   VerticalAlignment="Center"
+                                   Margin="10,10,0,0"/>
+
+                        <TextBlock Text="Hospital"
+                                   Foreground="#4592c3"
+                                   FontSize="20"
+                                   FontFamily="Montserrat"
+                                   FontWeight="Medium"
+                                   VerticalAlignment="Center"
+                                   Margin="5,10,0,0"/>  
+
+                    </StackPanel>
+                    
+                    <!--Menu Button-->
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color1}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Home" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Doardboard" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color2}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="UserDoctor" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Doctor" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+                    
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color3}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Bed" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Patient" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color4}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="ClipboardList" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Appointments" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color5}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="ChartColumn" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Statistical" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color6}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="RightFromBracket" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Logout" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+            </Border>
+            
+            <!--Main Section-->
+            <Border
+                CornerRadius="0,10,10,0"
+                Grid.Column="1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+                        <GradientStop Color="{StaticResource primaryBackColor1}" Offset="0"/>
+                        <GradientStop Color="{StaticResource primaryBackColor2}" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <!--Control Bar-->
+                        <RowDefinition Height="25"/>
+                        <!--Header / Caption-->
+                        <RowDefinition Height="35"/>
+                        <!--Content Section / Child View-->
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!--Control Bar-->
+                    <StackPanel x:Name="pnlControlBar"
+                                Grid.Row="0"
+                                Orientation="Horizontal"
+                                FlowDirection="RightToLeft"
+                                Background="Transparent"
+                                Margin="0,0,5,0"
+                                MouseLeftButtonDown="pnlControlBar_MouseLeftButtonDown">
+                        
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
-    </Window>
+    </Border>
+
+</Window>
