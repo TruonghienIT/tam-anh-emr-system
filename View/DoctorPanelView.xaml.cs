@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace TamAnh_EMR_System.View
 {
     /// <summary>
-    /// Interaction logic for EmployeeView.xaml
+    /// Interaction logic for DoctorPanelView.xaml
     /// </summary>
-    public partial class EmployeeView : UserControl
+    public partial class DoctorPanelView : UserControl
     {
-        public EmployeeView()
+        public DoctorPanelView()
         {
             InitializeComponent();
         }

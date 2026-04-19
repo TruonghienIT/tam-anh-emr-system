@@ -72,13 +72,13 @@ namespace TamAnh_EMR_System.ViewModel
 
         //Commands
         public ICommand ShowHomeViewCommand { get; }
-        public ICommand ShowEmployeeViewCommand { get; }
+        public ICommand ShowDoctorPanelViewCommand { get; }
 
         public AdminViewModel()
         {
             //Initialize commands
             ShowHomeViewCommand = new ViewModelCommand(ExecuteShowHomeViewCommand);
-            ShowEmployeeViewCommand = new ViewModelCommand(ExecuteShowEmployeeViewCommand);
+            ShowDoctorPanelViewCommand = new ViewModelCommand(ExecuteShowDoctorViewCommand);
 
             //Default View
             ExecuteShowHomeViewCommand(null);
@@ -86,10 +86,10 @@ namespace TamAnh_EMR_System.ViewModel
             LoadCurrentUserData();
         }
 
-        private void ExecuteShowEmployeeViewCommand(object obj)
+        private void ExecuteShowDoctorViewCommand(object obj)
         {
-            CurrentChildView = new EmployeeViewModel();
-            Caption = "Employee";
+            CurrentChildView = new DoctorPanelViewModel();
+            Caption = "Doctor";
             Icon = IconChar.UserDoctor;
         }
 

@@ -22,8 +22,8 @@
             <local:HomeView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewModel:EmployeeViewModel}">
-            <local:EmployeeView/>
+        <DataTemplate DataType="{x:Type viewModel:DoctorPanelViewModel}">
+            <local:DoctorPanelView/>
         </DataTemplate>
     </Window.Resources>
 
@@ -96,10 +96,10 @@
 
                     <RadioButton Style="{StaticResource menuButton}"
                                  Tag="{StaticResource color2}"
-                                 Command="{Binding ShowEmployeeViewCommand}">
+                                 Command="{Binding ShowDoctorPanelViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="UserDoctor" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Employee" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Doctor" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
                     
