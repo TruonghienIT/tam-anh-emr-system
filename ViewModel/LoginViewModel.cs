@@ -133,7 +133,7 @@ namespace TamAnh_EMR_System.ViewModel
             }
             else
             {
-                ErrorMessage = "* Username || Password không hợp lệ";
+                ErrorMessage = "* Tài khoản || Mật khẩu không hợp lệ";
             }
         }
 

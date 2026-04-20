@@ -101,7 +101,7 @@
             <!-- ADD BUTTON -->
             <Button Grid.Column="1"
                         Command="{Binding AddDoctorCommand}"
-                        Content="+ Add Doctor"
+                        Content="+ Thêm bác sĩ"
                         FontFamily="Montserrat"
                         FontSize="12"
                         Cursor="Hand"
@@ -196,26 +196,26 @@
                 <!-- COLUMNS -->
                 <DataGrid.Columns>
 
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="37"
                             ElementStyle="{StaticResource LeftText}" />
 
-                    <DataGridTextColumn Header="User ID" Binding="{Binding UserId}" Width="80"
+                    <DataGridTextColumn Header="ID Tài khoản" Binding="{Binding UserId}" Width="104"
                             ElementStyle="{StaticResource LeftText}" />
 
-                    <DataGridTextColumn Header="FullName" Binding="{Binding FullName}" Width="*"
+                    <DataGridTextColumn Header="Họ và tên" Binding="{Binding FullName}" Width="*"
                             ElementStyle="{StaticResource LeftText}" />
 
-                    <DataGridTextColumn Header="Specialization" Binding="{Binding Specialization}" Width="*"
+                    <DataGridTextColumn Header="Chuyên khoa" Binding="{Binding Specialization}" Width="*"
                             ElementStyle="{StaticResource LeftText}" />
 
-                    <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="130"
+                    <DataGridTextColumn Header="Số điện thoại" Binding="{Binding Phone}" Width="130"
                             ElementStyle="{StaticResource LeftText}" />
 
                     <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="250"
                             ElementStyle="{StaticResource LeftText}" />
 
                     <!-- CONTROL COLUMN -->
-                    <DataGridTemplateColumn Header="Control" Width="100">
+                    <DataGridTemplateColumn Header="Thao tác" Width="100">
                         <DataGridTemplateColumn.HeaderStyle>
                             <Style TargetType="DataGridColumnHeader">
                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>

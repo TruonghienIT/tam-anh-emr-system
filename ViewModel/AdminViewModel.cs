@@ -89,14 +89,14 @@ namespace TamAnh_EMR_System.ViewModel
         private void ExecuteShowDoctorViewCommand(object obj)
         {
             CurrentChildView = new DoctorPanelViewModel();
-            Caption = "Doctor";
+            Caption = "Bác sĩ";
             Icon = IconChar.UserDoctor;
         }
 
         private void ExecuteShowHomeViewCommand(object obj)
         {
             CurrentChildView = new HomeViewModel();
-            Caption = "Dashboard";
+            Caption = "Trang chủ";
             Icon = IconChar.Home;
         }
 

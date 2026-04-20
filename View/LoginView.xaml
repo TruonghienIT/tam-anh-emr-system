@@ -155,7 +155,7 @@
                                TextAlignment="Center"
                                Margin="0,0,0,0"/>
 
-                    <TextBlock Text="Username"
+                    <TextBlock Text="Tài khoản"
                                Foreground="DarkGray"
                                FontSize="12"
                                FontWeight="Medium"
@@ -183,7 +183,7 @@
                         </TextBox.Background>
                     </TextBox>
 
-                    <TextBlock Text="Password"
+                    <TextBlock Text="Mật khẩu"
                                Foreground="DarkGray"
                                FontSize="12"
                                FontWeight="Medium"
@@ -209,7 +209,7 @@
                             Command="{Binding LoginCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                             BorderThickness="0"
-                            Content="LOGIN"
+                            Content="ĐĂNG NHẬP"
                             Foreground="White"
                             FontSize="12"
                             FontFamily="Montserrat"
@@ -250,7 +250,7 @@
                                FontFamily="Montserrat"
                                TextAlignment="Left"/>
 
-                        <TextBlock Text="Reset password"
+                        <TextBlock Text="Đặt lại mật khẩu"
                                    Foreground="White"
                                    FontSize="12"
                                    FontWeight="Medium"

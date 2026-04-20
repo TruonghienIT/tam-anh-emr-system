@@ -90,7 +90,16 @@
                                  Command="{Binding ShowHomeViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Home" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Doardboard" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Trang chủ" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color9}"
+                                 Command="{Binding ShowDoctorPanelViewCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="CircleUser" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Tài khoản" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
 
@@ -99,15 +108,24 @@
                                  Command="{Binding ShowDoctorPanelViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="UserDoctor" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Doctor" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Bác sĩ" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
-                    
+
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color8}"
+                                 Command="{Binding ShowDoctorPanelViewCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="UserAstronaut" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Lễ tân" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
                     <RadioButton Style="{StaticResource menuButton}"
                                  Tag="{StaticResource color3}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Bed" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Patient" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Bệnh nhân" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
 
@@ -115,7 +133,7 @@
                                  Tag="{StaticResource color4}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="ClipboardList" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Appointments" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Lịch hẹn" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
 
@@ -123,7 +141,7 @@
                                  Tag="{StaticResource color5}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="ChartColumn" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Statistical" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Thống kê" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
 
@@ -131,7 +149,7 @@
                                  Tag="{StaticResource color6}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="RightFromBracket" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Logout" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Đăng xuất" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
                 </StackPanel>
