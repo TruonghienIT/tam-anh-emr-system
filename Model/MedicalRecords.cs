@@ -8,9 +8,9 @@ namespace TamAnh_EMR_System.Model
 {
     public class MedicalRecords
     {
-        public int Id { get; set; }
-        public int PatientId { get; set; }
-        public int DoctorId { get; set; }
+        public string Id { get; set; }
+        public string PatientId { get; set; }
+        public string DoctorId { get; set; }
         public string IcdCode { get; set; }
         public string Diagnosis { get; set; }
         public string Treatment { get; set; }

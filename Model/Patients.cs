@@ -8,8 +8,8 @@ namespace TamAnh_EMR_System.Model
 {
     public class Patients
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
+        public string Id { get; set; }
+        public string UserId { get; set; }
         public string Name { get; set; }
         public DateTime Dob { get; set; }
         public string Gender { get; set; }

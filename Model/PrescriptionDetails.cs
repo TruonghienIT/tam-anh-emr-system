@@ -8,9 +8,9 @@ namespace TamAnh_EMR_System.Model
 {
     public class PrescriptionDetails
     {
-        public int Id { get; set; }
-        public int RecordId { get; set; }
-        public int MedicineId { get; set; }
+        public string Id { get; set; }
+        public string RecordId { get; set; }
+        public string MedicineId { get; set; }
         public int Quantity { get; set; }
         public string Dosage { get; set; }
         public string Frequency { get; set; }

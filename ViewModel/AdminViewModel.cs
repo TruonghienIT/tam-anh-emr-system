@@ -93,6 +93,13 @@ namespace TamAnh_EMR_System.ViewModel
             Icon = IconChar.UserDoctor;
         }
 
+        private void ExecuteShowUserViewCommand(object obj)
+        {
+            //CurrentChildView new UserPanelViewModel();
+            Caption = "Tài khoản";
+            Icon = IconChar.CircleUser;
+        }
+
         private void ExecuteShowHomeViewCommand(object obj)
         {
             CurrentChildView = new HomeViewModel();

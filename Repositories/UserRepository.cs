@@ -38,7 +38,7 @@ namespace TamAnh_EMR_System.Repositories
                     {
                         user = new Users
                         {
-                            Id = (int)reader["id"],
+                            Id = reader["id"].ToString(),
                             Username = reader["username"].ToString(),
                             Role = reader["role"].ToString()
                         };

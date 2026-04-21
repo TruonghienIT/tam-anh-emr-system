@@ -25,75 +25,96 @@ namespace TamAnh_EMR_System.ViewModel
             }
         }
 
+        // ================= POPUP STATE =================
+        public bool IsPopupOpen { get; set; }
+        public bool IsEditMode { get; set; }
+
+        public Doctors CurrentDoctor { get; set; } = new Doctors();
+
         // ================= COMMAND =================
         public ICommand LoadDoctorCommand { get; }
-        public ICommand AddDoctorCommand { get; }
-        public ICommand UpdateDoctorCommand { get; }
+        public ICommand OpenAddCommand { get; }
+        public ICommand OpenEditCommand { get; }
+        public ICommand SaveDoctorCommand { get; }
         public ICommand DeleteDoctorCommand { get; }
+        public ICommand ClosePopupCommand { get; }
 
         public DoctorPanelViewModel()
         {
             repository = new DoctorPanelRepository();
 
-            LoadDoctorCommand = new ViewModelCommand(ExecuteLoad);
-            AddDoctorCommand = new ViewModelCommand(ExecuteAdd);
-            UpdateDoctorCommand = new ViewModelCommand(ExecuteUpdate, CanExecute);
-            DeleteDoctorCommand = new ViewModelCommand(ExecuteDelete, CanExecute);
+            LoadDoctorCommand = new ViewModelCommand(_ => LoadDoctors());
+
+            OpenAddCommand = new ViewModelCommand(_ =>
+            {
+                CurrentDoctor = new Doctors();
+                IsEditMode = false;
+                IsPopupOpen = true;
+                OnPropertyChanged(nameof(CurrentDoctor));
+                OnPropertyChanged(nameof(IsPopupOpen));
+            });
+
+            OpenEditCommand = new ViewModelCommand(obj =>
+            {
+                var doctor = obj as Doctors;
+                if (doctor == null) return;
+
+                CurrentDoctor = new Doctors
+                {
+                    Id = doctor.Id,
+                    UserId = doctor.UserId,
+                    FullName = doctor.FullName,
+                    Email = doctor.Email,
+                    Phone = doctor.Phone,
+                    Specialization = doctor.Specialization
+                };
+
+                IsEditMode = true;
+                IsPopupOpen = true;
+
+                OnPropertyChanged(nameof(CurrentDoctor));
+                OnPropertyChanged(nameof(IsPopupOpen));
+            });
+
+            SaveDoctorCommand = new ViewModelCommand(_ =>
+            {
+                if (IsEditMode)
+                    repository.UpdateDoctor(CurrentDoctor);
+                else
+                    repository.AddDoctor(CurrentDoctor);
+
+                LoadDoctors();
+
+                IsPopupOpen = false;
+                OnPropertyChanged(nameof(IsPopupOpen));
+            });
+
+            DeleteDoctorCommand = new ViewModelCommand(obj =>
+            {
+                var doctor = obj as Doctors;
+                if (doctor == null) return;
+
+                repository.DeleteDoctor(doctor.UserId);
+                LoadDoctors();
+            });
+
+            ClosePopupCommand = new ViewModelCommand(_ =>
+            {
+                IsPopupOpen = false;
+                OnPropertyChanged(nameof(IsPopupOpen));
+            });
 
             LoadDoctors();
         }
 
         // ================= LOAD =================
-        private void ExecuteLoad(object obj)
-        {
-            LoadDoctors();
-        }
-
         private void LoadDoctors()
         {
             Doctors = repository.GetAllDoctors();
             OnPropertyChanged(nameof(Doctors));
         }
 
-        // ================= ADD =================
-        private void ExecuteAdd(object obj)
-        {
-            var doctor = new Doctors
-            {
-                FullName = "New Doctor",
-                Email = "doctor@gmail.com",
-                Phone = "0000000000",
-                Specialization = "General"
-            };
-
-            repository.AddDoctor(doctor);
-            LoadDoctors();
-        }
-
-        // ================= UPDATE =================
-        private void ExecuteUpdate(object obj)
-        {
-            if (SelectedDoctor == null) return;
-
-            repository.UpdateDoctor(SelectedDoctor);
-            LoadDoctors();
-        }
-
-        // ================= DELETE =================
-        private void ExecuteDelete(object obj)
-        {
-            if (SelectedDoctor == null) return;
-
-            repository.DeleteDoctor(SelectedDoctor.UserId);
-            LoadDoctors();
-        }
-
-        private bool CanExecute(object obj)
-        {
-            return SelectedDoctor != null;
-        }
-
-        // ================= SEARCH AUTO =================
+        // ================= SEARCH =================
         private string _searchText;
         private CancellationTokenSource _cts;
 
@@ -127,9 +148,7 @@ namespace TamAnh_EMR_System.ViewModel
                     OnPropertyChanged(nameof(Doctors));
                 }
             }
-            catch (TaskCanceledException)
-            {
-            }
+            catch (TaskCanceledException) { }
         }
     }
 }

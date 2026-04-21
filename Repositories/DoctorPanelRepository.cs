@@ -23,7 +23,7 @@ namespace TamAnh_EMR_System.Repositories
                     SELECT d.*
                     FROM doctors d
                     INNER JOIN users u ON d.user_id = u.id
-                    WHERE u.role = 'Doctor'";
+                    WHERE u.role = 'doctor'";
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -31,8 +31,8 @@ namespace TamAnh_EMR_System.Repositories
                     {
                         list.Add(new Doctors
                         {
-                            Id = (int)reader["id"],
-                            UserId = (int)reader["user_id"],
+                            Id = reader["id"].ToString(),
+                            UserId =reader["user_id"].ToString(),
                             FullName = reader["full_name"].ToString(),
                             Specialization = reader["specialization"]?.ToString(),
                             Phone = reader["phone"].ToString(),
@@ -54,28 +54,44 @@ namespace TamAnh_EMR_System.Repositories
                 connection.Open();
                 command.Connection = connection;
 
+                // ================= INSERT USER =================
                 command.CommandText = @"
-                    INSERT INTO users (username, password, role, created_at)
-                    VALUES (@username, @password, 'Doctor', GETDATE());
-                    SELECT SCOPE_IDENTITY();";
+                INSERT INTO users (id, username, password, role, created_at)
+                OUTPUT INSERTED.id
+                VALUES (
+                    'U' + RIGHT('000' + CAST(
+                        ISNULL(
+                            (SELECT MAX(CAST(SUBSTRING(id, 2, LEN(id)) AS INT)) FROM users), 0
+                        ) + 1 AS VARCHAR
+                    ), 3),
+                    @username, @password, 'doctor', GETDATE()
+                )";
 
                 command.Parameters.Add("@username", SqlDbType.VarChar).Value = doctor.Email;
                 command.Parameters.Add("@password", SqlDbType.VarChar).Value = "123456";
 
-                int userId = Convert.ToInt32(command.ExecuteScalar());
+                string userId = command.ExecuteScalar().ToString();
                 command.Parameters.Clear();
 
+                // INSERT DOCTOR
                 command.CommandText = @"
-                    INSERT INTO doctors (user_id, full_name, specialization, phone, email)
-                    VALUES (@user_id, @full_name, @specialization, @phone, @email)";
-
-                command.Parameters.Add("@user_id", SqlDbType.Int).Value = userId;
+                INSERT INTO doctors (id, user_id, full_name, specialization, phone, email)
+                OUTPUT INSERTED.id
+                VALUES (
+                    'D' + RIGHT('000' + CAST(
+                        ISNULL(
+                            (SELECT MAX(CAST(SUBSTRING(id, 2, LEN(id)) AS INT)) FROM doctors), 0
+                        ) + 1 AS VARCHAR
+                    ), 3),
+                    @user_id, @full_name, @specialization, @phone, @email
+                )";
+                command.Parameters.Add("@user_id", SqlDbType.VarChar).Value = userId;
                 command.Parameters.Add("@full_name", SqlDbType.NVarChar).Value = doctor.FullName;
                 command.Parameters.Add("@specialization", SqlDbType.NVarChar).Value = doctor.Specialization ?? "";
                 command.Parameters.Add("@phone", SqlDbType.VarChar).Value = doctor.Phone;
                 command.Parameters.Add("@email", SqlDbType.VarChar).Value = doctor.Email;
 
-                command.ExecuteNonQuery();
+                string doctorId = command.ExecuteScalar().ToString();
             }
         }
 
@@ -96,7 +112,7 @@ namespace TamAnh_EMR_System.Repositories
                         email=@email
                     WHERE user_id=@user_id";
 
-                command.Parameters.Add("@user_id", SqlDbType.Int).Value = doctor.UserId;
+                command.Parameters.Add("@user_id", SqlDbType.VarChar).Value = doctor.UserId;
                 command.Parameters.Add("@full_name", SqlDbType.NVarChar).Value = doctor.FullName;
                 command.Parameters.Add("@specialization", SqlDbType.NVarChar).Value = doctor.Specialization ?? "";
                 command.Parameters.Add("@phone", SqlDbType.VarChar).Value = doctor.Phone;
@@ -107,7 +123,7 @@ namespace TamAnh_EMR_System.Repositories
         }
 
         // ================= DELETE =================
-        public void DeleteDoctor(int userId)
+        public void DeleteDoctor(string userId)
         {
             using (var connection = GetConnection())
             using (var command = new SqlCommand())
@@ -115,13 +131,10 @@ namespace TamAnh_EMR_System.Repositories
                 connection.Open();
                 command.Connection = connection;
 
-                command.CommandText = "DELETE FROM doctors WHERE user_id=@id";
-                command.Parameters.Add("@id", SqlDbType.Int).Value = userId;
-                command.ExecuteNonQuery();
-                command.Parameters.Clear();
-
+                // 🔥 chỉ cần xóa user
                 command.CommandText = "DELETE FROM users WHERE id=@id";
-                command.Parameters.Add("@id", SqlDbType.Int).Value = userId;
+                command.Parameters.Add("@id", SqlDbType.VarChar).Value = userId;
+
                 command.ExecuteNonQuery();
             }
         }
@@ -141,7 +154,7 @@ namespace TamAnh_EMR_System.Repositories
                     SELECT d.*
                     FROM doctors d
                     INNER JOIN users u ON d.user_id = u.id
-                    WHERE u.role = 'Doctor'
+                    WHERE u.role = 'doctor'
                     AND (
                         d.full_name LIKE @key OR 
                         d.phone LIKE @key OR 
@@ -158,8 +171,8 @@ namespace TamAnh_EMR_System.Repositories
                     {
                         list.Add(new Doctors
                         {
-                            Id = (int)reader["id"],
-                            UserId = (int)reader["user_id"],
+                            Id = reader["id"].ToString(),
+                            UserId = reader["user_id"].ToString(),
                             FullName = reader["full_name"].ToString(),
                             Specialization = reader["specialization"]?.ToString(),
                             Phone = reader["phone"].ToString(),
