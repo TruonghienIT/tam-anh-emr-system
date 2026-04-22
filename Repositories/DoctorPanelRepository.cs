@@ -45,6 +45,68 @@ namespace TamAnh_EMR_System.Repositories
             return list;
         }
 
+        public bool IsEmailExists(string email)
+        {
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = @"
+                SELECT COUNT(*) 
+                FROM users 
+                WHERE username = @email
+                UNION ALL
+                SELECT COUNT(*) 
+                FROM doctors 
+                WHERE email = @email";
+                command.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
+                int total = 0;
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        total += Convert.ToInt32(reader[0]);
+                    }
+                }
+                return total > 0;
+            }
+        }
+
+        public bool IsEmailExistsForOther(string email, string userId)
+        {
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandText = @"
+                SELECT COUNT(*) 
+                FROM users 
+                WHERE username = @email AND id <> @userId
+
+                UNION ALL
+
+                SELECT COUNT(*) 
+                FROM doctors 
+                WHERE email = @email 
+                AND user_id <> @userId";
+
+                command.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
+                command.Parameters.Add("@userId", SqlDbType.VarChar).Value = userId;
+                int total = 0;
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        total += Convert.ToInt32(reader[0]);
+                    }
+                }
+                return total > 0;
+            }
+        }
+
         // ================= ADD =================
         public void AddDoctor(Doctors doctor)
         {

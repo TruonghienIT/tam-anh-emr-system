@@ -2,18 +2,21 @@
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
+using TamAnh_EMR_System.View;
 
 namespace TamAnh_EMR_System.ViewModel
 {
-    public class DoctorPanelViewModel : ViewModelBase
+    public class DoctorPanelViewModel : ViewModelBase 
     {
         private DoctorPanelRepository repository;
 
         public ObservableCollection<Doctors> Doctors { get; set; }
 
+        // ================= SELECTED =================
         private Doctors _selectedDoctor;
         public Doctors SelectedDoctor
         {
@@ -25,11 +28,42 @@ namespace TamAnh_EMR_System.ViewModel
             }
         }
 
-        // ================= POPUP STATE =================
-        public bool IsPopupOpen { get; set; }
-        public bool IsEditMode { get; set; }
+        // ================= POPUP =================
+        private bool _isPopupOpen;
+        public bool IsPopupOpen
+        {
+            get => _isPopupOpen;
+            set
+            {
+                _isPopupOpen = value;
+                OnPropertyChanged(nameof(IsPopupOpen));
+            }
+        }
 
-        public Doctors CurrentDoctor { get; set; } = new Doctors();
+        private bool _isEditMode;
+        public bool IsEditMode
+        {
+            get => _isEditMode;
+            set
+            {
+                _isEditMode = value;
+                OnPropertyChanged(nameof(IsEditMode));
+                OnPropertyChanged(nameof(PopupTitle));
+            }
+        }
+
+        private Doctors _currentDoctor = new Doctors();
+        public Doctors CurrentDoctor
+        {
+            get => _currentDoctor;
+            set
+            {
+                _currentDoctor = value;
+                OnPropertyChanged(nameof(CurrentDoctor));
+            }
+        }
+
+        public string PopupTitle => IsEditMode ? "Cập nhật bác sĩ" : "Thêm bác sĩ";
 
         // ================= COMMAND =================
         public ICommand LoadDoctorCommand { get; }
@@ -45,15 +79,15 @@ namespace TamAnh_EMR_System.ViewModel
 
             LoadDoctorCommand = new ViewModelCommand(_ => LoadDoctors());
 
+            // ===== ADD =====
             OpenAddCommand = new ViewModelCommand(_ =>
             {
                 CurrentDoctor = new Doctors();
                 IsEditMode = false;
                 IsPopupOpen = true;
-                OnPropertyChanged(nameof(CurrentDoctor));
-                OnPropertyChanged(nameof(IsPopupOpen));
             });
 
+            // ===== EDIT =====
             OpenEditCommand = new ViewModelCommand(obj =>
             {
                 var doctor = obj as Doctors;
@@ -71,40 +105,96 @@ namespace TamAnh_EMR_System.ViewModel
 
                 IsEditMode = true;
                 IsPopupOpen = true;
-
-                OnPropertyChanged(nameof(CurrentDoctor));
-                OnPropertyChanged(nameof(IsPopupOpen));
             });
 
+            // ===== SAVE =====
             SaveDoctorCommand = new ViewModelCommand(_ =>
             {
-                if (IsEditMode)
-                    repository.UpdateDoctor(CurrentDoctor);
-                else
-                    repository.AddDoctor(CurrentDoctor);
+                if (!ValidateDoctor())
+                    return;
 
-                LoadDoctors();
+                try
+                {
+                    if (IsEditMode)
+                        repository.UpdateDoctor(CurrentDoctor);
+                    else
+                        repository.AddDoctor(CurrentDoctor);
 
-                IsPopupOpen = false;
-                OnPropertyChanged(nameof(IsPopupOpen));
+                    LoadDoctors();
+                    IsPopupOpen = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             });
 
+            // ===== DELETE =====
             DeleteDoctorCommand = new ViewModelCommand(obj =>
             {
                 var doctor = obj as Doctors;
                 if (doctor == null) return;
 
-                repository.DeleteDoctor(doctor.UserId);
-                LoadDoctors();
+                if (MessageBox.Show("Bạn có chắc muốn xóa?", "Xác nhận",
+                    MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    repository.DeleteDoctor(doctor.UserId);
+                    LoadDoctors();
+                }
             });
 
+            // ===== CLOSE POPUP =====
             ClosePopupCommand = new ViewModelCommand(_ =>
             {
                 IsPopupOpen = false;
-                OnPropertyChanged(nameof(IsPopupOpen));
             });
 
             LoadDoctors();
+        }
+
+        // ================= VALIDATE =================
+        private bool ValidateDoctor()
+        {
+            if (string.IsNullOrWhiteSpace(CurrentDoctor.FullName))
+            {
+                MessageBox.Show("Vui lòng nhập họ tên!");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(CurrentDoctor.Specialization))
+            {
+                MessageBox.Show("Vui lòng nhập chuyên khoa!");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(CurrentDoctor.Email))
+            {
+                MessageBox.Show("Vui lòng nhập email!");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(CurrentDoctor.Phone))
+            {
+                MessageBox.Show("Vui lòng nhập số điện thoại!");
+                return false;
+            }
+            if (IsEditMode)
+            {
+                if (repository.IsEmailExistsForOther(CurrentDoctor.Email, CurrentDoctor.UserId))
+                {
+                    MessageBox.Show("Email đã được sử dụng!");
+                    return false;
+                }
+            }
+            else
+            {
+                if (repository.IsEmailExists(CurrentDoctor.Email))
+                {
+                    CustomMessageBox.Show("Email đã tồn tại", "Lỗi", "error");
+                    return false;
+                }
+            }
+            return true;
         }
 
         // ================= LOAD =================
