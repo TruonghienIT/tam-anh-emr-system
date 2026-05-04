@@ -22,6 +22,10 @@
             <local:HomeView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewModel:UserPanelViewModel}">
+            <local:UserPanelView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type viewModel:DoctorPanelViewModel}">
             <local:DoctorPanelView/>
         </DataTemplate>
@@ -96,7 +100,7 @@
 
                     <RadioButton Style="{StaticResource menuButton}"
                                  Tag="{StaticResource color9}"
-                                 Command="{Binding ShowDoctorPanelViewCommand}">
+                                 Command="{Binding ShowUserPanelViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="CircleUser" Style="{StaticResource menuButtonIcon}"/>
                             <TextBlock Text="Tài khoản" Style="{StaticResource menuButtonText}"/>

@@ -12,27 +12,24 @@
   <ItemGroup>
     <Compile Remove="Models\**" />
     <Compile Remove="Resources\**" />
-    <Compile Remove="Services\**" />
     <Compile Remove="ViewModels\**" />
     <Compile Remove="Views\**" />
     <EmbeddedResource Remove="Models\**" />
     <EmbeddedResource Remove="Resources\**" />
-    <EmbeddedResource Remove="Services\**" />
     <EmbeddedResource Remove="ViewModels\**" />
     <EmbeddedResource Remove="Views\**" />
     <None Remove="Models\**" />
     <None Remove="Resources\**" />
-    <None Remove="Services\**" />
     <None Remove="ViewModels\**" />
     <None Remove="Views\**" />
     <Page Remove="Models\**" />
     <Page Remove="Resources\**" />
-    <Page Remove="Services\**" />
     <Page Remove="ViewModels\**" />
     <Page Remove="Views\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove=".env" />
     <None Remove="Resource\Image\back-image.jpg" />
     <None Remove="Resource\Image\chat.png" />
     <None Remove="Resource\Image\dashboard-template.png" />
@@ -49,6 +46,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="3.2.0" />
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />

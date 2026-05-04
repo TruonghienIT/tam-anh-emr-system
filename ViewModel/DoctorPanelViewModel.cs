@@ -6,13 +6,15 @@ using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
-using TamAnh_EMR_System.View;
+using TamAnh_EMR_System.Services;   
 
 namespace TamAnh_EMR_System.ViewModel
 {
-    public class DoctorPanelViewModel : ViewModelBase 
+    public class DoctorPanelViewModel : ViewModelBase
     {
-        private DoctorPanelRepository repository;
+        private readonly DoctorPanelRepository repository;
+
+        private readonly EmailService emailService = new EmailService();
 
         public ObservableCollection<Doctors> Doctors { get; set; }
 
@@ -79,7 +81,7 @@ namespace TamAnh_EMR_System.ViewModel
 
             LoadDoctorCommand = new ViewModelCommand(_ => LoadDoctors());
 
-            // ===== ADD =====
+            // ADD
             OpenAddCommand = new ViewModelCommand(_ =>
             {
                 CurrentDoctor = new Doctors();
@@ -87,7 +89,7 @@ namespace TamAnh_EMR_System.ViewModel
                 IsPopupOpen = true;
             });
 
-            // ===== EDIT =====
+            // EDIT
             OpenEditCommand = new ViewModelCommand(obj =>
             {
                 var doctor = obj as Doctors;
@@ -107,8 +109,8 @@ namespace TamAnh_EMR_System.ViewModel
                 IsPopupOpen = true;
             });
 
-            // ===== SAVE =====
-            SaveDoctorCommand = new ViewModelCommand(_ =>
+            // SAVE
+            SaveDoctorCommand = new ViewModelCommand(async _ =>
             {
                 if (!ValidateDoctor())
                     return;
@@ -116,9 +118,24 @@ namespace TamAnh_EMR_System.ViewModel
                 try
                 {
                     if (IsEditMode)
+                    {
                         repository.UpdateDoctor(CurrentDoctor);
+                        MessageBox.Show("Cập nhật thành công!");
+                    }
                     else
-                        repository.AddDoctor(CurrentDoctor);
+                    {
+                        var result = repository.AddDoctor(CurrentDoctor);
+
+                        await emailService.SendAccountEmailAsync(
+                            CurrentDoctor.Email,
+                            result.username,
+                            result.password
+                        );
+
+                        MessageBox.Show(
+                            $"Tạo bác sĩ thành công!\nUsername: {result.username}\nPassword: {result.password}"
+                        );
+                    }
 
                     LoadDoctors();
                     IsPopupOpen = false;
@@ -129,7 +146,7 @@ namespace TamAnh_EMR_System.ViewModel
                 }
             });
 
-            // ===== DELETE =====
+            // DELETE
             DeleteDoctorCommand = new ViewModelCommand(obj =>
             {
                 var doctor = obj as Doctors;
@@ -143,7 +160,7 @@ namespace TamAnh_EMR_System.ViewModel
                 }
             });
 
-            // ===== CLOSE POPUP =====
+            // CLOSE
             ClosePopupCommand = new ViewModelCommand(_ =>
             {
                 IsPopupOpen = false;
@@ -157,43 +174,16 @@ namespace TamAnh_EMR_System.ViewModel
         {
             if (string.IsNullOrWhiteSpace(CurrentDoctor.FullName))
             {
-                MessageBox.Show("Vui lòng nhập họ tên!");
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(CurrentDoctor.Specialization))
-            {
-                MessageBox.Show("Vui lòng nhập chuyên khoa!");
+                MessageBox.Show("Nhập họ tên!");
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(CurrentDoctor.Email))
             {
-                MessageBox.Show("Vui lòng nhập email!");
+                MessageBox.Show("Nhập email!");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(CurrentDoctor.Phone))
-            {
-                MessageBox.Show("Vui lòng nhập số điện thoại!");
-                return false;
-            }
-            if (IsEditMode)
-            {
-                if (repository.IsEmailExistsForOther(CurrentDoctor.Email, CurrentDoctor.UserId))
-                {
-                    MessageBox.Show("Email đã được sử dụng!");
-                    return false;
-                }
-            }
-            else
-            {
-                if (repository.IsEmailExists(CurrentDoctor.Email))
-                {
-                    CustomMessageBox.Show("Email đã tồn tại", "Lỗi", "error");
-                    return false;
-                }
-            }
             return true;
         }
 

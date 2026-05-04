@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using TamAnh_EMR_System.Model;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -12,11 +9,30 @@ namespace TamAnh_EMR_System.Repositories
 {
     public class UserRepository : RepositoryBase, IUserRepository
     {
+        // ================= ADD =================
         public void Add(Users user)
         {
-            throw new NotImplementedException();
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = @"
+                    INSERT INTO [Users]
+                    (username, password, role, created_at, updated_at)
+                    VALUES
+                    (@username, @password, @role, GETDATE(), GETDATE())";
+
+                command.Parameters.Add("@username", SqlDbType.VarChar).Value = user.Username;
+                command.Parameters.Add("@password", SqlDbType.VarChar).Value = user.Password;
+                command.Parameters.Add("@role", SqlDbType.VarChar).Value = user.Role;
+
+                command.ExecuteNonQuery();
+            }
         }
 
+        // ================= AUTH =================
         public Users AuthenticateUser(NetworkCredential credential)
         {
             Users user = null;
@@ -27,7 +43,9 @@ namespace TamAnh_EMR_System.Repositories
                 connection.Open();
                 command.Connection = connection;
 
-                command.CommandText = "SELECT * FROM [Users] WHERE username=@username AND [password]=@password";
+                command.CommandText = @"
+                    SELECT * FROM [Users]
+                    WHERE username=@username AND [password]=@password";
 
                 command.Parameters.Add("@username", SqlDbType.VarChar).Value = credential.UserName;
                 command.Parameters.Add("@password", SqlDbType.VarChar).Value = credential.Password;
@@ -36,12 +54,7 @@ namespace TamAnh_EMR_System.Repositories
                 {
                     if (reader.Read())
                     {
-                        user = new Users
-                        {
-                            Id = reader["id"].ToString(),
-                            Username = reader["username"].ToString(),
-                            Role = reader["role"].ToString()
-                        };
+                        user = MapUser(reader);
                     }
                 }
             }
@@ -49,29 +62,143 @@ namespace TamAnh_EMR_System.Repositories
             return user;
         }
 
+        // ================= EDIT =================
         public void Edit(Users user)
         {
-            throw new NotImplementedException();
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = @"
+                    UPDATE [Users]
+                    SET username = @username,
+                        password = @password,
+                        role = @role,
+                        updated_at = GETDATE()
+                    WHERE id = @id";
+
+                command.Parameters.Add("@id", SqlDbType.VarChar).Value = user.Id;
+                command.Parameters.Add("@username", SqlDbType.VarChar).Value = user.Username;
+                command.Parameters.Add("@password", SqlDbType.VarChar).Value = user.Password;
+                command.Parameters.Add("@role", SqlDbType.VarChar).Value = user.Role;
+
+                command.ExecuteNonQuery();
+            }
         }
 
+        // ================= GET ALL =================
         public IEnumerable<Users> GetByAll()
         {
-            throw new NotImplementedException();
+            var list = new List<Users>();
+
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = "SELECT * FROM [Users]";
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(MapUser(reader));
+                    }
+                }
+            }
+
+            return list;
         }
 
+        // ================= GET BY ID =================
         public Users GetById(int id)
         {
-            throw new NotImplementedException();
+            Users user = null;
+
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = "SELECT * FROM [Users] WHERE id=@id";
+                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        user = MapUser(reader);
+                    }
+                }
+            }
+
+            return user;
         }
 
+        // ================= GET BY USERNAME =================
         public Users GetByUsername(string username)
         {
-            throw new NotImplementedException();
+            Users user = null;
+
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = "SELECT * FROM [Users] WHERE username=@username";
+                command.Parameters.Add("@username", SqlDbType.VarChar).Value = username;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        user = MapUser(reader);
+                    }
+                }
+            }
+
+            return user;
         }
 
+        // ================= DELETE =================
         public void Remove(int id)
         {
-            throw new NotImplementedException();
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = "DELETE FROM [Users] WHERE id=@id";
+                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        // ================= MAPPING CHUẨN =================
+        private Users MapUser(SqlDataReader reader)
+        {
+            return new Users
+            {
+                Id = reader["id"].ToString(),
+                Username = reader["username"].ToString(),
+                Password = reader["password"].ToString(),
+                Role = reader["role"].ToString(),
+
+                CreatedDate = reader["created_at"] == DBNull.Value
+                    ? (DateTime?)null
+                    : Convert.ToDateTime(reader["created_at"]),
+
+                UpdatedDate = reader["updated_at"] == DBNull.Value
+                    ? (DateTime?)null
+                    : Convert.ToDateTime(reader["updated_at"])
+            };
         }
     }
 }

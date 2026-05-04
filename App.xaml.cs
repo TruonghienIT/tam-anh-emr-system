@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using DotNetEnv;
+using System.Configuration;
 using System.Data;
 using System.Windows;
 using TamAnh_EMR_System.View;
@@ -12,6 +13,8 @@ namespace TamAnh_EMR_System
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            DotNetEnv.Env.Load();
+
             base.OnStartup(e);
 
             var loginView = new LoginView();

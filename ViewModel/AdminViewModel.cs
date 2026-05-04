@@ -74,11 +74,14 @@ namespace TamAnh_EMR_System.ViewModel
         public ICommand ShowHomeViewCommand { get; }
         public ICommand ShowDoctorPanelViewCommand { get; }
 
+        public ICommand ShowUserPanelViewCommand { get; }
+
         public AdminViewModel()
         {
             //Initialize commands
             ShowHomeViewCommand = new ViewModelCommand(ExecuteShowHomeViewCommand);
             ShowDoctorPanelViewCommand = new ViewModelCommand(ExecuteShowDoctorViewCommand);
+            ShowUserPanelViewCommand = new ViewModelCommand(ExecuteShowUserViewCommand);
 
             //Default View
             ExecuteShowHomeViewCommand(null);
@@ -95,7 +98,7 @@ namespace TamAnh_EMR_System.ViewModel
 
         private void ExecuteShowUserViewCommand(object obj)
         {
-            //CurrentChildView new UserPanelViewModel();
+            CurrentChildView = new UserPanelViewModel();
             Caption = "Tài khoản";
             Icon = IconChar.CircleUser;
         }
