@@ -107,7 +107,7 @@
                 <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="1,1"><GradientStop Color="#3B82F6" Offset="0"/><GradientStop Color="#2563EB" Offset="1"/></LinearGradientBrush></Border.Background>
                 <Border.Effect><DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.15" Color="#3B82F6"/></Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="TỔNG QUAN LỄ TÂN TRONG NGÀY" FontSize="10" Foreground="#93C5FD" FontWeight="SemiBold" Margin="0,0,0,6" LetterSpacing="0.5"/>
+                    <TextBlock Text="TỔNG QUAN LỄ TÂN TRONG NGÀY" FontSize="10" Foreground="#93C5FD" FontWeight="SemiBold" Margin="0,0,0,6" />
                     <TextBlock Text="Lượng bệnh nhân" FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,16"/>
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
