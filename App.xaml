@@ -1,4 +1,4 @@
-﻿<Application x:Class="TamAnh_EMR_System.App"
+<Application x:Class="TamAnh_EMR_System.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:TamAnh_EMR_System">
@@ -7,6 +7,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resource/Style/UIColor.xaml"/>
                 <ResourceDictionary Source="/Resource/Style/ButtonStyles.xaml"/>
+                <ResourceDictionary Source="/Resource/Style/DashboardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -1,0 +1,333 @@
+<UserControl x:Class="TamAnh_EMR_System.View.Receptionist.CreateAppointmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+             xmlns:vm="clr-namespace:TamAnh_EMR_System.ViewModel.Receptionist"
+             Background="#F8F9FC" FontFamily="Segoe UI">
+    <UserControl.Resources>
+        <Style x:Key="CInput" TargetType="TextBox">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="14,11"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="B" Background="White" CornerRadius="8" BorderBrush="#D1D5DB" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <Grid><ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="P" Text="{TemplateBinding Tag}" Foreground="#9CA3AF" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed"/></Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value=""><Setter TargetName="P" Property="Visibility" Value="Visible"/></Trigger>
+                            <Trigger Property="Text" Value="{x:Null}"><Setter TargetName="P" Property="Visibility" Value="Visible"/></Trigger>
+                            <Trigger Property="IsFocused" Value="True"><Setter TargetName="B" Property="BorderBrush" Value="#3B82F6"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CBtn" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/><Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Tag}" Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="B" Property="Opacity" Value="0.85"/></Trigger></ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="Lbl" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Foreground" Value="#374151"/><Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <Grid Margin="32,24,32,32">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="24"/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <Grid Grid.ColumnSpan="3" Margin="0,0,0,24">
+            <StackPanel><TextBlock Text="Tạo lịch hẹn mới" FontSize="26" FontWeight="Bold" Foreground="#111827"/>
+            <TextBlock Text="Điền thông tin chi tiết bên dưới để lên lịch khám cho bệnh nhân." FontSize="14" Foreground="#6B7280" Margin="0,4,0,0"/></StackPanel>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource CBtn}" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" Tag="8" Padding="20,10" Command="{Binding CancelCommand}">
+                <TextBlock Text="Hủy bỏ" FontSize="13" Foreground="#374151"/>
+            </Button>
+        </Grid>
+
+        <!-- LEFT COLUMN -->
+        <StackPanel Grid.Row="1" Grid.Column="0">
+
+            <!-- SECTION 1: Thông tin Bệnh nhân -->
+            <Border Background="White" CornerRadius="12" Padding="24,20" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
+                <Border.Effect><DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/></Border.Effect>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <fa:IconImage Icon="User" Width="16" Height="16" Foreground="#3B82F6" Margin="0,0,8,0"/>
+                        <TextBlock Text="Thông tin Bệnh nhân" FontSize="17" FontWeight="Bold" Foreground="#111827"/>
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource Lbl}"><Run Text="Tìm kiếm bệnh nhân"/><Run Text=" *" Foreground="#EF4444"/></TextBlock>
+                    <Grid Margin="0,0,0,14">
+                        <TextBox Style="{StaticResource CInput}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Tag="Nhập tên, số điện thoại hoặc mã bệnh nhân..." Padding="14,11,40,11"/>
+                        <fa:IconImage Icon="UserGroup" Width="18" Height="18" Foreground="#9CA3AF" HorizontalAlignment="Right" Margin="0,0,14,0" IsHitTestVisible="False"/>
+                    </Grid>
+                    <!-- Selected patient card -->
+                    <Border Background="#F9FAFB" CornerRadius="10" Padding="14,12" BorderBrush="#E5E7EB" BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="40" Height="40" CornerRadius="20" Background="#6366F1" Margin="0,0,12,0">
+                                <TextBlock Text="{Binding Appointment.PatientInitials}" Foreground="White" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Appointment.PatientName}" FontSize="14" FontWeight="SemiBold" Foreground="#111827"/>
+                                <TextBlock FontSize="12" Foreground="#6B7280" Margin="0,2,0,0">
+                                    <Run Text="ID: "/><Run Text="{Binding Appointment.PatientId}"/><Run Text=" • "/><Run Text="{Binding Appointment.PatientGender}"/><Run Text=" • "/><Run Text="{Binding Appointment.PatientAge}"/><Run Text=" tuổi"/>
+                                </TextBlock>
+                            </StackPanel>
+                            <Button Grid.Column="2" Style="{StaticResource CBtn}" Background="Transparent" Command="{Binding ChangePatientCommand}" Tag="4" Padding="0">
+                                <TextBlock Text="Thay đổi" FontSize="13" Foreground="#3B82F6" FontWeight="SemiBold"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- SECTION 2: Chuyên khoa & Bác sĩ -->
+            <Border Background="White" CornerRadius="12" Padding="24,20" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
+                <Border.Effect><DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/></Border.Effect>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <fa:IconImage Icon="HospitalUser" Width="16" Height="16" Foreground="#3B82F6" Margin="0,0,8,0"/>
+                        <TextBlock Text="Chuyên khoa &amp; Bác sĩ" FontSize="17" FontWeight="Bold" Foreground="#111827"/>
+                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Style="{StaticResource Lbl}"><Run Text="Chuyên khoa"/><Run Text=" *" Foreground="#EF4444"/></TextBlock>
+                            <ComboBox ItemsSource="{Binding AvailableDepartments}" SelectedItem="{Binding Appointment.Department}" Height="44" FontSize="13" Padding="12,10" BorderBrush="#D1D5DB"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource Lbl}"><Run Text="Bác sĩ phụ trách"/><Run Text=" *" Foreground="#EF4444"/></TextBlock>
+                            <ComboBox ItemsSource="{Binding AvailableDoctors}" SelectedItem="{Binding Appointment.Doctor}" Height="44" FontSize="13" Padding="12,10" BorderBrush="#D1D5DB"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- SECTION 3: Loại cuộc hẹn -->
+            <Border Background="White" CornerRadius="12" Padding="24,20" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,0">
+                <Border.Effect><DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/></Border.Effect>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <fa:IconImage Icon="ClipboardList" Width="16" Height="16" Foreground="#3B82F6" Margin="0,0,8,0"/>
+                        <TextBlock Text="Loại cuộc hẹn" FontSize="17" FontWeight="Bold" Foreground="#111827"/>
+                    </StackPanel>
+                    <!-- Type selection buttons -->
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <!-- Khám tổng quát -->
+                        <RadioButton Grid.Column="0" GroupName="AType" IsChecked="{Binding IsTypeGeneral}" Cursor="Hand">
+                            <RadioButton.Template><ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="B" Background="White" CornerRadius="10" BorderBrush="#D1D5DB" BorderThickness="1.5" Padding="0,16" MinHeight="80">
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <fa:IconImage Icon="ShieldHalved" Width="22" Height="22" Foreground="#3B82F6" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Khám tổng quát" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#111827"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True"><Setter TargetName="B" Property="Background" Value="#EFF6FF"/><Setter TargetName="B" Property="BorderBrush" Value="#3B82F6"/></Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate></RadioButton.Template>
+                        </RadioButton>
+                        <!-- Tái khám -->
+                        <RadioButton Grid.Column="2" GroupName="AType" IsChecked="{Binding IsTypeFollowUp}" Cursor="Hand">
+                            <RadioButton.Template><ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="B" Background="White" CornerRadius="10" BorderBrush="#D1D5DB" BorderThickness="1.5" Padding="0,16" MinHeight="80">
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <fa:IconImage Icon="ClockRotateLeft" Width="22" Height="22" Foreground="#6B7280" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Tái khám" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#111827"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True"><Setter TargetName="B" Property="Background" Value="#EFF6FF"/><Setter TargetName="B" Property="BorderBrush" Value="#3B82F6"/></Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate></RadioButton.Template>
+                        </RadioButton>
+                        <!-- Cấp cứu -->
+                        <RadioButton Grid.Column="4" GroupName="AType" IsChecked="{Binding IsTypeEmergency}" Cursor="Hand">
+                            <RadioButton.Template><ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="B" Background="White" CornerRadius="10" BorderBrush="#D1D5DB" BorderThickness="1.5" Padding="0,16" MinHeight="80">
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="✱" FontSize="22" Foreground="#EF4444" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Cấp cứu" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#111827"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True"><Setter TargetName="B" Property="Background" Value="#EFF6FF"/><Setter TargetName="B" Property="BorderBrush" Value="#3B82F6"/></Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate></RadioButton.Template>
+                        </RadioButton>
+                    </Grid>
+                    <!-- Notes -->
+                    <TextBlock Text="Ghi chú triệu chứng" Style="{StaticResource Lbl}"/>
+                    <TextBox Style="{StaticResource CInput}" Height="80" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
+                             Text="{Binding Appointment.Note, UpdateSourceTrigger=PropertyChanged}" Tag="Mô tả ngắn gọn lý do khám hoặc triệu chứng..." Padding="14,12"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- RIGHT COLUMN -->
+        <StackPanel Grid.Row="1" Grid.Column="2">
+
+            <!-- CALENDAR -->
+            <Border Background="White" CornerRadius="12" Padding="16,14" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
+                <Border.Effect><DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/></Border.Effect>
+                <StackPanel>
+                    <!-- Month nav -->
+                    <Grid Margin="0,0,0,12">
+                        <TextBlock Text="{Binding MonthYearText}" FontSize="15" FontWeight="Bold" Foreground="#111827" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource CBtn}" Background="Transparent" Tag="4" Padding="6" Command="{Binding PrevMonthCommand}">
+                                <fa:IconImage Icon="ChevronLeft" Width="12" Height="12" Foreground="#6B7280"/>
+                            </Button>
+                            <Button Style="{StaticResource CBtn}" Background="Transparent" Tag="4" Padding="6" Command="{Binding NextMonthCommand}">
+                                <fa:IconImage Icon="ChevronRight" Width="12" Height="12" Foreground="#6B7280"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                    <!-- Day headers -->
+                    <UniformGrid Rows="1" Columns="7" Margin="0,0,0,6">
+                        <TextBlock Text="T2" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="T3" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="T4" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="T5" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="T6" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="T7" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="CN" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    </UniformGrid>
+                    <!-- Calendar grid -->
+                    <ItemsControl ItemsSource="{Binding CalendarDays}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><UniformGrid Rows="6" Columns="7"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.SelectDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding FullDate}" Width="34" Height="34" Cursor="Hand" Margin="1">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="D" CornerRadius="17" Background="Transparent">
+                                                <TextBlock x:Name="T" Text="{Binding Day}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#374151"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsCurrentMonth}" Value="False"><Setter TargetName="T" Property="Foreground" Value="#D1D5DB"/></DataTrigger>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="D" Property="Background" Value="#3B82F6"/><Setter TargetName="T" Property="Foreground" Value="White"/><Setter TargetName="T" Property="FontWeight" Value="Bold"/></DataTrigger>
+                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="D" Property="Background" Value="#EFF6FF"/></Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="{Binding TodayText}" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- TIME SLOTS -->
+            <Border Background="White" CornerRadius="12" Padding="16,14" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
+                <Border.Effect><DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/></Border.Effect>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <fa:IconImage Icon="Clock" Width="14" Height="14" Foreground="#3B82F6" Margin="0,0,8,0"/>
+                        <TextBlock Text="Khung giờ trống" FontSize="15" FontWeight="Bold" Foreground="#111827"/>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding TimeSlots}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><UniformGrid Columns="2"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.SelectTimeSlotCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding Text}" Margin="3" Height="36" Cursor="Hand" IsEnabled="{Binding IsAvailable}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="B" CornerRadius="8" BorderBrush="#D1D5DB" BorderThickness="1" Background="White">
+                                                <TextBlock x:Name="T" Text="{Binding Text}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#374151"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="B" Property="Background" Value="#3B82F6"/><Setter TargetName="B" Property="BorderBrush" Value="#3B82F6"/><Setter TargetName="T" Property="Foreground" Value="White"/><Setter TargetName="T" Property="FontWeight" Value="SemiBold"/></DataTrigger>
+                                                <DataTrigger Binding="{Binding IsAvailable}" Value="False"><Setter TargetName="B" Property="Background" Value="#F3F4F6"/><Setter TargetName="T" Property="Foreground" Value="#D1D5DB"/></DataTrigger>
+                                                <MultiTrigger><MultiTrigger.Conditions><Condition Property="IsMouseOver" Value="True"/></MultiTrigger.Conditions><Setter TargetName="B" Property="Background" Value="#EFF6FF"/></MultiTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- SUBMIT PANEL -->
+            <Border CornerRadius="12" Padding="20,16" Margin="0,0,0,16">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#3B82F6" Offset="0"/><GradientStop Color="#2563EB" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <fa:IconImage Icon="CircleInfo" Width="16" Height="16" Foreground="#93C5FD" Margin="0,0,8,0"/>
+                        <TextBlock Text="Xác nhận lịch hẹn sẽ gửi thông báo qua SMS cho bệnh nhân." FontSize="12" Foreground="White" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Button Style="{StaticResource CBtn}" Background="White" Tag="10" Padding="0,12" Command="{Binding SubmitCommand}" HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <fa:IconImage Icon="PaperPlane" Width="14" Height="14" Foreground="#3B82F6" Margin="0,0,8,0"/>
+                            <TextBlock Text="Gửi lịch hẹn" FontSize="14" FontWeight="SemiBold" Foreground="#3B82F6"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- SUMMARY -->
+            <Border Background="White" CornerRadius="12" Padding="16,14" BorderBrush="#E5E7EB" BorderThickness="1">
+                <Border.Effect><DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/></Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="TÓM TẮT" FontSize="11" FontWeight="Bold" Foreground="#6B7280" Margin="0,0,0,12"/>
+                    <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="Bệnh nhân:" FontSize="13" Foreground="#6B7280"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Appointment.PatientName}" FontSize="13" FontWeight="SemiBold" Foreground="#111827" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="Thời gian:" FontSize="13" Foreground="#6B7280"/>
+                        <TextBlock Grid.Column="1" Text="{Binding SummaryTime}" FontSize="13" FontWeight="SemiBold" Foreground="#111827" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="Địa điểm:" FontSize="13" Foreground="#6B7280"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Appointment.Location}" FontSize="13" FontWeight="SemiBold" Foreground="#111827" HorizontalAlignment="Right"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- FAB Button -->
+        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource CBtn}" Background="#3B82F6" Tag="24" Width="48" Height="48"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,0">
+            <TextBlock Text="+" FontSize="24" Foreground="White" FontWeight="Light" Margin="0,-3,0,0"/>
+        </Button>
+    </Grid>
+    </ScrollViewer>
+</UserControl>

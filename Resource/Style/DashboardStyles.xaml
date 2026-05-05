@@ -1,0 +1,348 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ================================================================
+         DASHBOARD STYLES
+         Complete styling for the Receptionist Dashboard (Tổng quan Lịch khám).
+         All colors, fonts, and dimensions are defined here as resources
+         to ensure consistency and easy maintenance.
+         ================================================================ -->
+
+    <!-- ======================== COLOR PALETTE ======================== -->
+    <!-- Page & Layout Colors -->
+    <SolidColorBrush x:Key="DashPageBackground" Color="#F8F9FC"/>
+    <SolidColorBrush x:Key="DashCardBackground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="DashSidebarBackground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="DashHeaderBackground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="DashBorderColor" Color="#E5E7EB"/>
+    <SolidColorBrush x:Key="DashDividerColor" Color="#F3F4F6"/>
+
+    <!-- Primary Brand Colors -->
+    <SolidColorBrush x:Key="DashPrimaryBlue" Color="#3B82F6"/>
+    <SolidColorBrush x:Key="DashPrimaryBlueDark" Color="#2563EB"/>
+    <SolidColorBrush x:Key="DashPrimaryBlueLight" Color="#EBF0FF"/>
+
+    <!-- Text Colors -->
+    <SolidColorBrush x:Key="DashTextPrimary" Color="#111827"/>
+    <SolidColorBrush x:Key="DashTextSecondary" Color="#6B7280"/>
+    <SolidColorBrush x:Key="DashTextMuted" Color="#9CA3AF"/>
+    <SolidColorBrush x:Key="DashTextDark" Color="#1E293B"/>
+
+    <!-- Status Colors -->
+    <SolidColorBrush x:Key="DashStatusBlue" Color="#3B82F6"/>
+    <SolidColorBrush x:Key="DashStatusOrange" Color="#F59E0B"/>
+    <SolidColorBrush x:Key="DashStatusGreen" Color="#10B981"/>
+    <SolidColorBrush x:Key="DashStatusRed" Color="#EF4444"/>
+    <SolidColorBrush x:Key="DashStatusTeal" Color="#06B6D4"/>
+
+    <!-- Chart Colors -->
+    <SolidColorBrush x:Key="DashChartBar1" Color="#3B82F6"/>
+    <SolidColorBrush x:Key="DashChartBar2" Color="#93C5FD"/>
+
+    <!-- ======================== TYPOGRAPHY ======================== -->
+    <!-- Base font for the entire dashboard -->
+    <FontFamily x:Key="DashFontFamily">Segoe UI</FontFamily>
+
+    <!-- ======================== CARD STYLES ======================== -->
+    <!-- White card container with rounded corners and subtle shadow -->
+    <Style x:Key="DashCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource DashCardBackground}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DashBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="1" BlurRadius="8" Opacity="0.08" Color="#000000"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Statistic card (top KPI cards) -->
+    <Style x:Key="DashStatCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource DashCardBackground}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="20,16"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DashBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06" Color="#000000"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======================== SIDEBAR STYLES ======================== -->
+    <!-- Sidebar menu item button (inactive) -->
+    <Style x:Key="DashSidebarMenuItem" TargetType="Button">
+        <Setter Property="Height" Value="44"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextSecondary}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="20,0,16,0"/>
+        <Setter Property="Margin" Value="8,2"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F3F4F6" TargetName="Bd"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Active sidebar menu item -->
+    <Style x:Key="DashSidebarMenuItemActive" TargetType="Button" BasedOn="{StaticResource DashSidebarMenuItem}">
+        <Setter Property="Background" Value="{StaticResource DashPrimaryBlueLight}"/>
+        <Setter Property="Foreground" Value="{StaticResource DashPrimaryBlue}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <!-- ======================== BUTTON STYLES ======================== -->
+    <!-- Primary action button (e.g., "+ Hẹn lịch mới") -->
+    <Style x:Key="DashPrimaryButton" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource DashPrimaryBlue}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="20,12"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="10" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource DashPrimaryBlueDark}" TargetName="Bd"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Outline/secondary button (e.g., "Xuất báo cáo") -->
+    <Style x:Key="DashOutlineButton" TargetType="Button">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextPrimary}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="8"
+                            BorderBrush="{StaticResource DashBorderColor}"
+                            BorderThickness="1"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F9FAFB" TargetName="Bd"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Pagination number button -->
+    <Style x:Key="DashPaginationButton" TargetType="Button">
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextSecondary}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F3F4F6" TargetName="Bd"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Active pagination button (current page) -->
+    <Style x:Key="DashPaginationButtonActive" TargetType="Button" BasedOn="{StaticResource DashPaginationButton}">
+        <Setter Property="Background" Value="{StaticResource DashPrimaryBlue}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <!-- ======================== TEXTBOX STYLES ======================== -->
+    <!-- Search input box -->
+    <Style x:Key="DashSearchBox" TargetType="TextBox">
+        <Setter Property="Background" Value="#F9FAFB"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextPrimary}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DashBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="8"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======================== COMBOBOX STYLES ======================== -->
+    <!-- Filter dropdown -->
+    <Style x:Key="DashFilterComboBox" TargetType="ComboBox">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextPrimary}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="MinWidth" Value="160"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DashBorderColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- ======================== TABLE HEADER STYLE ======================== -->
+    <Style x:Key="DashTableHeaderText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontStyle" Value="Italic"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextSecondary}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- ======================== TEXT LINK STYLES ======================== -->
+    <Style x:Key="DashLinkButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DashPrimaryBlue}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <TextBlock Text="{TemplateBinding Content}"
+                               Foreground="{TemplateBinding Foreground}"
+                               FontSize="{TemplateBinding FontSize}"
+                               TextDecorations="Underline"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ======================== NOTIFICATION BADGE ======================== -->
+    <Style x:Key="DashBadge" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource DashPrimaryBlue}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="6,2"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <!-- ======================== ICON BUTTON ======================== -->
+    <!-- Transparent button for header icons (notification bell, info) -->
+    <Style x:Key="DashIconButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F3F4F6" TargetName="Bd"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Sidebar bottom item (Cài đặt, Hỗ trợ) -->
+    <Style x:Key="DashSidebarBottomItem" TargetType="Button" BasedOn="{StaticResource DashSidebarMenuItem}">
+        <Setter Property="Foreground" Value="{StaticResource DashTextMuted}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Height" Value="40"/>
+    </Style>
+
+    <!-- Tab toggle button (Theo giờ / Theo khoa) -->
+    <Style x:Key="DashTabButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextMuted}"/>
+        <Setter Property="FontFamily" Value="{StaticResource DashFontFamily}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F3F4F6" TargetName="Bd"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Active tab button -->
+    <Style x:Key="DashTabButtonActive" TargetType="Button" BasedOn="{StaticResource DashTabButton}">
+        <Setter Property="Background" Value="#F3F4F6"/>
+        <Setter Property="Foreground" Value="{StaticResource DashTextPrimary}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+</ResourceDictionary>

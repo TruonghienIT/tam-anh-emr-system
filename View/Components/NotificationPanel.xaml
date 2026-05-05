@@ -1,0 +1,82 @@
+<UserControl x:Class="TamAnh_EMR_System.View.Components.NotificationPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ================================================================
+         NOTIFICATION PANEL
+         Displays recent alerts/notifications in the bottom-left section.
+         Contains:
+         - "Thông báo mới" title with "3 Tin mới" badge
+         - List of notification items (via ItemsControl)
+         - "Xem tất cả thông báo" link at bottom
+         
+         Each notification has a colored dot, title, and description.
+         ================================================================ -->
+
+    <Border Style="{StaticResource DashCardStyle}">
+        <StackPanel>
+
+            <!-- ===== Header: Title + Badge ===== -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <TextBlock Text="Thông báo mới"
+                           FontFamily="{StaticResource DashFontFamily}"
+                           FontSize="16" FontWeight="Bold"
+                           Foreground="{StaticResource DashTextPrimary}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0"/>
+
+                <!-- "3 Tin mới" badge -->
+                <Border Background="#EFF6FF" CornerRadius="10"
+                        Padding="10,3">
+                    <TextBlock FontFamily="{StaticResource DashFontFamily}"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource DashPrimaryBlue}">
+                        <Run Text="{Binding NewNotificationCount}"/>
+                        <Run Text=" Tin mới"/>
+                    </TextBlock>
+                </Border>
+            </StackPanel>
+
+            <!-- ===== Notification Items ===== -->
+            <ItemsControl ItemsSource="{Binding Notifications}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <!-- Color dot indicator -->
+                            <Ellipse Width="10" Height="10"
+                                     Fill="{Binding DotColor}"
+                                     Margin="0,4,12,0"
+                                     VerticalAlignment="Top"/>
+
+                            <!-- Notification text -->
+                            <StackPanel MaxWidth="300">
+                                <TextBlock Text="{Binding Title}"
+                                           FontFamily="{StaticResource DashFontFamily}"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{StaticResource DashTextPrimary}"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Description}"
+                                           FontFamily="{StaticResource DashFontFamily}"
+                                           FontSize="12"
+                                           Foreground="{StaticResource DashTextMuted}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- ===== View All Link ===== -->
+            <Border BorderBrush="{StaticResource DashDividerColor}"
+                    BorderThickness="0,1,0,0"
+                    Padding="0,12,0,0"
+                    Margin="0,4,0,0">
+                <Button Style="{StaticResource DashLinkButton}"
+                        Content="Xem tất cả thông báo"
+                        Command="{Binding ViewAllNotificationsCommand}"
+                        HorizontalAlignment="Left"/>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>

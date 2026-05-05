@@ -1,0 +1,79 @@
+<UserControl x:Class="TamAnh_EMR_System.View.Components.StatisticCardControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:TamAnh_EMR_System.Converters">
+
+    <!-- ================================================================
+         STATISTIC CARDS CONTROL
+         Renders the 4 KPI cards in a horizontal row:
+         - Tổng lịch hẹn (42, ↑12%)
+         - Đang chờ (18, progress bar)
+         - Đã hoàn thành (14/42, progress bar)
+         - Tỷ lệ hủy (2, 4.7%, progress bar)
+         
+         Uses ItemsControl bound to StatisticCards ObservableCollection.
+         Each card is rendered via DataTemplate for consistent layout.
+         ================================================================ -->
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <ItemsControl ItemsSource="{Binding StatisticCards}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <!-- Horizontal layout with uniform spacing between cards -->
+                <UniformGrid Rows="1" Columns="4"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <!-- Each statistic card -->
+                <Border Style="{StaticResource DashStatCardStyle}"
+                        Margin="0,0,16,0">
+                    <StackPanel>
+                        <!-- Card title (e.g., "TỔNG LỊCH HẸN") -->
+                        <TextBlock Text="{Binding Title}"
+                                   FontFamily="{StaticResource DashFontFamily}"
+                                   FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{StaticResource DashTextSecondary}"
+                                   Margin="0,0,0,8"
+                                   LetterSpacing="0.5"/>
+
+                        <!-- Value row: main number + sub text -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="{Binding Value}"
+                                       FontFamily="{StaticResource DashFontFamily}"
+                                       FontSize="28" FontWeight="Bold"
+                                       Foreground="{Binding ValueColor}"/>
+                            <TextBlock Text="{Binding SubText}"
+                                       FontFamily="{StaticResource DashFontFamily}"
+                                       FontSize="13"
+                                       Foreground="{Binding SubTextColor}"
+                                       VerticalAlignment="Bottom"
+                                       Margin="8,0,0,5"/>
+                        </StackPanel>
+
+                        <!-- Progress bar (only shown for some cards) -->
+                        <Grid Height="4"
+                              Visibility="{Binding ShowProgress, Converter={StaticResource BoolToVis}}">
+                            <!-- Background track -->
+                            <Border Background="#F3F4F6" CornerRadius="2"/>
+                            <!-- Fill bar (width proportional to ProgressValue) -->
+                            <Border Background="{Binding ProgressColor}"
+                                    CornerRadius="2"
+                                    HorizontalAlignment="Left">
+                                <Border.Width>
+                                    <MultiBinding Converter="{x:Null}">
+                                        <Binding Path="ProgressValue"/>
+                                    </MultiBinding>
+                                </Border.Width>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

@@ -12,7 +12,7 @@ namespace TamAnh_EMR_System.Repositories
         private readonly string _connectionString;
         public RepositoryBase()
         {
-            _connectionString = "Server=DESKTOP-T8N6JVU\\SQLEXPRESS;Database=hos_db;User Id=sa;Password=sa;TrustServerCertificate=True;";
+            _connectionString = "Server=DESKTOP-DTF9I4R\\SQL2022;Database=hos_db;User Id=sa;Password=12345;TrustServerCertificate=True;";
         }
         protected SqlConnection GetConnection()
         {
