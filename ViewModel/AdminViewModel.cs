@@ -72,16 +72,18 @@ namespace TamAnh_EMR_System.ViewModel
 
         //Commands
         public ICommand ShowHomeViewCommand { get; }
-        public ICommand ShowDoctorPanelViewCommand { get; }
 
         public ICommand ShowUserPanelViewCommand { get; }
+        public ICommand ShowDoctorPanelViewCommand { get; }
+        public ICommand ShowReceptionistPanelViewCommand { get; }
 
         public AdminViewModel()
         {
             //Initialize commands
             ShowHomeViewCommand = new ViewModelCommand(ExecuteShowHomeViewCommand);
-            ShowDoctorPanelViewCommand = new ViewModelCommand(ExecuteShowDoctorViewCommand);
             ShowUserPanelViewCommand = new ViewModelCommand(ExecuteShowUserViewCommand);
+            ShowDoctorPanelViewCommand = new ViewModelCommand(ExecuteShowDoctorViewCommand);
+            ShowReceptionistPanelViewCommand = new ViewModelCommand(ExecuteShowReceptionistViewCommand);
 
             //Default View
             ExecuteShowHomeViewCommand(null);
@@ -89,6 +91,18 @@ namespace TamAnh_EMR_System.ViewModel
             LoadCurrentUserData();
         }
 
+        private void ExecuteShowHomeViewCommand(object obj)
+        {
+            CurrentChildView = new HomeViewModel();
+            Caption = "Trang chủ";
+            Icon = IconChar.Home;
+        }
+        private void ExecuteShowUserViewCommand(object obj)
+        {
+            CurrentChildView = new UserPanelViewModel();
+            Caption = "Tài khoản";
+            Icon = IconChar.CircleUser;
+        }
         private void ExecuteShowDoctorViewCommand(object obj)
         {
             CurrentChildView = new DoctorPanelViewModel();
@@ -96,18 +110,11 @@ namespace TamAnh_EMR_System.ViewModel
             Icon = IconChar.UserDoctor;
         }
 
-        private void ExecuteShowUserViewCommand(object obj)
+        private void ExecuteShowReceptionistViewCommand(object obj)
         {
-            CurrentChildView = new UserPanelViewModel();
-            Caption = "Tài khoản";
-            Icon = IconChar.CircleUser;
-        }
-
-        private void ExecuteShowHomeViewCommand(object obj)
-        {
-            CurrentChildView = new HomeViewModel();
-            Caption = "Trang chủ";
-            Icon = IconChar.Home;
+            CurrentChildView = new ReceptionistPanelViewModel();
+            Caption = "Lễ tân";
+            Icon = IconChar.UserAstronaut;
         }
 
         private void LoadCurrentUserData()

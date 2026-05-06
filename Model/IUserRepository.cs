@@ -17,5 +17,7 @@ namespace TamAnh_EMR_System.Model
         Users GetByUsername (string username);
         IEnumerable<Users> GetByAll();
 
+        Users GetByEmail(string email);
+
     }
 }

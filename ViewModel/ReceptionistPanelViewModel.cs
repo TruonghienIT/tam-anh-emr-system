@@ -6,27 +6,27 @@ using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
-using TamAnh_EMR_System.Services;   
+using TamAnh_EMR_System.Services;
 
 namespace TamAnh_EMR_System.ViewModel
 {
-    public class DoctorPanelViewModel : ViewModelBase
+    public class ReceptionistPanelViewModel : ViewModelBase
     {
-        private readonly DoctorPanelRepository repository;
+        private readonly ReceptionistPanelRepository repository;
 
         private readonly EmailService emailService = new EmailService();
 
-        public ObservableCollection<Doctors> Doctors { get; set; }
+        public ObservableCollection<Receptionists> Receptionists { get; set; }
 
         // ================= SELECTED =================
-        private Doctors _selectedDoctor;
-        public Doctors SelectedDoctor
+        private Receptionists _selectedReceptionist;
+        public Receptionists SelectedReceptionist
         {
-            get => _selectedDoctor;
+            get => _selectedReceptionist;
             set
             {
-                _selectedDoctor = value;
-                OnPropertyChanged(nameof(SelectedDoctor));
+                _selectedReceptionist = value;
+                OnPropertyChanged(nameof(SelectedReceptionist));
             }
         }
 
@@ -54,37 +54,37 @@ namespace TamAnh_EMR_System.ViewModel
             }
         }
 
-        private Doctors _currentDoctor = new Doctors();
-        public Doctors CurrentDoctor
+        private Receptionists _currentReceptionist = new Receptionists();
+        public Receptionists CurrentReceptionist
         {
-            get => _currentDoctor;
+            get => _currentReceptionist;
             set
             {
-                _currentDoctor = value;
-                OnPropertyChanged(nameof(CurrentDoctor));
+                _currentReceptionist = value;
+                OnPropertyChanged(nameof(CurrentReceptionist));
             }
         }
 
-        public string PopupTitle => IsEditMode ? "Cập nhật bác sĩ" : "Thêm bác sĩ";
+        public string PopupTitle => IsEditMode ? "Cập nhật lễ tân" : "Thêm lễ tân";
 
         // ================= COMMAND =================
-        public ICommand LoadDoctorCommand { get; }
+        public ICommand LoadReceptionistCommand { get; }
         public ICommand OpenAddCommand { get; }
         public ICommand OpenEditCommand { get; }
-        public ICommand SaveDoctorCommand { get; }
-        public ICommand DeleteDoctorCommand { get; }
+        public ICommand SaveReceptionistCommand { get; }
+        public ICommand DeleteReceptionistCommand { get; }
         public ICommand ClosePopupCommand { get; }
 
-        public DoctorPanelViewModel()
+        public ReceptionistPanelViewModel()
         {
-            repository = new DoctorPanelRepository();
+            repository = new ReceptionistPanelRepository();
 
-            LoadDoctorCommand = new ViewModelCommand(_ => LoadDoctors());
+            LoadReceptionistCommand = new ViewModelCommand(_ => LoadReceptionists());
 
             // ADD
             OpenAddCommand = new ViewModelCommand(_ =>
             {
-                CurrentDoctor = new Doctors();
+                CurrentReceptionist = new Receptionists();
                 IsEditMode = false;
                 IsPopupOpen = true;
             });
@@ -92,17 +92,16 @@ namespace TamAnh_EMR_System.ViewModel
             // EDIT
             OpenEditCommand = new ViewModelCommand(obj =>
             {
-                var doctor = obj as Doctors;
-                if (doctor == null) return;
+                var receptionist = obj as Receptionists;
+                if (receptionist == null) return;
 
-                CurrentDoctor = new Doctors
+                CurrentReceptionist = new Receptionists
                 {
-                    Id = doctor.Id,
-                    UserId = doctor.UserId,
-                    FullName = doctor.FullName,
-                    Email = doctor.Email,
-                    Phone = doctor.Phone,
-                    Specialization = doctor.Specialization
+                    Id = receptionist.Id,
+                    UserId = receptionist.UserId,
+                    FullName = receptionist.FullName,
+                    Email = receptionist.Email,
+                    Phone = receptionist.Phone
                 };
 
                 IsEditMode = true;
@@ -110,34 +109,34 @@ namespace TamAnh_EMR_System.ViewModel
             });
 
             // SAVE
-            SaveDoctorCommand = new ViewModelCommand(async _ =>
+            SaveReceptionistCommand = new ViewModelCommand(async _ =>
             {
-                if (!ValidateDoctor())
+                if (!ValidateReceptionist())
                     return;
 
                 try
                 {
                     if (IsEditMode)
                     {
-                        repository.UpdateDoctor(CurrentDoctor);
+                        repository.UpdateReceptionist(CurrentReceptionist);
                         MessageBox.Show("Cập nhật thành công!");
                     }
                     else
                     {
-                        var result = repository.AddDoctor(CurrentDoctor);
+                        var result = repository.AddReceptionist(CurrentReceptionist);
 
                         await emailService.SendAccountEmailAsync(
-                            CurrentDoctor.Email,
+                            CurrentReceptionist.Email,
                             result.username,
-                            result.password, "doctor"
+                            result.password, "receptionist"
                         );
 
                         MessageBox.Show(
-                            $"Tạo bác sĩ thành công!\nUsername: {result.username}\nPassword: {result.password}"
+                            $"Tạo lễ tân thành công!\nUsername: {result.username}\nPassword: {result.password}"
                         );
                     }
 
-                    LoadDoctors();
+                    LoadReceptionists();
                     IsPopupOpen = false;
                 }
                 catch (Exception ex)
@@ -147,16 +146,16 @@ namespace TamAnh_EMR_System.ViewModel
             });
 
             // DELETE
-            DeleteDoctorCommand = new ViewModelCommand(obj =>
+            DeleteReceptionistCommand = new ViewModelCommand(obj =>
             {
-                var doctor = obj as Doctors;
-                if (doctor == null) return;
+                var receptionist = obj as Receptionists;
+                if (receptionist == null) return;
 
                 if (MessageBox.Show("Bạn có chắc muốn xóa?", "Xác nhận",
                     MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    repository.DeleteDoctor(doctor.UserId);
-                    LoadDoctors();
+                    repository.DeleteReceptionist(receptionist.UserId);
+                    LoadReceptionists();
                 }
             });
 
@@ -166,19 +165,19 @@ namespace TamAnh_EMR_System.ViewModel
                 IsPopupOpen = false;
             });
 
-            LoadDoctors();
+            LoadReceptionists();
         }
 
         // ================= VALIDATE =================
-        private bool ValidateDoctor()
+        private bool ValidateReceptionist()
         {
-            if (string.IsNullOrWhiteSpace(CurrentDoctor.FullName))
+            if (string.IsNullOrWhiteSpace(CurrentReceptionist.FullName))
             {
                 MessageBox.Show("Nhập họ tên!");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(CurrentDoctor.Email))
+            if (string.IsNullOrWhiteSpace(CurrentReceptionist.Email))
             {
                 MessageBox.Show("Nhập email!");
                 return false;
@@ -188,10 +187,10 @@ namespace TamAnh_EMR_System.ViewModel
         }
 
         // ================= LOAD =================
-        private void LoadDoctors()
+        private void LoadReceptionists()
         {
-            Doctors = repository.GetAllDoctors();
-            OnPropertyChanged(nameof(Doctors));
+            Receptionists = repository.GetAllReceptionists();
+            OnPropertyChanged(nameof(Receptionists));
         }
 
         // ================= SEARCH =================
@@ -220,12 +219,12 @@ namespace TamAnh_EMR_System.ViewModel
 
                 if (string.IsNullOrWhiteSpace(_searchText))
                 {
-                    LoadDoctors();
+                    LoadReceptionists();
                 }
                 else
                 {
-                    Doctors = repository.SearchDoctors(_searchText);
-                    OnPropertyChanged(nameof(Doctors));
+                    Receptionists = repository.SearchReceptionists(_searchText);
+                    OnPropertyChanged(nameof(Receptionists));
                 }
             }
             catch (TaskCanceledException) { }

@@ -200,5 +200,39 @@ namespace TamAnh_EMR_System.Repositories
                     : Convert.ToDateTime(reader["updated_at"])
             };
         }
+
+        public Users GetByEmail(string email)
+        {
+            Users user = null;
+
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+
+                command.CommandText = @"
+            SELECT u.*
+            FROM Users u
+            LEFT JOIN doctors d ON u.id = d.user_id
+            LEFT JOIN receptionists r ON u.id = r.user_id
+            LEFT JOIN patients p ON u.id = p.user_id
+            WHERE d.email = @email 
+               OR r.email = @email 
+               OR p.email = @email";
+
+                command.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        user = MapUser(reader);
+                    }
+                }
+            }
+
+            return user;
+        }
     }
 }

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TamAnh_EMR_System.View"
+        xmlns:converter="clr-namespace:TamAnh_EMR_System.Converter"
         xmlns:viewModel="clr-namespace:TamAnh_EMR_System.ViewModel" xmlns:customcontrol="clr-namespace:TamAnh_EMR_System.CustomControl"
         mc:Ignorable="d"
         Title="LoginView" Height="550" Width="800"
@@ -19,7 +20,9 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key ="BooleanToVisibility"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+        <converter:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibility"/>
+        <converter:CooldownTextConverter x:Key="CooldownTextConverter"/>
     </Window.Resources>
 
     <Window.Visibility>
@@ -138,15 +141,15 @@
                         </Button.Template>
                     </Button>    
                 </Grid>
-
-                <StackPanel Width="250"
-                            Grid.Row="2"
+                <Grid Grid.Row="2">
+                    <StackPanel Width="280"
                             Orientation="Vertical"
-                            Margin="0,25,0,0">
-                    <Image Source="/Resource/Image/Logo.png"
+                            Margin="0,25,0,0"
+                            Visibility="{Binding IsResetMode, Converter={StaticResource InverseBooleanToVisibility}}">
+                        <Image Source="/Resource/Image/Logo.png"
                            Width="120" Height="120"/>
 
-                    <TextBlock Text="Số hóa y tế – Kết nối dữ liệu – Tối ưu điều trị"
+                        <TextBlock Text="Số hóa y tế – Kết nối dữ liệu – Tối ưu điều trị"
                                Foreground="LightGray"
                                FontSize="12"
                                FontWeight="Medium"
@@ -155,7 +158,7 @@
                                TextAlignment="Center"
                                Margin="0,0,0,0"/>
 
-                    <TextBlock Text="Tài khoản"
+                        <TextBlock Text="Tài khoản"
                                Foreground="DarkGray"
                                FontSize="12"
                                FontWeight="Medium"
@@ -163,7 +166,7 @@
                                TextAlignment="Left"
                                Margin="0,30,0,0"/>
 
-                    <TextBox x:Name="txtUser"
+                        <TextBox x:Name="txtUser"
                              Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
                              FontSize="13"
                              FontWeight="Medium"
@@ -176,14 +179,14 @@
                              VerticalContentAlignment="Center"
                              Margin="0,5,0,0"
                              Padding="28,0,0,0">
-                        <TextBox.Background>
-                            <ImageBrush ImageSource="/Resource/Image/user-icon.png"
+                            <TextBox.Background>
+                                <ImageBrush ImageSource="/Resource/Image/user-icon.png"
                                         Stretch="Uniform"
                                         AlignmentX="Left"/>
-                        </TextBox.Background>
-                    </TextBox>
+                            </TextBox.Background>
+                        </TextBox>
 
-                    <TextBlock Text="Mật khẩu"
+                        <TextBlock Text="Mật khẩu"
                                Foreground="DarkGray"
                                FontSize="12"
                                FontWeight="Medium"
@@ -191,12 +194,12 @@
                                TextAlignment="Left"
                                Margin="0,15,0,0"/>
 
-                    <customcontrol:BindablePasswordBox Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        <customcontrol:BindablePasswordBox Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                        Height="28"
                                                        Margin="0,5,0,0">
-                    </customcontrol:BindablePasswordBox>
+                        </customcontrol:BindablePasswordBox>
 
-                    <TextBlock Text="{Binding ErrorMessage}"
+                        <TextBlock Text="{Binding ErrorMessage}"
                                Foreground="#D7596D"
                                FontSize="12"
                                FontWeight="Medium"
@@ -205,7 +208,7 @@
                                Margin="0,10,0,0"
                                TextWrapping="Wrap"/>
 
-                    <Button x:Name="btnLogin"
+                        <Button x:Name="btnLogin"
                             Command="{Binding LoginCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                             BorderThickness="0"
@@ -217,49 +220,142 @@
                             Grid.Column="2"
                             Margin="0,50,0,0"
                             Click="btnLogin_Click">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Background" Value="#462AD8"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#28AEED"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#462AD8"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#28AEED"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
 
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Width="150" Height="40"
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Width="150" Height="40"
                                         CornerRadius="15"
                                         Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Center"
+                                        <ContentPresenter HorizontalAlignment="Center"
                                                       VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
 
-                    <StackPanel Orientation="Horizontal"
+                        <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center"
                                 Margin="0,20,0,0">
-                        <TextBlock Text="Quên mật khẩu?"
+                            <TextBlock Text="Quên mật khẩu?"
                                Foreground="DarkGray"
                                FontSize="12"
                                FontWeight="Medium"
                                FontFamily="Montserrat"
                                TextAlignment="Left"/>
 
-                        <TextBlock Text="Đặt lại mật khẩu"
+                            <TextBlock Text="Đặt lại mật khẩu"
                                    Foreground="White"
                                    FontSize="12"
                                    FontWeight="Medium"
                                    FontFamily="Montserrat"
                                    TextAlignment="Left"
                                    Cursor="Hand"
-                                   Margin="8,0,0,0"/>
+                                   Margin="8,0,0,0">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                Command="{Binding ShowResetCommand}"/>
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
+
+                    <!--RESET-->
+                    <StackPanel Width="280"
+                                Orientation="Vertical"
+                                Margin="0,25,0,0"
+                                Visibility="{Binding IsResetMode, Converter={StaticResource BooleanToVisibility}}">
+                        <Image Source="/Resource/Image/Logo.png" Width="120" Height="120"/>
+                        
+                        <TextBlock Text="Số hóa y tế – Kết nối dữ liệu – Tối ưu điều trị"
+                                   Foreground="LightGray"
+                                   FontSize="12"
+                                   FontWeight="Medium"
+                                   FontFamily="Montserrat"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"/>
+
+                        <TextBlock Text="Email"
+                               Foreground="DarkGray"
+                               FontSize="12"
+                               FontWeight="Medium"
+                               FontFamily="Montserrat"
+                               TextAlignment="Left"
+                               Margin="0,30,0,0"/>
+                        
+                        <TextBox Text="{Binding ResetEmail}"
+                                 FontSize="13"
+                                 FontWeight="Medium"
+                                 FontFamily="Montserrat"
+                                 Foreground="white"
+                                 CaretBrush="LightGray"
+                                 BorderBrush="DarkGray"
+                                 BorderThickness="0,0,0,1"
+                                 Height="28"
+                                 VerticalContentAlignment="Center"
+                                 Margin="0,5,0,0"
+                                 Padding="30,0,0,0">
+
+                            <TextBox.Background>
+                                <ImageBrush ImageSource="/Resource/Image/email.png"
+                                            Stretch="Uniform"
+                                            AlignmentX="Left"/>
+                            </TextBox.Background>
+                        </TextBox>
+
+                        <Button Content="{Binding CooldownSeconds, Converter={StaticResource CooldownTextConverter}}"
+                                Command="{Binding SendResetCommand}"
+                                BorderThickness="0"
+                                Foreground="White"
+                                FontSize="12"
+                                FontFamily="Montserrat"
+                                Cursor="Hand"
+                                Margin="0,50,0,0">
+
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#28C76F"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#20B362"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Width="150" Height="40"
+                                            CornerRadius="15"
+                                            Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <TextBlock Text="← Quay lại đăng nhập"
+                                   Foreground="LightGray"
+                                   Cursor="Hand"
+                                   HorizontalAlignment="Center"
+                                    Margin="0,20,0,0">
+                            <TextBlock.InputBindings>
+                                <MouseBinding Gesture="LeftClick" Command="{Binding BackToLoginCommand}"/>
+                            </TextBlock.InputBindings>
+                        </TextBlock>
+
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Border>
     </Border>

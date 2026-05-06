@@ -34,6 +34,7 @@
     <None Remove="Resource\Image\chat.png" />
     <None Remove="Resource\Image\dashboard-template.png" />
     <None Remove="Resource\Image\doctor.jpg" />
+    <None Remove="Resource\Image\email.png" />
     <None Remove="Resource\Image\error.png" />
     <None Remove="Resource\Image\exclamation.png" />
     <None Remove="Resource\Image\information.png" />
@@ -63,6 +64,7 @@
     <Resource Include="Resource\Image\chat.png" />
     <Resource Include="Resource\Image\dashboard-template.png" />
     <Resource Include="Resource\Image\doctor.jpg" />
+    <Resource Include="Resource\Image\email.png" />
     <Resource Include="Resource\Image\error.png" />
     <Resource Include="Resource\Image\exclamation.png" />
     <Resource Include="Resource\Image\information.png" />

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using TamAnh_EMR_System.Helper;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
+using TamAnh_EMR_System.Services;
 using TamAnh_EMR_System.View;
 
 namespace TamAnh_EMR_System.ViewModel
@@ -23,15 +24,67 @@ namespace TamAnh_EMR_System.ViewModel
         private bool _isViewVisible = true;
 
         private IUserRepository userRepository;
-        public string Username 
-        { 
-            get => _username; 
+
+        private bool _isResetMode;
+        public bool IsResetMode
+        {
+            get => _isResetMode;
+            set
+            {
+                _isResetMode = value;
+                OnPropertyChanged(nameof(IsResetMode));
+            }
+        }
+
+        private string _resetEmail;
+        public string ResetEmail
+        {
+            get => _resetEmail;
+            set
+            {
+                _resetEmail = value;
+                OnPropertyChanged(nameof(ResetEmail));
+            }
+        }
+
+        private bool _isSending;
+        public bool IsSending
+        {
+            get => _isSending;
+            set
+            {
+                _isSending = value;
+                OnPropertyChanged(nameof(IsSending));
+            }
+        }
+
+        private DateTime _lastSendTime = DateTime.MinValue;
+
+        private int _cooldownSeconds;
+        public int CooldownSeconds
+        {
+            get => _cooldownSeconds;
+            set
+            {
+                _cooldownSeconds = value;
+                OnPropertyChanged(nameof(CooldownSeconds));
+            }
+        }
+
+        public ICommand ShowResetCommand { get; }
+        public ICommand BackToLoginCommand { get; }
+        public ICommand SendResetCommand { get; }
+
+        public string Username
+        {
+            get => _username;
             set
             {
                 _username = value;
                 OnPropertyChanged(nameof(Username));
             }
         }
+
         public SecureString Password
         {
             get => _password;
@@ -41,8 +94,9 @@ namespace TamAnh_EMR_System.ViewModel
                 OnPropertyChanged(nameof(Password));
             }
         }
-        public string ErrorMessage 
-        { 
+
+        public string ErrorMessage
+        {
             get => _errorMessage;
             set
             {
@@ -51,28 +105,32 @@ namespace TamAnh_EMR_System.ViewModel
             }
         }
 
-        public  ICommand LoginCommand
-        {
-            get;
-        }
-        public ICommand RecoverPasswordCommand
-        {
-            get;
-        }
-        public ICommand ShowPasswordCommand
-        {
-            get;
-        }
-        public ICommand RememberPasswordCommand
-        {
-            get;
-        }
+        public ICommand LoginCommand { get; }
+        public ICommand RecoverPasswordCommand { get; }
+        public ICommand ShowPasswordCommand { get; }
+        public ICommand RememberPasswordCommand { get; }
 
         public LoginViewModel()
         {
             userRepository = new UserRepository();
+
             LoginCommand = new ViewModelCommand(ExecuteLoginCommand, CanExecuteLoginCommand);
+
             RecoverPasswordCommand = new ViewModelCommand(p => ExecuteRecoverPassCommand("", ""));
+
+            ShowResetCommand = new ViewModelCommand(_ =>
+            {
+                IsResetMode = true;
+                ErrorMessage = "";
+            });
+
+            BackToLoginCommand = new ViewModelCommand(_ =>
+            {
+                IsResetMode = false;
+                ResetEmail = "";
+            });
+
+            SendResetCommand = new ViewModelCommand(_ => ExecuteSendReset());
         }
 
         private bool CanExecuteLoginCommand(object obj)
@@ -92,8 +150,8 @@ namespace TamAnh_EMR_System.ViewModel
             {
                 UserSession.CurrentUser = user;
 
-                Thread.CurrentPrincipal = new GenericPrincipal( 
-                    new GenericIdentity (user.Username), 
+                Thread.CurrentPrincipal = new GenericPrincipal(
+                    new GenericIdentity(user.Username),
                     new[] { user.Role });
 
                 Window window = null;
@@ -122,8 +180,8 @@ namespace TamAnh_EMR_System.ViewModel
                     MessageBox.Show("Role không hợp lệ!");
                     return;
                 }
-                window.Show();
 
+                window.Show();
                 Application.Current.MainWindow = window;
 
                 if (obj is Window loginWindow)
@@ -140,6 +198,86 @@ namespace TamAnh_EMR_System.ViewModel
         private void ExecuteRecoverPassCommand(string username, string email)
         {
             throw new NotImplementedException();
+        }
+
+        private string GenerateGuidPassword()
+        {
+            return Guid.NewGuid().ToString("N").Substring(0, 8);
+        }
+        private async void ExecuteSendReset()
+        {
+            if (IsSending) return;
+
+            if ((DateTime.Now - _lastSendTime).TotalSeconds < 30)
+            {
+                int remain = 30 - (int)(DateTime.Now - _lastSendTime).TotalSeconds;
+                MessageBox.Show($"Vui lòng chờ {remain}s trước khi gửi lại!");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(ResetEmail))
+            {
+                MessageBox.Show("Vui lòng nhập email!");
+                return;
+            }
+
+            if (!ResetEmail.Contains("@"))
+            {
+                MessageBox.Show("Email không hợp lệ!");
+                return;
+            }
+
+            var user = userRepository.GetByEmail(ResetEmail);
+
+            if (user == null)
+            {
+                MessageBox.Show("Không tìm thấy email!");
+                return;
+            }
+
+            string newPassword = GenerateGuidPassword();
+
+            user.Password = newPassword;
+            userRepository.Edit(user);
+
+            try
+            {
+                IsSending = true;
+
+                var emailService = new EmailService();
+
+                await emailService.SendResetPasswordEmailAsync(
+                    ResetEmail,
+                    user.Username,
+                    newPassword
+                );
+
+                MessageBox.Show("Mật khẩu mới đã được gửi qua email!");
+
+                _lastSendTime = DateTime.Now;
+                StartCooldownTimer();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi gửi mail: " + ex.Message);
+            }
+            finally
+            {
+                IsSending = false;
+            }
+
+            IsResetMode = false;
+            ResetEmail = "";
+        }
+        private async void StartCooldownTimer()
+        {
+            CooldownSeconds = 30;
+
+            while (CooldownSeconds > 0)
+            {
+                await Task.Delay(1000);
+                CooldownSeconds--;
+            }
         }
     }
 }

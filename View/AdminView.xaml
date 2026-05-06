@@ -29,6 +29,10 @@
         <DataTemplate DataType="{x:Type viewModel:DoctorPanelViewModel}">
             <local:DoctorPanelView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModel:ReceptionistPanelViewModel}">
+            <local:ReceptionistPanelView/>
+        </DataTemplate>
     </Window.Resources>
 
     <Border CornerRadius="10"
@@ -118,7 +122,7 @@
 
                     <RadioButton Style="{StaticResource menuButton}"
                                  Tag="{StaticResource color8}"
-                                 Command="{Binding ShowDoctorPanelViewCommand}">
+                                 Command="{Binding ShowReceptionistPanelViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="UserAstronaut" Style="{StaticResource menuButtonIcon}"/>
                             <TextBlock Text="Lễ tân" Style="{StaticResource menuButtonText}"/>
