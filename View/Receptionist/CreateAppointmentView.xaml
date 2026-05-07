@@ -8,43 +8,44 @@
         <Style x:Key="CInput" TargetType="TextBox">
             <Setter Property="Height" Value="44"/>
             <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="14,11"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CaretBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+            <!-- CỰC QUAN TRỌNG -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="B" Background="White" CornerRadius="8" BorderBrush="#D1D5DB" BorderThickness="1" Padding="{TemplateBinding Padding}">
-                            <Grid><ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="P" Text="{TemplateBinding Tag}" Foreground="#9CA3AF" FontSize="13" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed"/></Grid>
+                        <Border
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="10">
+
+                            <ScrollViewer
+    x:Name="PART_ContentHost"
+    Margin="{TemplateBinding Padding}"
+    VerticalAlignment="Center"
+    Focusable="False"/>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Text" Value=""><Setter TargetName="P" Property="Visibility" Value="Visible"/></Trigger>
-                            <Trigger Property="Text" Value="{x:Null}"><Setter TargetName="P" Property="Visibility" Value="Visible"/></Trigger>
-                            <Trigger Property="IsFocused" Value="True"><Setter TargetName="B" Property="BorderBrush" Value="#3B82F6"/></Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <Style x:Key="CBtn" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/><Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Tag}" Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="B" Property="Opacity" Value="0.85"/></Trigger></ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            
         </Style>
         <Style x:Key="Lbl" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Foreground" Value="#374151"/><Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PreviewMouseDown="RootGrid_PreviewMouseDown">
     <Grid Margin="32,24,32,32">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -77,9 +78,252 @@
                         <TextBlock Text="Thông tin Bệnh nhân" FontSize="17" FontWeight="Bold" Foreground="#111827"/>
                     </StackPanel>
                     <TextBlock Style="{StaticResource Lbl}"><Run Text="Tìm kiếm bệnh nhân"/><Run Text=" *" Foreground="#EF4444"/></TextBlock>
-                    <Grid Margin="0,0,0,14">
-                        <TextBox Style="{StaticResource CInput}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Tag="Nhập tên, số điện thoại hoặc mã bệnh nhân..." Padding="14,11,40,11"/>
-                        <fa:IconImage Icon="UserGroup" Width="18" Height="18" Foreground="#9CA3AF" HorizontalAlignment="Right" Margin="0,0,14,0" IsHitTestVisible="False"/>
+                    <Grid Margin="0,0,0,14" x:Name="SearchBoxContainer">
+                        <TextBox x:Name="SearchTextBox" Style="{StaticResource CInput}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Nhập tên, số điện thoại hoặc mã bệnh nhân..." Padding="14,0,50,0"/>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                            <!-- All Patients Button -->
+                            <Button Command="{Binding OpenPatientPopupCommand}" Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Hiển thị tất cả bệnh nhân">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bg" Background="Transparent" CornerRadius="6">
+                                            <fa:IconImage Icon="UserGroup" Width="16" Height="16" Foreground="#6B7280" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bg" Property="Background" Value="#F3F4F6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Popup Dropdown -->
+                        <Popup IsOpen="{Binding ShowSearchResults}" StaysOpen="False" PlacementTarget="{Binding ElementName=SearchBoxContainer}" Placement="Bottom" AllowsTransparency="True">
+                                <Border x:Name="SearchPopupBorder"
+        Background="White"
+        BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Margin="0,4,0,10" Width="{Binding ActualWidth, ElementName=SearchBoxContainer}">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="12" ShadowDepth="4" Opacity="0.1" Color="#000000"/>
+                                </Border.Effect>
+
+                                <Grid>
+                                    <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                                        <StackPanel>
+                                            <!-- Results List -->
+                                                <ListBox
+    ItemsSource="{Binding SearchResults}"
+    BorderThickness="0"
+    Background="White"
+    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                                                    <ListBox.ItemTemplate>
+                                                        <DataTemplate>
+
+                                                            <Button
+    Command="{Binding PlacementTarget.DataContext.SelectPatientCommand,
+    RelativeSource={RelativeSource AncestorType=Popup}}"
+                CommandParameter="{Binding}"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                HorizontalContentAlignment="Stretch">
+
+                                                                <Button.Template>
+                                                                    <ControlTemplate TargetType="Button">
+
+                                                                        <Border x:Name="bg"
+                                Background="Transparent"
+                                Padding="14,12"
+                                BorderBrush="#F3F4F6"
+                                BorderThickness="0,0,0,1">
+
+                                                                            <Grid>
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="Auto"/>
+                                                                                    <ColumnDefinition Width="*"/>
+                                                                                </Grid.ColumnDefinitions>
+
+                                                                                <!-- avatar -->
+                                                                                <Border Width="36"
+                                        Height="36"
+                                        CornerRadius="18"
+                                        Background="#DBEAFE"
+                                        Margin="0,0,12,0">
+
+                                                                                    <TextBlock
+                                        Text="BN"
+                                        Foreground="#2563EB"
+                                        FontWeight="Bold"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"/>
+                                                                                </Border>
+
+                                                                                <!-- info -->
+                                                                                <StackPanel Grid.Column="1">
+
+                                                                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontSize="14"
+                                        FontWeight="SemiBold"
+                                        Foreground="#111827"/>
+
+                                                                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="#6B7280"
+                                        Margin="0,2,0,0">
+
+                                        <Run Text="{Binding Id}"/>
+                                        <Run Text=" • "/>
+                                        <Run Text="{Binding Phone}"/>
+                                                                                    </TextBlock>
+
+                                                                                    <TextBlock
+                                        Text="{Binding Dob, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                        FontSize="11"
+                                        Foreground="#9CA3AF"/>
+                                                                                </StackPanel>
+                                                                            </Grid>
+                                                                        </Border>
+
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter TargetName="bg"
+                                        Property="Background"
+                                        Value="#F9FAFB"/>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+
+                                                            </Button>
+
+                                                        </DataTemplate>
+                                                    </ListBox.ItemTemplate>
+                                                </ListBox>
+
+                                                <!-- Empty State & Add New Button -->
+                                            <Border Padding="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="Không tìm thấy bệnh nhân nào." FontSize="13" Foreground="#6B7280" HorizontalAlignment="Center" Margin="0,0,0,10">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding SearchResults.Count}" Value="0">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <Button Command="{Binding OpenRegisterPatientCommand}" Style="{StaticResource CBtn}" Background="#EEF2FF" Tag="8" Padding="0,12">
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <fa:IconImage Icon="UserPlus" Width="14" Height="14" Foreground="#4F46E5" Margin="0,0,8,0"/>
+                                                            <TextBlock Text="Đăng ký bệnh nhân mới" FontSize="13" FontWeight="SemiBold" Foreground="#4F46E5"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Popup>
+
+                        <!-- Popup Dropdown (All Patients) -->
+                        <Popup IsOpen="{Binding IsPatientPopupOpen}" PlacementTarget="{Binding ElementName=SearchBoxContainer}" Placement="Bottom" AllowsTransparency="True" StaysOpen="True">
+                        <Border x:Name="AllPatientsPopupBorder" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Margin="0,4,0,10" Width="{Binding ActualWidth, ElementName=SearchBoxContainer}">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="12" ShadowDepth="4" Opacity="0.1" Color="#000000"/>
+                                </Border.Effect>
+
+                                <Grid>
+                                    <ScrollViewer MaxHeight="350" VerticalScrollBarVisibility="Auto">
+                                        <StackPanel>
+                                            <Border BorderBrush="#F3F4F6" BorderThickness="0,0,0,1" Padding="14,10" Background="#F9FAFB" CornerRadius="8,8,0,0">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <fa:IconImage Icon="Users" Width="14" Height="14" Foreground="#6B7280" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Danh sách bệnh nhân (tải từ DB)" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563"/>
+
+                                                        <fa:IconImage Icon="Spinner" Width="14" Height="14" Foreground="#3B82F6" Margin="8,0,0,0" VerticalAlignment="Center">
+                                                        <fa:IconImage.Style>
+                                                            <Style TargetType="fa:IconImage">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsLoadingPatients}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </fa:IconImage.Style>
+                                                    </fa:IconImage>
+                                                </StackPanel>
+                                            </Border>
+                                            
+                                            <!-- Results List -->
+                                            <ListBox ItemsSource="{Binding AllPatients}">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Command="{Binding PlacementTarget.DataContext.SelectPatientCommand, RelativeSource={RelativeSource AncestorType=Popup}}"
+                                                                CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalContentAlignment="Stretch">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border x:Name="bg" Background="Transparent" Padding="14,12" BorderBrush="#F3F4F6" BorderThickness="0,0,0,1">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="Auto"/>
+                                                                                <ColumnDefinition Width="*"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Border Width="36" Height="36" CornerRadius="18" Background="#EEF2FF" Margin="0,0,12,0">
+                                                                                <fa:IconImage Icon="User" Width="16" Height="16" Foreground="#6366F1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" Foreground="#111827"/>
+                                                                                <TextBlock FontSize="12" Foreground="#6B7280" Margin="0,2,0,0">
+                                                                                    <Run Text="ID: "/>
+                                                                                    <Run Text="{Binding Id}"/>
+                                                                                    <Run Text=" • "/>
+                                                                                    <Run Text="{Binding Phone}"/>
+                                                                                </TextBlock>
+                                                                            </StackPanel>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="bg" Property="Background" Value="#F9FAFB"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                            
+                                            <TextBlock Text="Chưa có dữ liệu bệnh nhân." FontSize="13" Foreground="#6B7280" HorizontalAlignment="Center" Margin="0,16">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding AllPatients.Count}" Value="0">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                            <!-- Don't show if loading -->
+                                                            <DataTrigger Binding="{Binding IsLoadingPatients}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Popup>
                     </Grid>
                     <!-- Selected patient card -->
                     <Border Background="#F9FAFB" CornerRadius="10" Padding="14,12" BorderBrush="#E5E7EB" BorderThickness="1">
@@ -192,7 +436,7 @@
         <StackPanel Grid.Row="1" Grid.Column="2">
 
             <!-- CALENDAR -->
-            <Border Background="White" CornerRadius="12" Padding="16,14" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
+            <Border  Background="White" CornerRadius="12" Padding="16,14" BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
                 <Border.Effect><DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/></Border.Effect>
                 <StackPanel>
                     <!-- Month nav -->
@@ -324,10 +568,23 @@
         </StackPanel>
 
         <!-- FAB Button -->
-        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource CBtn}" Background="#3B82F6" Tag="24" Width="48" Height="48"
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,0">
-            <TextBlock Text="+" FontSize="24" Foreground="White" FontWeight="Light" Margin="0,-3,0,0"/>
-        </Button>
-    </Grid>
+            <Button Grid.Row="1"
+        Grid.Column="2"
+        Style="{StaticResource CBtn}"
+        Background="#3B82F6"
+        Tag="24"
+        Width="48"
+        Height="48"
+        Command="{Binding SubmitCommand}"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom">
+
+                <TextBlock Text="+"
+               FontSize="24"
+               Foreground="White"
+               FontWeight="Light"
+               Margin="0,-3,0,0"/>
+            </Button>
+        </Grid>
     </ScrollViewer>
 </UserControl>

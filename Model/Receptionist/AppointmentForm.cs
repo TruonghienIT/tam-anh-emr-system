@@ -28,7 +28,7 @@ namespace TamAnh_EMR_System.Model.Receptionist
         public string PatientId
         {
             get => _patientId;
-            set { _patientId = value; OnPropertyChanged(nameof(PatientId)); }
+            set { _patientId = value; OnPropertyChanged(nameof(PatientId)); OnPropertyChanged(nameof(PatientInfoLine)); }
         }
 
         private string _patientInitials;
@@ -42,14 +42,14 @@ namespace TamAnh_EMR_System.Model.Receptionist
         public string PatientGender
         {
             get => _patientGender;
-            set { _patientGender = value; OnPropertyChanged(nameof(PatientGender)); }
+            set { _patientGender = value; OnPropertyChanged(nameof(PatientGender)); OnPropertyChanged(nameof(PatientInfoLine)); }
         }
 
         private int _patientAge;
         public int PatientAge
         {
             get => _patientAge;
-            set { _patientAge = value; OnPropertyChanged(nameof(PatientAge)); }
+            set { _patientAge = value; OnPropertyChanged(nameof(PatientAge)); OnPropertyChanged(nameof(PatientInfoLine)); }
         }
 
         // ======================== DEPARTMENT & DOCTOR ========================
@@ -58,8 +58,16 @@ namespace TamAnh_EMR_System.Model.Receptionist
         public string Department
         {
             get => _department;
-            set { _department = value; OnPropertyChanged(nameof(Department)); }
+            set
+            {
+                _department = value;
+                OnPropertyChanged(nameof(Department));
+
+                DepartmentChanged?.Invoke(value);
+            }
         }
+
+        public Action<string> DepartmentChanged { get; set; }
 
         private string _doctor;
         public string Doctor
