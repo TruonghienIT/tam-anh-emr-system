@@ -1,9 +1,16 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model;
+using TamAnh_EMR_System.Repositories;
+using TamAnh_EMR_System.View;
+using TamAnh_EMR_System.View.Components;
+using TamAnh_EMR_System.View.Receptionist;
 
 namespace TamAnh_EMR_System.ViewModel
 {
@@ -13,29 +20,60 @@ namespace TamAnh_EMR_System.ViewModel
     /// This ViewModel is the single source of truth for ALL data displayed on the dashboard.
     /// It provides:
     ///   - User info (name, role area)
-    ///   - Statistics cards (4 KPI metrics)
-    ///   - Appointment list (table data)
+    ///   - Statistics cards (4 KPI metrics) — loaded from DB
+    ///   - Appointment list (table data) — loaded from DB
     ///   - Notifications list
     ///   - Chart data (hourly appointment density)
     ///   - Filter state (status, doctor)
     ///   - Pagination state
     ///   - Commands for all user actions
     /// 
-    /// ObservableCollection is used for all list properties because it automatically
-    /// notifies the UI when items are added/removed, keeping the view in sync.
-    /// 
-    /// All Commands use RelayCommand (ICommand) so buttons bind directly to ViewModel
-    /// methods without any code-behind logic.
-    /// 
-    /// FUTURE: Replace LoadSampleData() with API calls to Laravel/Spring Boot backend.
-    /// The ViewModel interface remains the same — only the data source changes.
+    /// KEY CHANGES FROM ORIGINAL:
+    /// - Dashboard appointments now load from SQL Server via AppointmentRepository
+    /// - Statistics cards compute from real DB data
+    /// - "Hẹn lịch mới" button opens CreateAppointmentWindow popup
+    /// - After popup closes with success, dashboard reloads from DB
     /// </summary>
     public class ReceptionistDashboardViewModel : ViewModelBase
     {
         // =====================================================================
+        // REPOSITORY
+        // =====================================================================
+
+        private readonly AppointmentRepository _appointmentRepo;
+
+        // =====================================================================
+        // CURRENT VIEW (for dynamic view switching)
+        // ContentControl in ReceptionistView.xaml binds to this property.
+        // Changing CurrentView swaps the entire content area.
+        // =====================================================================
+
+        private UserControl _currentView;
+        /// <summary>
+        /// The currently displayed UserControl in the main content area.
+        /// Default: DashboardContentControl (tổng quan).
+        /// Changed by ExecuteMenuNavigate when sidebar items are clicked.
+        /// </summary>
+        public UserControl CurrentView
+        {
+            get => _currentView;
+            set { _currentView = value; OnPropertyChanged(nameof(CurrentView)); }
+        }
+
+        // =====================================================================
         // USER INFO PROPERTIES
         // These display the logged-in receptionist's identity in the sidebar and header
         // =====================================================================
+
+        private string _selectedMenu = "Tổng quan";
+        /// <summary>
+        /// Currently active sidebar menu item title. Drives sidebar highlighting.
+        /// </summary>
+        public string SelectedMenu
+        {
+            get => _selectedMenu;
+            set { _selectedMenu = value; OnPropertyChanged(nameof(SelectedMenu)); }
+        }
 
         private string _userDisplayName;
         /// <summary>User name shown in the header (e.g., "Lễ tân")</summary>
@@ -201,7 +239,7 @@ namespace TamAnh_EMR_System.ViewModel
         }
 
         /// <summary>Formatted pagination text (e.g., "Hiển thị 1 - 10 trong tổng số 42 lịch hẹn")</summary>
-        public string PaginationText => $"Hiển thị 1 - 10 trong tổng số {TotalAppointments} lịch hẹn";
+        public string PaginationText => $"Hiển thị 1 - {Math.Min(10, TotalAppointments)} trong tổng số {TotalAppointments} lịch hẹn";
 
         // =====================================================================
         // SIDEBAR MENU ITEMS
@@ -237,11 +275,14 @@ namespace TamAnh_EMR_System.ViewModel
 
         // =====================================================================
         // CONSTRUCTOR
-        // Initializes all collections, loads sample data, and wires up commands
+        // Initializes all collections, loads data from DB, and wires up commands
         // =====================================================================
 
         public ReceptionistDashboardViewModel()
         {
+            // Initialize repository
+            _appointmentRepo = new AppointmentRepository();
+
             // Initialize all ObservableCollections
             StatisticCards = new ObservableCollection<StatisticCard>();
             Appointments = new ObservableCollection<DashboardAppointment>();
@@ -259,19 +300,143 @@ namespace TamAnh_EMR_System.ViewModel
             MenuNavigateCommand = new RelayCommand(ExecuteMenuNavigate);
             ViewAllNotificationsCommand = new RelayCommand(ExecuteViewAllNotifications);
 
-            // Load demo data — replace with API calls in production
-            LoadSampleData();
+            // Load static UI data
+            LoadStaticData();
+
+            // Set default view = Dashboard
+            CurrentView = new DashboardContentControl();
+
+            // Load dashboard data from database
+            _ = LoadDashboardFromDatabaseAsync();
+        }
+
+        // =====================================================================
+        // DATABASE LOADING
+        // Loads appointments and statistics from SQL Server
+        // =====================================================================
+
+        /// <summary>
+        /// Loads all dashboard data from the database.
+        /// Called on startup and after creating a new appointment.
+        /// </summary>
+        private async Task LoadDashboardFromDatabaseAsync()
+        {
+            try
+            {
+                // Load appointments from DB
+                var appointments = await _appointmentRepo.GetDashboardAppointmentsAsync(DateTime.Today);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Appointments.Clear();
+                    foreach (var apt in appointments)
+                        Appointments.Add(apt);
+
+                    TotalAppointments = appointments.Count;
+                    TotalPages = Math.Max(1, (int)Math.Ceiling(TotalAppointments / 10.0));
+                    CurrentPage = 1;
+                });
+
+                // Load statistics from DB
+                var stats = await _appointmentRepo.GetTodayStatisticsAsync();
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StatisticCards.Clear();
+
+                    int total = stats["total"];
+                    int waiting = stats["waiting"];
+                    int completed = stats["completed"];
+                    int cancelled = stats["cancelled"];
+
+                    StatisticCards.Add(new StatisticCard
+                    {
+                        Title = "TỔNG LỊCH HẸN",
+                        Value = total.ToString(),
+                        SubText = "Hôm nay",
+                        ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E293B")),
+                        SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10B981")),
+                        ShowProgress = false
+                    });
+
+                    StatisticCards.Add(new StatisticCard
+                    {
+                        Title = "ĐANG CHỜ",
+                        Value = waiting.ToString(),
+                        SubText = "Hiện tại",
+                        ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B")),
+                        SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9CA3AF")),
+                        ShowProgress = true,
+                        ProgressValue = total > 0 ? (double)waiting / total : 0,
+                        ProgressColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B"))
+                    });
+
+                    StatisticCards.Add(new StatisticCard
+                    {
+                        Title = "ĐÃ HOÀN THÀNH",
+                        Value = completed.ToString(),
+                        SubText = $"/ {total}",
+                        ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#06B6D4")),
+                        SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9CA3AF")),
+                        ShowProgress = true,
+                        ProgressValue = total > 0 ? (double)completed / total : 0,
+                        ProgressColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#06B6D4"))
+                    });
+
+                    StatisticCards.Add(new StatisticCard
+                    {
+                        Title = "TỶ LỆ HỦY",
+                        Value = cancelled.ToString(),
+                        SubText = total > 0 ? $"{(double)cancelled / total * 100:F1}%" : "0%",
+                        ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E293B")),
+                        SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444")),
+                        ShowProgress = true,
+                        ProgressValue = total > 0 ? (double)cancelled / total : 0,
+                        ProgressColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"))
+                    });
+                });
+
+                // Extract unique doctors for filter dropdown
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    DoctorOptions.Clear();
+                    DoctorOptions.Add("Tất cả bác sĩ");
+                    var doctorNames = new System.Collections.Generic.HashSet<string>();
+                    foreach (var apt in appointments)
+                    {
+                        if (!string.IsNullOrEmpty(apt.DoctorName) && doctorNames.Add(apt.DoctorName))
+                            DoctorOptions.Add(apt.DoctorName);
+                    }
+                    SelectedDoctor = "Tất cả bác sĩ";
+                });
+            }
+            catch (Exception ex)
+            {
+                // If DB is unavailable, show friendly message and load sample data as fallback
+                System.Diagnostics.Debug.WriteLine($"DB load failed: {ex.Message}");
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    LoadFallbackSampleData();
+                });
+            }
         }
 
         // =====================================================================
         // COMMAND IMPLEMENTATIONS
-        // Placeholder methods ready for backend integration
         // =====================================================================
 
         private void ExecuteAddAppointment(object parameter)
         {
-            // TODO: Open new appointment dialog/window
-            System.Windows.MessageBox.Show("Mở form tạo lịch hẹn mới", "Hẹn lịch mới");
+            // Open CreateAppointmentWindow as a modal dialog
+            var window = new CreateAppointmentWindow();
+            window.Owner = Application.Current.MainWindow;
+            var result = window.ShowDialog();
+
+            // If appointment was created successfully, reload dashboard from DB
+            if (result == true)
+            {
+                _ = LoadDashboardFromDatabaseAsync();
+            }
         }
 
         private void ExecuteExportReport(object parameter)
@@ -296,13 +461,39 @@ namespace TamAnh_EMR_System.ViewModel
 
         private void ExecuteMenuNavigate(object parameter)
         {
-            // TODO: Navigate to the selected menu section
-            if (parameter is string menuTitle)
+            if (parameter is not string menuTitle) return;
+
+            // Update SelectedMenu for sidebar highlighting via DataTrigger
+            SelectedMenu = menuTitle;
+
+            // Update sidebar selection state
+            foreach (var item in MenuItems)
             {
-                foreach (var item in MenuItems)
-                {
-                    item.IsSelected = item.Title == menuTitle;
-                }
+                item.IsSelected = item.Title == menuTitle;
+            }
+
+            // Switch the content area view based on menu title
+            switch (menuTitle)
+            {
+                case "Tổng quan":
+                    CurrentView = new DashboardContentControl();
+                    break;
+
+                case "Đăng ký":
+                    CurrentView = new RegisterPatientView();
+                    break;
+
+                // Future: uncomment when views are ready
+                // case "Tìm kiếm bệnh nhân":
+                //     CurrentView = new SearchPatientView();
+                //     break;
+                // case "Lịch hẹn":
+                //     CurrentView = new CreateAppointmentView();
+                //     break;
+
+                default:
+                    // Unknown menu — stay on current view
+                    break;
             }
         }
 
@@ -313,12 +504,11 @@ namespace TamAnh_EMR_System.ViewModel
         }
 
         // =====================================================================
-        // SAMPLE DATA LOADER
-        // Populates all collections with demo data matching the design screenshot.
-        // In production, replace this with service/repository calls.
+        // STATIC DATA LOADER
+        // Loads data that doesn't come from the database
         // =====================================================================
 
-        private void LoadSampleData()
+        private void LoadStaticData()
         {
             // --- User Info ---
             UserDisplayName = "Lễ tân";
@@ -332,110 +522,6 @@ namespace TamAnh_EMR_System.ViewModel
             DashboardTitle = "Tổng quan Lịch khám";
             DashboardSubtitle = "Chào buổi sáng! Đây là tóm tắt lịch trình phòng khám ngày hôm nay.";
 
-            // --- Statistics Cards (4 KPI cards matching design) ---
-            StatisticCards.Add(new StatisticCard
-            {
-                Title = "TỔNG LỊCH HẸN",
-                Value = "42",
-                SubText = "↑12%",
-                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E293B")),
-                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10B981")),
-                ShowProgress = false
-            });
-
-            StatisticCards.Add(new StatisticCard
-            {
-                Title = "ĐANG CHỜ",
-                Value = "18",
-                SubText = "Hiện tại",
-                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B")),
-                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9CA3AF")),
-                ShowProgress = true,
-                ProgressValue = 0.43,
-                ProgressColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B"))
-            });
-
-            StatisticCards.Add(new StatisticCard
-            {
-                Title = "ĐÃ HOÀN THÀNH",
-                Value = "14",
-                SubText = "/ 42",
-                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#06B6D4")),
-                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9CA3AF")),
-                ShowProgress = true,
-                ProgressValue = 0.33,
-                ProgressColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#06B6D4"))
-            });
-
-            StatisticCards.Add(new StatisticCard
-            {
-                Title = "TỶ LỆ HỦY",
-                Value = "2",
-                SubText = "4.7%",
-                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E293B")),
-                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444")),
-                ShowProgress = true,
-                ProgressValue = 0.05,
-                ProgressColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"))
-            });
-
-            // --- Appointments (matching design rows exactly) ---
-            Appointments.Add(new DashboardAppointment
-            {
-                Time = "08:30",
-                Date = "THỨ 2, 24/05",
-                PatientName = "Nguyễn Thành Long",
-                PatientInitials = "NL",
-                GenderAge = "Nam, 32 tuổi",
-                DoctorName = "BS. Trần Đức Anh",
-                Department = "Khoa Nội",
-                Service = "Khám tổng quát",
-                Status = "Đang khám",
-                AvatarColor = "#6366F1"
-            });
-
-            Appointments.Add(new DashboardAppointment
-            {
-                Time = "09:00",
-                Date = "THỨ 2, 24/05",
-                PatientName = "Phạm Minh Hương",
-                PatientInitials = "PH",
-                GenderAge = "Nữ, 28 tuổi",
-                DoctorName = "BS. Lê Thu Thủy",
-                Department = "Khoa Sản",
-                Service = "Siêu âm thai",
-                Status = "Đang chờ",
-                AvatarColor = "#EC4899"
-            });
-
-            Appointments.Add(new DashboardAppointment
-            {
-                Time = "09:15",
-                Date = "THỨ 2, 24/05",
-                PatientName = "Vũ Anh Duy",
-                PatientInitials = "VD",
-                GenderAge = "Nam, 45 tuổi",
-                DoctorName = "BS. Nguyễn Văn A",
-                Department = "Khoa Tai Mũi Họng",
-                Service = "Nội soi TMH",
-                Status = "Hoàn thành",
-                AvatarColor = "#10B981"
-            });
-
-            Appointments.Add(new DashboardAppointment
-            {
-                Time = "09:30",
-                Date = "THỨ 2, 24/05",
-                PatientName = "Trần Quốc Quân",
-                PatientInitials = "TQ",
-                GenderAge = "Nam, 19 tuổi",
-                DoctorName = "BS. Phạm Văn C",
-                Department = "Khoa RHM",
-                Service = "Lấy cao răng",
-                Status = "Đã hủy",
-                AvatarColor = "#F59E0B"
-            });
-
             // --- Filter Options ---
             StatusOptions.Add("Tất cả trạng thái");
             StatusOptions.Add("Đang khám");
@@ -444,25 +530,13 @@ namespace TamAnh_EMR_System.ViewModel
             StatusOptions.Add("Đã hủy");
             SelectedStatus = "Tất cả trạng thái";
 
-            DoctorOptions.Add("Tất cả bác sĩ");
-            DoctorOptions.Add("BS. Trần Đức Anh");
-            DoctorOptions.Add("BS. Lê Thu Thủy");
-            DoctorOptions.Add("BS. Nguyễn Văn A");
-            DoctorOptions.Add("BS. Phạm Văn C");
-            SelectedDoctor = "Tất cả bác sĩ";
-
-            // --- Pagination ---
-            CurrentPage = 1;
-            TotalPages = 3;
-            TotalAppointments = 42;
-
             // --- Sidebar Menu ---
             MenuItems.Add(new SidebarMenuItem { Title = "Tổng quan", Icon = FontAwesome.Sharp.IconChar.ChartLine, IsSelected = true });
             MenuItems.Add(new SidebarMenuItem { Title = "Tìm kiếm bệnh nhân", Icon = FontAwesome.Sharp.IconChar.UserGroup, IsSelected = false });
             MenuItems.Add(new SidebarMenuItem { Title = "Đăng ký", Icon = FontAwesome.Sharp.IconChar.UserPlus, IsSelected = false });
             MenuItems.Add(new SidebarMenuItem { Title = "Lịch hẹn", Icon = FontAwesome.Sharp.IconChar.CalendarCheck, IsSelected = false });
 
-            // --- Notifications (matching design) ---
+            // --- Notifications ---
             Notifications.Add(new Notification
             {
                 Title = "Bệnh nhân mới đăng ký khám",
@@ -475,7 +549,7 @@ namespace TamAnh_EMR_System.ViewModel
             Notifications.Add(new Notification
             {
                 Title = "Bác sĩ Trần Đức Anh yêu cầu hỗ trợ",
-                Description = "Vật tưPhòng khám 03 cần bổ sung",
+                Description = "Vật tư Phòng khám 03 cần bổ sung",
                 TimeDisplay = "9:30 sáng nay",
                 Time = DateTime.Now.AddHours(-2),
                 DotColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B"))
@@ -500,6 +574,67 @@ namespace TamAnh_EMR_System.ViewModel
             ChartData.Add(new ChartDataPoint { Label = "13H", Value1 = 14, Value2 = 9, MaxValue = maxVal });
             ChartData.Add(new ChartDataPoint { Label = "14H", Value1 = 16, Value2 = 11, MaxValue = maxVal });
             ChartData.Add(new ChartDataPoint { Label = "15H", Value1 = 10, Value2 = 6, MaxValue = maxVal });
+        }
+
+        // =====================================================================
+        // FALLBACK SAMPLE DATA
+        // Used only when database is unavailable
+        // =====================================================================
+
+        private void LoadFallbackSampleData()
+        {
+            // --- Statistics Cards (fallback) ---
+            StatisticCards.Clear();
+            StatisticCards.Add(new StatisticCard
+            {
+                Title = "TỔNG LỊCH HẸN",
+                Value = "0",
+                SubText = "Chưa kết nối DB",
+                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E293B")),
+                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444")),
+                ShowProgress = false
+            });
+
+            StatisticCards.Add(new StatisticCard
+            {
+                Title = "ĐANG CHỜ",
+                Value = "0",
+                SubText = "—",
+                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B")),
+                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9CA3AF")),
+                ShowProgress = false
+            });
+
+            StatisticCards.Add(new StatisticCard
+            {
+                Title = "ĐÃ HOÀN THÀNH",
+                Value = "0",
+                SubText = "/ 0",
+                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#06B6D4")),
+                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9CA3AF")),
+                ShowProgress = false
+            });
+
+            StatisticCards.Add(new StatisticCard
+            {
+                Title = "TỶ LỆ HỦY",
+                Value = "0",
+                SubText = "0%",
+                ValueColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E293B")),
+                SubTextColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444")),
+                ShowProgress = false
+            });
+
+            // --- Appointments (empty) ---
+            Appointments.Clear();
+            TotalAppointments = 0;
+            TotalPages = 1;
+            CurrentPage = 1;
+
+            // --- Doctor filter (empty) ---
+            DoctorOptions.Clear();
+            DoctorOptions.Add("Tất cả bác sĩ");
+            SelectedDoctor = "Tất cả bác sĩ";
         }
     }
 }

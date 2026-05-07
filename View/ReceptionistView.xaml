@@ -46,51 +46,19 @@
             <!-- ===== TOP HEADER ===== -->
             <components:HeaderControl DockPanel.Dock="Top"/>
 
-            <!-- ===== SCROLLABLE CONTENT ===== -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled"
-                          Padding="0">
-
-                <StackPanel Margin="24,20,24,24">
-
-                    <!-- ===== Dashboard Title Section ===== -->
-                    <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="{Binding DashboardTitle}"
-                                   FontFamily="{StaticResource DashFontFamily}"
-                                   FontSize="22" FontWeight="Bold"
-                                   Foreground="{StaticResource DashTextPrimary}"/>
-                        <TextBlock Text="{Binding DashboardSubtitle}"
-                                   FontFamily="{StaticResource DashFontFamily}"
-                                   FontSize="14"
-                                   Foreground="{StaticResource DashTextSecondary}"
-                                   Margin="0,4,0,0"/>
-                    </StackPanel>
-
-                    <!-- ===== Statistics Cards Row ===== -->
-                    <components:StatisticCardControl Margin="0,0,0,0"/>
-
-                    <!-- ===== Appointment Table ===== -->
-                    <components:AppointmentTableControl/>
-
-                    <!-- ===== Bottom Section: Notifications + Chart ===== -->
-                    <Grid Margin="0,16,0,0">
-                        <Grid.ColumnDefinitions>
-                            <!-- Notifications panel: ~40% width -->
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="16"/>
-                            <!-- Chart panel: ~60% width -->
-                            <ColumnDefinition Width="6*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Notifications Panel -->
-                        <components:NotificationPanel Grid.Column="0"/>
-
-                        <!-- Chart Panel -->
-                        <components:ChartPanel Grid.Column="2"/>
-                    </Grid>
-
-                </StackPanel>
-            </ScrollViewer>
+            <!-- ===== DYNAMIC CONTENT AREA =====
+                 ContentControl binds to CurrentView property in ViewModel.
+                 
+                 When sidebar menu is clicked:
+                 1. MenuNavigateCommand fires
+                 2. ExecuteMenuNavigate sets CurrentView to the target UserControl
+                 3. ContentControl re-renders the new view
+                 
+                 CurrentView starts with DashboardContentControl (default).
+                 "Đăng ký" sets it to RegisterPatientView.
+                 All child views inherit DataContext from the ViewModel.
+                 ===== -->
+            <ContentControl Content="{Binding CurrentView}"/>
         </DockPanel>
     </DockPanel>
 </Window>

@@ -11,7 +11,7 @@ namespace TamAnh_EMR_System.Model
         public string Id { get; set; }
         public string PatientId { get; set; }
         public string DoctorId { get; set; }
-        public int? CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
 
         public DateTime AppointmentDate { get; set; }
         public string AppointmentTime { get; set; }

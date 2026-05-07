@@ -92,45 +92,90 @@
                 </StackPanel>
 
                 <!-- ===== Navigation Menu Items ===== -->
-                <!-- First item (Tổng quan) is highlighted as active -->
-                <Button Style="{StaticResource DashSidebarMenuItemActive}"
-                        Command="{Binding MenuNavigateCommand}" CommandParameter="Tổng quan">
+                <!-- Bound with DataTriggers to dynamically highlight the SelectedMenu -->
+                
+                <!-- Tổng quan -->
+                <Button Command="{Binding MenuNavigateCommand}" CommandParameter="Tổng quan">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource DashSidebarMenuItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedMenu}" Value="Tổng quan">
+                                    <Setter Property="Background" Value="{StaticResource DashPrimaryBlueLight}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource DashPrimaryBlue}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="ChartLine" Width="18" Height="18"
-                                      Foreground="{StaticResource DashPrimaryBlue}"
+                                      Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
                                       Margin="0,0,12,0"/>
                         <TextBlock Text="Tổng quan" VerticalAlignment="Center"
                                    FontFamily="{StaticResource DashFontFamily}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource DashSidebarMenuItem}"
-                        Command="{Binding MenuNavigateCommand}" CommandParameter="Tìm kiếm bệnh nhân">
+                <!-- Tìm kiếm bệnh nhân -->
+                <Button Command="{Binding MenuNavigateCommand}" CommandParameter="Tìm kiếm bệnh nhân">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource DashSidebarMenuItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedMenu}" Value="Tìm kiếm bệnh nhân">
+                                    <Setter Property="Background" Value="{StaticResource DashPrimaryBlueLight}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource DashPrimaryBlue}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="UserGroup" Width="18" Height="18"
-                                      Foreground="{StaticResource DashTextSecondary}"
+                                      Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
                                       Margin="0,0,12,0"/>
                         <TextBlock Text="Tìm kiếm bệnh nhân" VerticalAlignment="Center"
                                    FontFamily="{StaticResource DashFontFamily}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource DashSidebarMenuItem}"
-                        Command="{Binding MenuNavigateCommand}" CommandParameter="Đăng ký">
+                <!-- Đăng ký -->
+                <Button Command="{Binding MenuNavigateCommand}" CommandParameter="Đăng ký">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource DashSidebarMenuItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedMenu}" Value="Đăng ký">
+                                    <Setter Property="Background" Value="{StaticResource DashPrimaryBlueLight}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource DashPrimaryBlue}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="UserPlus" Width="18" Height="18"
-                                      Foreground="{StaticResource DashTextSecondary}"
+                                      Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
                                       Margin="0,0,12,0"/>
                         <TextBlock Text="Đăng ký" VerticalAlignment="Center"
                                    FontFamily="{StaticResource DashFontFamily}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource DashSidebarMenuItem}"
-                        Command="{Binding MenuNavigateCommand}" CommandParameter="Lịch hẹn">
+                <!-- Lịch hẹn -->
+                <Button Command="{Binding MenuNavigateCommand}" CommandParameter="Lịch hẹn">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource DashSidebarMenuItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedMenu}" Value="Lịch hẹn">
+                                    <Setter Property="Background" Value="{StaticResource DashPrimaryBlueLight}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource DashPrimaryBlue}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="CalendarCheck" Width="18" Height="18"
-                                      Foreground="{StaticResource DashTextSecondary}"
+                                      Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
                                       Margin="0,0,12,0"/>
                         <TextBlock Text="Lịch hẹn" VerticalAlignment="Center"
                                    FontFamily="{StaticResource DashFontFamily}"/>

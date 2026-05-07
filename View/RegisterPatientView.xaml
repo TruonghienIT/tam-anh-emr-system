@@ -12,19 +12,26 @@
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Foreground" Value="#111827"/>
             <Setter Property="Background" Value="White"/>
-            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="CaretBrush" Value="#111827"/>
+            <Setter Property="Padding" Value="14,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
                         <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                                CornerRadius="8" BorderBrush="#D1D5DB" BorderThickness="1"
-                                Padding="{TemplateBinding Padding}">
+                                CornerRadius="8" BorderBrush="#D1D5DB" BorderThickness="1">
                             <Grid>
-                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                                <!-- PART_ContentHost intrinsically reads TextBox.Padding, do NOT pad the Border -->
+                                <ScrollViewer x:Name="PART_ContentHost" Margin="0" 
+                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                
+                                <!-- Placeholder aligns with Padding and ContentAlignment -->
                                 <TextBlock x:Name="Ph" Text="{TemplateBinding Tag}"
                                            Foreground="#9CA3AF" FontSize="14"
-                                           VerticalAlignment="Center" IsHitTestVisible="False"
+                                           Margin="{TemplateBinding Padding}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           IsHitTestVisible="False"
                                            Visibility="Collapsed"/>
                             </Grid>
                         </Border>
@@ -46,7 +53,7 @@
 
         <!-- ===== FORM INPUT WITH LEFT ICON ===== -->
         <Style x:Key="FormInputIcon" TargetType="TextBox" BasedOn="{StaticResource FormInput}">
-            <Setter Property="Padding" Value="36,12,14,12"/>
+            <Setter Property="Padding" Value="36,0,14,0"/>
         </Style>
 
         <!-- ===== FIELD LABEL ===== -->
@@ -151,40 +158,15 @@
             </StackPanel>
 
             <!-- ============================================================
-                 PAGE HEADER: Title + Subtitle + Progress Bar
+                 PAGE HEADER: Title + Subtitle
                  ============================================================ -->
-            <Grid Margin="0,0,0,24">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Title and subtitle -->
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Thông tin Bệnh nhân"
-                               FontSize="26" FontWeight="Bold" Foreground="#111827"/>
-                    <TextBlock Text="Hoàn thành tất cả các mục bắt buộc để tạo hồ sơ bệnh nhân mới."
-                               FontSize="14" Foreground="#6B7280" Margin="0,6,0,0"
-                               TextWrapping="Wrap" MaxWidth="500"/>
-                </StackPanel>
-
-                <!-- Progress indicator -->
-                <StackPanel Grid.Column="1" VerticalAlignment="Top" MinWidth="160"
-                            HorizontalAlignment="Right">
-                    <TextBlock HorizontalAlignment="Right" FontSize="11"
-                               FontWeight="Bold" Foreground="#3B82F6" Margin="0,0,0,6">
-                        <Run Text="HOÀN THÀNH "/>
-                        <Run Text="{Binding ProgressPercent, Mode=OneWay}"/>
-                        <Run Text="%"/>
-                    </TextBlock>
-                    <!-- Progress bar track -->
-                    <Grid Height="6">
-                        <Border Background="#E5E7EB" CornerRadius="3"/>
-                        <Border Background="#3B82F6" CornerRadius="3"
-                                HorizontalAlignment="Left" Width="120"/>
-                    </Grid>
-                </StackPanel>
-            </Grid>
+            <StackPanel Margin="0,0,0,24">
+                <TextBlock Text="Thông tin Bệnh nhân"
+                           FontSize="26" FontWeight="Bold" Foreground="#111827"/>
+                <TextBlock Text="Hoàn thành tất cả các mục bắt buộc để tạo hồ sơ bệnh nhân mới."
+                           FontSize="14" Foreground="#6B7280" Margin="0,6,0,0"
+                           TextWrapping="Wrap" MaxWidth="500"/>
+            </StackPanel>
 
             <!-- ============================================================
                  MAIN CONTENT: Step Nav (left) + Form (right)
@@ -445,6 +427,68 @@
                     </Border>
 
                     <!-- ====================================================
+                         ERROR MESSAGE BOX
+                         Shown when validation fails or save error occurs
+                         ==================================================== -->
+                    <Border Background="#FEF2F2" CornerRadius="10"
+                            BorderBrush="#FECACA" BorderThickness="1"
+                            Padding="20,16" Margin="0,0,0,16"
+                            Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <!-- Error icon -->
+                            <Border Width="24" Height="24" CornerRadius="12"
+                                    Background="#FEE2E2" Margin="0,0,14,0"
+                                    VerticalAlignment="Top">
+                                <TextBlock Text="✕" FontSize="12" FontWeight="Bold"
+                                           Foreground="#EF4444"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Error text -->
+                            <StackPanel MaxWidth="600">
+                                <TextBlock Text="Lỗi đăng ký"
+                                           FontSize="14" FontWeight="Bold"
+                                           Foreground="#DC2626" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding ErrorMessage}"
+                                           TextWrapping="Wrap" FontSize="13"
+                                           Foreground="#991B1B" LineHeight="20"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====================================================
+                         SUCCESS MESSAGE BOX
+                         Shown after successful patient registration
+                         ==================================================== -->
+                    <Border Background="#ECFDF5" CornerRadius="10"
+                            BorderBrush="#A7F3D0" BorderThickness="1"
+                            Padding="20,16" Margin="0,0,0,16"
+                            Visibility="{Binding HasSuccess, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <!-- Success icon -->
+                            <Border Width="24" Height="24" CornerRadius="12"
+                                    Background="#D1FAE5" Margin="0,0,14,0"
+                                    VerticalAlignment="Top">
+                                <TextBlock Text="✓" FontSize="14" FontWeight="Bold"
+                                           Foreground="#10B981"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Success text -->
+                            <StackPanel MaxWidth="600">
+                                <TextBlock Text="Đăng ký thành công!"
+                                           FontSize="14" FontWeight="Bold"
+                                           Foreground="#065F46" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding SuccessMessage}"
+                                           TextWrapping="Wrap" FontSize="13"
+                                           Foreground="#047857" LineHeight="20"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====================================================
                          WARNING BOX: Insurance verification notice
                          ==================================================== -->
                     <Border Background="#FEF2F2" CornerRadius="10"
@@ -475,7 +519,7 @@
                     </Border>
 
                     <!-- ====================================================
-                         ACTION BUTTONS: Save Draft, Previous, Verify
+                         ACTION BUTTONS: Xóa form, Phần trước, Lưu bệnh nhân
                          ==================================================== -->
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
@@ -486,35 +530,47 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Lưu bản nháp -->
+                        <!-- Xóa form -->
                         <Button Grid.Column="0" Style="{StaticResource FormOutlineBtn}"
-                                Content="Lưu bản nháp"
-                                Command="{Binding SaveDraftCommand}"/>
+                                Content="Xóa form"
+                                Command="{Binding ClearFormCommand}"/>
 
                         <!-- Phần trước -->
                         <Button Grid.Column="2" Style="{StaticResource FormOutlineBtn}"
                                 Content="Phần trước"
                                 Command="{Binding PreviousCommand}"/>
 
-                        <!-- Xác minh & Tiếp tục (Primary) -->
-                        <Button Grid.Column="4" Height="48" MinWidth="180"
-                                Command="{Binding NextCommand}"
+                        <!-- Lưu bệnh nhân (Primary button) -->
+                        <Button Grid.Column="4" Height="48" MinWidth="200"
+                                Command="{Binding SavePatientCommand}"
+                                IsEnabled="{Binding IsNotLoading}"
                                 Cursor="Hand">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="Bd" Background="#3B82F6"
                                             CornerRadius="10" Padding="28,0">
-                                        <TextBlock Text="Xác minh &amp;&#x0a;Tiếp tục"
-                                                   Foreground="White" FontSize="14"
-                                                   FontWeight="SemiBold"
-                                                   TextAlignment="Center"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                            <TextBlock x:Name="BtnIcon" Text="💾" FontSize="14"
+                                                       Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="BtnText"
+                                                       Text="Lưu bệnh nhân"
+                                                       Foreground="White" FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter TargetName="Bd" Property="Background"
                                                     Value="#2563EB"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Background"
+                                                    Value="#93C5FD"/>
+                                            <Setter TargetName="BtnText" Property="Text"
+                                                    Value="Đang lưu..."/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
