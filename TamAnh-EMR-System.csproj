@@ -41,8 +41,10 @@
     <None Remove="Resource\Image\key-icon.png" />
     <None Remove="Resource\Image\logo-ta.png" />
     <None Remove="Resource\Image\Logo.png" />
+    <None Remove="Resource\Image\patient.jpg" />
     <None Remove="Resource\Image\profile-picture.jpg" />
     <None Remove="Resource\Image\question.png" />
+    <None Remove="Resource\Image\receptionist.jpg" />
     <None Remove="Resource\Image\user-icon.png" />
   </ItemGroup>
 
@@ -71,8 +73,10 @@
     <Resource Include="Resource\Image\key-icon.png" />
     <Resource Include="Resource\Image\logo-ta.png" />
     <Resource Include="Resource\Image\Logo.png" />
+    <Resource Include="Resource\Image\patient.jpg" />
     <Resource Include="Resource\Image\profile-picture.jpg" />
     <Resource Include="Resource\Image\question.png" />
+    <Resource Include="Resource\Image\receptionist.jpg" />
     <Resource Include="Resource\Image\user-icon.png" />
   </ItemGroup>
 

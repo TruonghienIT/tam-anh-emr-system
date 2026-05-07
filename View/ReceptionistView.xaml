@@ -1,12 +1,73 @@
-﻿<Window x:Class="TamAnh_EMR_System.View.ReceptionistView"
+<Window x:Class="TamAnh_EMR_System.View.ReceptionistView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TamAnh_EMR_System.View"
+        xmlns:components="clr-namespace:TamAnh_EMR_System.View.Components"
         mc:Ignorable="d"
-        Title="ReceptionistView" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen">
-    <Grid Background="BurlyWood">
-    </Grid>
+        Title="TâmAnh Hospital - ReceptionistView"
+        Height="700" Width="1300"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource DashPageBackground}"
+        FontFamily="{StaticResource DashFontFamily}">
+
+
+    <DockPanel LastChildFill="True">
+
+        <!-- ===== LEFT SIDEBAR ===== -->
+        <components:SidebarControl DockPanel.Dock="Left"/>
+
+        <!-- ===== MAIN CONTENT AREA ===== -->
+        <DockPanel LastChildFill="True">
+
+            <!-- ===== TOP HEADER ===== -->
+            <components:HeaderControl DockPanel.Dock="Top"/>
+
+            <!-- ===== SCROLLABLE CONTENT ===== -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Padding="0">
+
+                <StackPanel Margin="24,20,24,24">
+
+                    <!-- ===== Dashboard Title Section ===== -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="{Binding DashboardTitle}"
+                                   FontFamily="{StaticResource DashFontFamily}"
+                                   FontSize="22" FontWeight="Bold"
+                                   Foreground="{StaticResource DashTextPrimary}"/>
+                        <TextBlock Text="{Binding DashboardSubtitle}"
+                                   FontFamily="{StaticResource DashFontFamily}"
+                                   FontSize="14"
+                                   Foreground="{StaticResource DashTextSecondary}"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <!-- ===== Statistics Cards Row ===== -->
+                    <components:StatisticCardControl Margin="0,0,0,0"/>
+
+                    <!-- ===== Appointment Table ===== -->
+                    <components:AppointmentTableControl/>
+
+                    <!-- ===== Bottom Section: Notifications + Chart ===== -->
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <!-- Notifications panel: ~40% width -->
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="16"/>
+                            <!-- Chart panel: ~60% width -->
+                            <ColumnDefinition Width="6*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Notifications Panel -->
+                        <components:NotificationPanel Grid.Column="0"/>
+
+                        <!-- Chart Panel -->
+                        <components:ChartPanel Grid.Column="2"/>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </DockPanel>
 </Window>

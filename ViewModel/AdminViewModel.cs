@@ -77,6 +77,8 @@ namespace TamAnh_EMR_System.ViewModel
         public ICommand ShowDoctorPanelViewCommand { get; }
         public ICommand ShowReceptionistPanelViewCommand { get; }
 
+        public ICommand ShowPatientPanelViewCommand { get; }
+
         public AdminViewModel()
         {
             //Initialize commands
@@ -84,6 +86,8 @@ namespace TamAnh_EMR_System.ViewModel
             ShowUserPanelViewCommand = new ViewModelCommand(ExecuteShowUserViewCommand);
             ShowDoctorPanelViewCommand = new ViewModelCommand(ExecuteShowDoctorViewCommand);
             ShowReceptionistPanelViewCommand = new ViewModelCommand(ExecuteShowReceptionistViewCommand);
+            ShowPatientPanelViewCommand = new ViewModelCommand(ExecuteShowPatientViewCommand);
+
 
             //Default View
             ExecuteShowHomeViewCommand(null);
@@ -115,6 +119,13 @@ namespace TamAnh_EMR_System.ViewModel
             CurrentChildView = new ReceptionistPanelViewModel();
             Caption = "Lễ tân";
             Icon = IconChar.UserAstronaut;
+        }
+
+        private void ExecuteShowPatientViewCommand(object obj)
+        {
+            CurrentChildView = new PatientPanelViewModel();
+            Caption = "Bệnh nhân";
+            Icon = IconChar.Bed;
         }
 
         private void LoadCurrentUserData()

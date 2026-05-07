@@ -1,0 +1,529 @@
+<UserControl x:Class="TamAnh_EMR_System.View.RegisterPatientView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+             Background="{StaticResource DashPageBackground}"
+             FontFamily="{StaticResource DashFontFamily}">
+
+    <UserControl.Resources>
+        <!-- ===== FORM INPUT TEXTBOX with placeholder via Tag ===== -->
+        <Style x:Key="FormInput" TargetType="TextBox">
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="8" BorderBrush="#D1D5DB" BorderThickness="1"
+                                Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="Ph" Text="{TemplateBinding Tag}"
+                                           Foreground="#9CA3AF" FontSize="14"
+                                           VerticalAlignment="Center" IsHitTestVisible="False"
+                                           Visibility="Collapsed"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Ph" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="Ph" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#3B82F6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===== FORM INPUT WITH LEFT ICON ===== -->
+        <Style x:Key="FormInputIcon" TargetType="TextBox" BasedOn="{StaticResource FormInput}">
+            <Setter Property="Padding" Value="36,12,14,12"/>
+        </Style>
+
+        <!-- ===== FIELD LABEL ===== -->
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <!-- ===== MARITAL TOGGLE (RadioButton styled as pill) ===== -->
+        <Style x:Key="MaritalToggle" TargetType="RadioButton">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" Background="White" CornerRadius="8"
+                                BorderBrush="#D1D5DB" BorderThickness="1"
+                                Padding="20,8" Cursor="Hand">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#3B82F6"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#3B82F6"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="#F3F4F6"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===== STEP NAV ITEM (inactive) ===== -->
+        <Style x:Key="StepItem" TargetType="Border">
+            <Setter Property="BorderThickness" Value="3,0,0,0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- ===== OUTLINE BUTTON ===== -->
+        <Style x:Key="FormOutlineBtn" TargetType="Button">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="MinWidth" Value="140"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="White" CornerRadius="10"
+                                BorderBrush="#D1D5DB" BorderThickness="1"
+                                Padding="24,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#F9FAFB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===== COMBOBOX STYLE ===== -->
+        <Style x:Key="FormCombo" TargetType="ComboBox">
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#9CA3AF"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- ===== MAIN SCROLLABLE CONTENT ===== -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="32,24,32,32">
+
+            <!-- ============================================================
+                 BREADCRUMB NAVIGATION
+                 Shows current location: Bệnh nhân > Đăng ký mới
+                 ============================================================ -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <TextBlock Text="Bệnh nhân" FontSize="13" Foreground="#9CA3AF"/>
+                <TextBlock Text="  ›  " FontSize="13" Foreground="#9CA3AF"/>
+                <TextBlock Text="Đăng ký mới" FontSize="13" Foreground="#6B7280" FontWeight="SemiBold"/>
+            </StackPanel>
+
+            <!-- ============================================================
+                 PAGE HEADER: Title + Subtitle + Progress Bar
+                 ============================================================ -->
+            <Grid Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Title and subtitle -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Thông tin Bệnh nhân"
+                               FontSize="26" FontWeight="Bold" Foreground="#111827"/>
+                    <TextBlock Text="Hoàn thành tất cả các mục bắt buộc để tạo hồ sơ bệnh nhân mới."
+                               FontSize="14" Foreground="#6B7280" Margin="0,6,0,0"
+                               TextWrapping="Wrap" MaxWidth="500"/>
+                </StackPanel>
+
+                <!-- Progress indicator -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Top" MinWidth="160"
+                            HorizontalAlignment="Right">
+                    <TextBlock HorizontalAlignment="Right" FontSize="11"
+                               FontWeight="Bold" Foreground="#3B82F6" Margin="0,0,0,6">
+                        <Run Text="HOÀN THÀNH "/>
+                        <Run Text="{Binding ProgressPercent, Mode=OneWay}"/>
+                        <Run Text="%"/>
+                    </TextBlock>
+                    <!-- Progress bar track -->
+                    <Grid Height="6">
+                        <Border Background="#E5E7EB" CornerRadius="3"/>
+                        <Border Background="#3B82F6" CornerRadius="3"
+                                HorizontalAlignment="Left" Width="120"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+            <!-- ============================================================
+                 MAIN CONTENT: Step Nav (left) + Form (right)
+                 ============================================================ -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ========================================================
+                     LEFT: STEP NAVIGATION
+                     Vertical wizard steps with active indicator
+                     ======================================================== -->
+                <StackPanel Grid.Column="0" Margin="0,8,0,0">
+
+                    <!-- Step 1: Active -->
+                    <Border BorderThickness="3,0,0,0" BorderBrush="#3B82F6" Padding="16,14"
+                            Cursor="Hand" Margin="0,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="User" Width="16" Height="16"
+                                          Foreground="#3B82F6" Margin="0,0,10,0"/>
+                            <TextBlock Text="Thông tin cá nhân" FontSize="14"
+                                       FontWeight="SemiBold" Foreground="#3B82F6"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Step 2: Inactive -->
+                    <Border Style="{StaticResource StepItem}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="AddressCard" Width="16" Height="16"
+                                          Foreground="#9CA3AF" Margin="0,0,10,0"/>
+                            <TextBlock Text="Thông tin liên hệ" FontSize="14"
+                                       Foreground="#6B7280"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Step 3: Inactive -->
+                    <Border Style="{StaticResource StepItem}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Asterisk" Width="16" Height="16"
+                                          Foreground="#9CA3AF" Margin="0,0,10,0"/>
+                            <StackPanel>
+                                <TextBlock Text="Người liên hệ khẩn" FontSize="14"
+                                           Foreground="#6B7280"/>
+                                <TextBlock Text="cấp" FontSize="14"
+                                           Foreground="#6B7280"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Step 4: Inactive -->
+                    <Border Style="{StaticResource StepItem}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="ShieldHalved" Width="16" Height="16"
+                                          Foreground="#9CA3AF" Margin="0,0,10,0"/>
+                            <TextBlock Text="Thông tin bảo hiểm" FontSize="14"
+                                       Foreground="#6B7280"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ========================================================
+                     RIGHT: FORM CONTENT
+                     All form sections stacked vertically
+                     ======================================================== -->
+                <StackPanel Grid.Column="2">
+
+                    <!-- ====================================================
+                         SECTION 1: THÔNG TIN CÁ NHÂN (Personal Information)
+                         ==================================================== -->
+                    <Border Background="White" CornerRadius="12" Padding="28,24"
+                            BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="1" BlurRadius="8"
+                                              Opacity="0.06" Color="#000000"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <!-- Section title -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                <fa:IconImage Icon="User" Width="18" Height="18"
+                                              Foreground="#3B82F6" Margin="0,0,10,0"/>
+                                <TextBlock Text="Thông tin cá nhân" FontSize="18"
+                                           FontWeight="Bold" Foreground="#111827"/>
+                            </StackPanel>
+
+                            <!-- Row 1: Họ + Tên -->
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                                        <Run Text="HỌ"/><Run Text=" *" Foreground="#EF4444"/>
+                                    </TextBlock>
+                                    <TextBox Style="{StaticResource FormInput}"
+                                             Text="{Binding Patient.LastName, UpdateSourceTrigger=PropertyChanged}"
+                                             Tag="Họ"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                                        <Run Text="TÊN"/><Run Text=" *" Foreground="#EF4444"/>
+                                    </TextBlock>
+                                    <TextBox Style="{StaticResource FormInput}"
+                                             Text="{Binding Patient.FirstName, UpdateSourceTrigger=PropertyChanged}"
+                                             Tag="Nhập tên"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Row 2: Ngày sinh + Giới tính -->
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                                        <Run Text="NGÀY SINH"/><Run Text=" *" Foreground="#EF4444"/>
+                                    </TextBlock>
+                                    <DatePicker SelectedDate="{Binding Patient.DateOfBirth}"
+                                                Height="46" FontSize="14"
+                                                BorderBrush="#D1D5DB" BorderThickness="1"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                                        <Run Text="GIỚI TÍNH"/><Run Text=" *" Foreground="#EF4444"/>
+                                    </TextBlock>
+                                    <ComboBox Style="{StaticResource FormCombo}"
+                                              ItemsSource="{Binding GenderOptions}"
+                                              SelectedItem="{Binding Patient.Gender}"
+                                              Text="Chọn giới tính" IsEditable="False"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Row 3: Tình trạng hôn nhân -->
+                            <StackPanel>
+                                <TextBlock Text="TÌNH TRẠNG HÔN NHÂN"
+                                           Style="{StaticResource FieldLabel}" Margin="0,0,0,10"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton Style="{StaticResource MaritalToggle}"
+                                                 Content="Độc thân" GroupName="Marital"
+                                                 IsChecked="{Binding IsSingle}"
+                                                 Margin="0,0,8,0"/>
+                                    <RadioButton Style="{StaticResource MaritalToggle}"
+                                                 Content="Đã kết hôn" GroupName="Marital"
+                                                 IsChecked="{Binding IsMarried}"
+                                                 Margin="0,0,8,0"/>
+                                    <RadioButton Style="{StaticResource MaritalToggle}"
+                                                 Content="Ly hôn" GroupName="Marital"
+                                                 IsChecked="{Binding IsDivorced}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====================================================
+                         SECTION 2: THÔNG TIN LIÊN HỆ (Contact Information)
+                         ==================================================== -->
+                    <Border Background="White" CornerRadius="12" Padding="28,24"
+                            BorderBrush="#E5E7EB" BorderThickness="1" Margin="0,0,0,16">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="1" BlurRadius="8"
+                                              Opacity="0.06" Color="#000000"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <!-- Section title -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                <fa:IconImage Icon="AddressCard" Width="18" Height="18"
+                                              Foreground="#3B82F6" Margin="0,0,10,0"/>
+                                <TextBlock Text="Thông tin liên hệ" FontSize="18"
+                                           FontWeight="Bold" Foreground="#111827"/>
+                            </StackPanel>
+
+                            <!-- Row 1: Email + Phone (with icons) -->
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Email field with icon -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                                        <Run Text="EMAIL"/><Run Text=" *" Foreground="#EF4444"/>
+                                    </TextBlock>
+                                    <Grid>
+                                        <TextBox Style="{StaticResource FormInputIcon}"
+                                                 Text="{Binding Patient.Email, UpdateSourceTrigger=PropertyChanged}"
+                                                 Tag="abc@example.com"/>
+                                        <fa:IconImage Icon="Envelope" Width="16" Height="16"
+                                                      Foreground="#9CA3AF"
+                                                      HorizontalAlignment="Left"
+                                                      Margin="14,0,0,0"
+                                                      IsHitTestVisible="False"/>
+                                    </Grid>
+                                </StackPanel>
+
+                                <!-- Phone field with icon -->
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                                        <Run Text="SỐ ĐIỆN THOẠI"/><Run Text=" *" Foreground="#EF4444"/>
+                                    </TextBlock>
+                                    <Grid>
+                                        <TextBox Style="{StaticResource FormInputIcon}"
+                                                 Text="{Binding Patient.Phone, UpdateSourceTrigger=PropertyChanged}"
+                                                 Tag="+84 000 000 000"/>
+                                        <fa:IconImage Icon="Phone" Width="16" Height="16"
+                                                      Foreground="#9CA3AF"
+                                                      HorizontalAlignment="Left"
+                                                      Margin="14,0,0,0"
+                                                      IsHitTestVisible="False"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Row 2: Address (full width) -->
+                            <StackPanel Margin="0,0,0,16">
+                                <TextBlock Style="{StaticResource FieldLabel}">
+                                    <Run Text="ĐỊA CHỈ"/><Run Text=" *" Foreground="#EF4444"/>
+                                </TextBlock>
+                                <TextBox Style="{StaticResource FormInput}"
+                                         Text="{Binding Patient.Address, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="Địa chỉ, Số nhà, Tên đường"/>
+                            </StackPanel>
+
+                            <!-- Row 3: City + District + Postal -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox Grid.Column="0" Style="{StaticResource FormInput}"
+                                         Text="{Binding Patient.City, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="Thành phố"/>
+
+                                <TextBox Grid.Column="2" Style="{StaticResource FormInput}"
+                                         Text="{Binding Patient.District, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="Quận/Huyện"/>
+
+                                <TextBox Grid.Column="4" Style="{StaticResource FormInput}"
+                                         Text="{Binding Patient.PostalCode, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="Mã bưu điện"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====================================================
+                         WARNING BOX: Insurance verification notice
+                         ==================================================== -->
+                    <Border Background="#FEF2F2" CornerRadius="10"
+                            BorderBrush="#FECACA" BorderThickness="1"
+                            Padding="20,16" Margin="0,0,0,24">
+                        <StackPanel Orientation="Horizontal">
+                            <!-- Warning icon -->
+                            <Border Width="24" Height="24" CornerRadius="12"
+                                    Background="#FEE2E2" Margin="0,0,14,0"
+                                    VerticalAlignment="Top">
+                                <TextBlock Text="!" FontSize="14" FontWeight="Bold"
+                                           Foreground="#EF4444"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Warning text -->
+                            <StackPanel MaxWidth="600">
+                                <TextBlock Text="Chưa xác minh bảo hiểm"
+                                           FontSize="14" FontWeight="Bold"
+                                           Foreground="#DC2626" Margin="0,0,0,4"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="13"
+                                           Foreground="#991B1B" LineHeight="20">
+                                    Nhà cung cấp bảo hiểm của bệnh nhân cần được xác minh trước khi hoàn tất đăng ký. Bạn vẫn có thể lưu hồ sơ dưới dạng bản nháp.
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====================================================
+                         ACTION BUTTONS: Save Draft, Previous, Verify
+                         ==================================================== -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Lưu bản nháp -->
+                        <Button Grid.Column="0" Style="{StaticResource FormOutlineBtn}"
+                                Content="Lưu bản nháp"
+                                Command="{Binding SaveDraftCommand}"/>
+
+                        <!-- Phần trước -->
+                        <Button Grid.Column="2" Style="{StaticResource FormOutlineBtn}"
+                                Content="Phần trước"
+                                Command="{Binding PreviousCommand}"/>
+
+                        <!-- Xác minh & Tiếp tục (Primary) -->
+                        <Button Grid.Column="4" Height="48" MinWidth="180"
+                                Command="{Binding NextCommand}"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="#3B82F6"
+                                            CornerRadius="10" Padding="28,0">
+                                        <TextBlock Text="Xác minh &amp;&#x0a;Tiếp tục"
+                                                   Foreground="White" FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   TextAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background"
+                                                    Value="#2563EB"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

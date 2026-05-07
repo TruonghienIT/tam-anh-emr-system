@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace TamAnh_EMR_System.Converter
+namespace TamAnh_EMR_System.Converters
 {
     public class CooldownTextConverter : IValueConverter
     {

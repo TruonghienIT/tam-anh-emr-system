@@ -1,10 +1,10 @@
-﻿<Window x:Class="TamAnh_EMR_System.View.LoginView"
+<Window x:Class="TamAnh_EMR_System.View.LoginView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TamAnh_EMR_System.View"
-        xmlns:converter="clr-namespace:TamAnh_EMR_System.Converter"
+        xmlns:converter="clr-namespace:TamAnh_EMR_System.Converters"
         xmlns:viewModel="clr-namespace:TamAnh_EMR_System.ViewModel" xmlns:customcontrol="clr-namespace:TamAnh_EMR_System.CustomControl"
         mc:Ignorable="d"
         Title="LoginView" Height="550" Width="800"
@@ -19,14 +19,16 @@
         <viewModel:LoginViewModel/>
     </Window.DataContext>
 
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
         <converter:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibility"/>
         <converter:CooldownTextConverter x:Key="CooldownTextConverter"/>
     </Window.Resources>
 
+
     <Window.Visibility>
-        <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource BooleanToVisibility}"/>
+        <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource BooleanToVisibilityConverter}"/>
     </Window.Visibility>
 
     <Border CornerRadius="12">

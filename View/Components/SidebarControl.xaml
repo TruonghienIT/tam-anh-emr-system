@@ -1,0 +1,143 @@
+<UserControl x:Class="TamAnh_EMR_System.View.Components.SidebarControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp">
+
+    <!-- ================================================================
+         SIDEBAR CONTROL
+         Left navigation panel with:
+         - Logo + brand name
+         - User area info card
+         - Navigation menu items (dynamically bound)
+         - "+ Hẹn lịch mới" action button
+         - Bottom links (Cài đặt, Hỗ trợ)
+         ================================================================ -->
+
+    <Border Background="{StaticResource DashSidebarBackground}"
+            BorderBrush="{StaticResource DashBorderColor}"
+            BorderThickness="0,0,1,0"
+            Width="220">
+
+        <DockPanel LastChildFill="True">
+
+            <!-- ===== SIDEBAR BOTTOM: Action button + links ===== -->
+            <StackPanel DockPanel.Dock="Bottom" Margin="12,0,12,16">
+
+                <!-- Hỗ trợ link -->
+                <Button Style="{StaticResource DashSidebarBottomItem}"
+                        Margin="0,0,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="CircleQuestion" Width="16" Height="16"
+                                      Foreground="{StaticResource DashTextMuted}" Margin="0,0,10,0"/>
+                        <TextBlock Text="Hỗ trợ" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Cài đặt link -->
+                <Button Style="{StaticResource DashSidebarBottomItem}"
+                        Margin="0,0,0,4">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="Gear" Width="16" Height="16"
+                                      Foreground="{StaticResource DashTextMuted}" Margin="0,0,10,0"/>
+                        <TextBlock Text="Cài đặt" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- + Hẹn lịch mới button -->
+                <Button Style="{StaticResource DashPrimaryButton}"
+                        Command="{Binding AddAppointmentCommand}"
+                        Margin="0,0,0,12"
+                        HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="+" FontSize="16" FontWeight="Bold" Margin="0,0,8,0"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="Hẹn lịch mới" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!-- ===== SIDEBAR TOP CONTENT ===== -->
+            <StackPanel>
+
+                <!-- ===== Logo and Brand ===== -->
+                <StackPanel Orientation="Horizontal" Margin="16,20,16,20">
+                    <!-- Logo icon circle -->
+                    <Border Background="{StaticResource DashPrimaryBlue}"
+                            CornerRadius="10" Width="40" Height="40"
+                            Margin="0,0,10,0">
+                        <fa:IconImage Icon="HospitalUser" Width="20" Height="20"
+                                      Foreground="White"/>
+                    </Border>
+                    <TextBlock Text="TâmAnhHospital"
+                               FontFamily="{StaticResource DashFontFamily}"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="{StaticResource DashTextPrimary}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- ===== Divider ===== -->
+                <Border Height="1" Background="{StaticResource DashDividerColor}" Margin="16,0"/>
+
+                <!-- ===== User Area Card ===== -->
+                <StackPanel Margin="20,16,20,16">
+                    <TextBlock Text="{Binding UserArea}"
+                               FontFamily="{StaticResource DashFontFamily}"
+                               FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource DashTextPrimary}"/>
+                    <TextBlock Text="{Binding UserSubtitle}"
+                               FontFamily="{StaticResource DashFontFamily}"
+                               FontSize="12"
+                               Foreground="{StaticResource DashTextMuted}"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <!-- ===== Navigation Menu Items ===== -->
+                <!-- First item (Tổng quan) is highlighted as active -->
+                <Button Style="{StaticResource DashSidebarMenuItemActive}"
+                        Command="{Binding MenuNavigateCommand}" CommandParameter="Tổng quan">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="ChartLine" Width="18" Height="18"
+                                      Foreground="{StaticResource DashPrimaryBlue}"
+                                      Margin="0,0,12,0"/>
+                        <TextBlock Text="Tổng quan" VerticalAlignment="Center"
+                                   FontFamily="{StaticResource DashFontFamily}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource DashSidebarMenuItem}"
+                        Command="{Binding MenuNavigateCommand}" CommandParameter="Tìm kiếm bệnh nhân">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="UserGroup" Width="18" Height="18"
+                                      Foreground="{StaticResource DashTextSecondary}"
+                                      Margin="0,0,12,0"/>
+                        <TextBlock Text="Tìm kiếm bệnh nhân" VerticalAlignment="Center"
+                                   FontFamily="{StaticResource DashFontFamily}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource DashSidebarMenuItem}"
+                        Command="{Binding MenuNavigateCommand}" CommandParameter="Đăng ký">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="UserPlus" Width="18" Height="18"
+                                      Foreground="{StaticResource DashTextSecondary}"
+                                      Margin="0,0,12,0"/>
+                        <TextBlock Text="Đăng ký" VerticalAlignment="Center"
+                                   FontFamily="{StaticResource DashFontFamily}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource DashSidebarMenuItem}"
+                        Command="{Binding MenuNavigateCommand}" CommandParameter="Lịch hẹn">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="CalendarCheck" Width="18" Height="18"
+                                      Foreground="{StaticResource DashTextSecondary}"
+                                      Margin="0,0,12,0"/>
+                        <TextBlock Text="Lịch hẹn" VerticalAlignment="Center"
+                                   FontFamily="{StaticResource DashFontFamily}"/>
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

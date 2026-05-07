@@ -33,6 +33,10 @@
         <DataTemplate DataType="{x:Type viewModel:ReceptionistPanelViewModel}">
             <local:ReceptionistPanelView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModel:PatientPanelViewModel}">
+            <local:PatientPanelView/>
+        </DataTemplate>
     </Window.Resources>
 
     <Border CornerRadius="10"
@@ -130,7 +134,8 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource menuButton}"
-                                 Tag="{StaticResource color3}">
+                                 Tag="{StaticResource color3}"
+                                 Command="{Binding ShowPatientPanelViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Bed" Style="{StaticResource menuButtonIcon}"/>
                             <TextBlock Text="Bệnh nhân" Style="{StaticResource menuButtonText}"/>

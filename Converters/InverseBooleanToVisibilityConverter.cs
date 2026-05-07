@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace TamAnh_EMR_System.Converter
+namespace TamAnh_EMR_System.Converters
 {
     public class InverseBooleanToVisibilityConverter : IValueConverter
     {

@@ -1,13 +1,21 @@
-﻿<Application x:Class="TamAnh_EMR_System.App"
+<Application x:Class="TamAnh_EMR_System.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:TamAnh_EMR_System">
+             xmlns:local="clr-namespace:TamAnh_EMR_System"
+             xmlns:converters="clr-namespace:TamAnh_EMR_System.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resource/Style/UIColor.xaml"/>
                 <ResourceDictionary Source="/Resource/Style/ButtonStyles.xaml"/>
+                <ResourceDictionary Source="/Resource/Style/DashboardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+            <converters:StatusToBackgroundConverter x:Key="StatusToBackgroundConverter"/>
+            <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

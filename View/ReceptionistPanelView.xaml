@@ -8,12 +8,10 @@
                  mc:Ignorable="d" 
                  d:DesignHeight="450" d:DesignWidth="800">
 
-    <!-- ================= RESOURCES ================= -->
     <UserControl.Resources>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-        <!-- ICON BUTTON STYLE -->
         <Style x:Key="IconButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -32,12 +30,10 @@
                         </Border>
 
                         <ControlTemplate.Triggers>
-                            <!-- Hover -->
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="bd" Property="Background" Value="#1FFFFFFF"/>
                             </Trigger>
 
-                            <!-- Click -->
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="bd" Property="Background" Value="#2FFFFFFF"/>
                             </Trigger>
@@ -48,7 +44,6 @@
             </Setter>
         </Style>
 
-        <!-- TEXT ALIGN -->
         <Style x:Key="CenterText" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextAlignment" Value="Center"/>
@@ -62,21 +57,18 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- ================= LAYOUT ================= -->
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <!-- ===== TOP BAR ===== -->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="120"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- SEARCH -->
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Top"
                             Grid.Column="0">
@@ -101,7 +93,6 @@
                              Margin="5,5,0,0"/>
                 </StackPanel>
 
-                <!-- ADD BUTTON -->
                 <Button Grid.Column="1"
                         Command="{Binding OpenAddCommand}"
                         Content="+ Thêm lễ tân"
@@ -133,7 +124,6 @@
                 </Button>
             </Grid>
 
-            <!-- ===== TABLE ===== -->
             <Border Grid.Row="1"
                     Background="{StaticResource panelColor}"
                     CornerRadius="15"
@@ -153,7 +143,6 @@
                           CanUserAddRows="False"
                           SelectionMode="Single">
 
-                    <!-- HEADER STYLE -->
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Foreground" Value="{StaticResource plainTextColor3}"/>
@@ -166,7 +155,6 @@
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
-                    <!-- ROW STYLE -->
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="Transparent"/>
@@ -184,7 +172,6 @@
                         </Style>
                     </DataGrid.RowStyle>
 
-                    <!-- CELL STYLE -->
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Foreground" Value="{StaticResource color8}"/>
@@ -195,7 +182,6 @@
                         </Style>
                     </DataGrid.CellStyle>
 
-                    <!-- COLUMNS -->
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"
@@ -213,7 +199,6 @@
                         <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"
                             ElementStyle="{StaticResource LeftText}" />
 
-                        <!-- CONTROL COLUMN -->
                         <DataGridTemplateColumn Header="Thao tác" Width="100">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
@@ -232,7 +217,6 @@
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center">
 
-                                        <!-- EDIT -->
                                         <Button Style="{StaticResource IconButtonStyle}"
                                                 Command="{Binding DataContext.OpenEditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}"
@@ -244,7 +228,6 @@
                                                           Height="18"/>
                                         </Button>
 
-                                        <!-- DELETE -->
                                         <Button Style="{StaticResource IconButtonStyle}"
                                                 Command="{Binding DataContext.DeleteReceptionistCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}">
@@ -280,7 +263,6 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- ===== LEFT PANEL ===== -->
                     <Border Background="{StaticResource color8}"
                     CornerRadius="20,0,0,20"
                     Padding="20">
@@ -289,7 +271,7 @@
 
                             <Ellipse Width="120" Height="120">
                                 <Ellipse.Fill>
-                                    <ImageBrush ImageSource="/Resource/Image/doctor.jpg" Stretch="UniformToFill"/>
+                                    <ImageBrush ImageSource="/Resource/Image/receptionist.jpg" Stretch="UniformToFill"/>
                                 </Ellipse.Fill>
                             </Ellipse>
                             <TextBlock Text="{Binding PopupTitle}"
@@ -308,7 +290,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ===== RIGHT FORM ===== -->
                     <Grid Grid.Column="1" Margin="30">
 
                         <Grid.RowDefinitions>
@@ -317,7 +298,6 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- CLOSE -->
                         <Button
                         Style="{StaticResource controlButton}"
                         Command="{Binding ClosePopupCommand}"
@@ -329,7 +309,6 @@
                         </Button>
 
 
-                        <!-- FORM -->
                         <StackPanel Grid.Row="1" Margin="0,9,0,0">
 
                             <TextBlock Text="Họ tên" FontFamily="Montserrat"/>
@@ -343,7 +322,6 @@
 
                         </StackPanel>
 
-                        <!-- BUTTON -->
                         <StackPanel Grid.Row="2"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
