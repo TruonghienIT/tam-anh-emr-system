@@ -109,5 +109,39 @@ namespace TamAnh_EMR_System.Model
             get => _postalCode;
             set { _postalCode = value; OnPropertyChanged(nameof(PostalCode)); }
         }
+        private string _idCard;
+        public string IdCard
+        {
+            get => _idCard;
+            set { _idCard = value; OnPropertyChanged(nameof(IdCard)); }
+        }
+
+        private string _bloodType;
+        public string BloodType
+        {
+            get => _bloodType;
+            set { _bloodType = value; OnPropertyChanged(nameof(BloodType)); }
+        }
+
+        private string _allergies;
+        public string Allergies
+        {
+            get => _allergies;
+            set { _allergies = value; OnPropertyChanged(nameof(Allergies)); }
+        }
+
+        private string _emergencyContactName;
+        public string EmergencyContactName
+        {
+            get => _emergencyContactName;
+            set { _emergencyContactName = value; OnPropertyChanged(nameof(EmergencyContactName)); }
+        }
+
+        private string _emergencyContactPhone;
+        public string EmergencyContactPhone
+        {
+            get => _emergencyContactPhone;
+            set { _emergencyContactPhone = value; OnPropertyChanged(nameof(EmergencyContactPhone)); }
+        }
     }
 }

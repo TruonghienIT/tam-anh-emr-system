@@ -56,7 +56,9 @@
                 <components:NotificationPanel Grid.Column="0"/>
 
                 <!-- Chart Panel -->
-                <components:ChartPanel Grid.Column="2"/>
+                <components:ChartPanel
+                    Grid.Column="2"
+                    DataContext="{Binding}"/>
             </Grid>
 
         </StackPanel>

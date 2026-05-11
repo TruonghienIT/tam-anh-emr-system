@@ -52,6 +52,14 @@
                               SelectedItem="{Binding SelectedDoctor}"
                               Margin="0,0,12,0"/>
 
+                    <Button Style="{StaticResource DashOutlineButton}"
+                            Margin="0,0,8,0"
+                            Command="{Binding ResetFiltersCommand}">    
+
+                        <TextBlock Text="Reset filter"/>
+
+                    </Button>
+
                     <!-- Export report button -->
                     <Button Style="{StaticResource DashOutlineButton}"
                             Command="{Binding ExportReportCommand}">
@@ -71,12 +79,18 @@
                     BorderThickness="0,0,0,1" Padding="0,8,0,12">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="110"/>  <!-- THỜI GIAN -->
-                        <ColumnDefinition Width="*"/>     <!-- BỆNH NHÂN -->
-                        <ColumnDefinition Width="140"/>  <!-- BÁC SĨ -->
-                        <ColumnDefinition Width="120"/>  <!-- DỊCH VỤ -->
-                        <ColumnDefinition Width="110"/>  <!-- TRẠNG THÁI -->
-                        <ColumnDefinition Width="80"/>   <!-- THAO TÁC -->
+                        <ColumnDefinition Width="110"/>
+                        <!-- THỜI GIAN -->
+                        <ColumnDefinition Width="*"/>
+                        <!-- BỆNH NHÂN -->
+                        <ColumnDefinition Width="140"/>
+                        <!-- BÁC SĨ -->
+                        <ColumnDefinition Width="120"/>
+                        <!-- DỊCH VỤ -->
+                        <ColumnDefinition Width="110"/>
+                        <!-- TRẠNG THÁI -->
+                        <ColumnDefinition Width="80"/>
+                        <!-- THAO TÁC -->
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Text="THỜI GIAN"
@@ -95,15 +109,65 @@
                                HorizontalAlignment="Center"/>
                 </Grid>
             </Border>
+            <Grid Margin="0,24,0,24">
 
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding PagedAppointments.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <StackPanel HorizontalAlignment="Center">
+
+                    <TextBlock Text="📅"
+                   FontSize="42"
+                   HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Không có lịch hẹn"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   Margin="0,12,0,0"
+                   HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Không tìm thấy dữ liệu phù hợp bộ lọc"
+                   Foreground="#94A3B8"
+                   Margin="0,4,0,0"
+                   HorizontalAlignment="Center"/>
+
+                </StackPanel>
+
+            </Grid>
             <!-- ===== Appointment Data Rows ===== -->
             <!-- ItemsControl renders one row per DashboardAppointment in the collection -->
-            <ItemsControl ItemsSource="{Binding Appointments}">
+            <ItemsControl ItemsSource="{Binding PagedAppointments}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="{StaticResource DashDividerColor}"
-                                BorderThickness="0,0,0,1"
-                                Padding="0,12">
+        BorderThickness="0,0,0,1"
+        Padding="0,12"
+        Background="Transparent">
+
+                            <Border.Style>
+                                <Style TargetType="Border">
+
+                                    <Setter Property="Background" Value="Transparent"/>
+
+                                    <Style.Triggers>
+
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                        </Trigger>
+
+                                    </Style.Triggers>
+
+                                </Style>
+                            </Border.Style>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="110"/>
@@ -236,33 +300,38 @@
                     <!-- Previous page arrow -->
                     <Button Style="{StaticResource DashPaginationButton}"
                             Command="{Binding NavigatePageCommand}"
-                            CommandParameter="0">
+                            CommandParameter="{Binding CurrentPage, Converter={StaticResource PrevPageConverter}}"
+                            >
                         <fa:IconImage Icon="ChevronLeft" Width="10" Height="10"
                                       Foreground="{StaticResource DashTextMuted}"/>
                     </Button>
 
-                    <!-- Page 1 (active) -->
-                    <Button Style="{StaticResource DashPaginationButtonActive}"
-                            Content="1"
-                            Command="{Binding NavigatePageCommand}"
-                            CommandParameter="1"/>
+                    <ItemsControl ItemsSource="{Binding PageNumbers}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <!-- Page 2 -->
-                    <Button Style="{StaticResource DashPaginationButton}"
-                            Content="2"
-                            Command="{Binding NavigatePageCommand}"
-                            CommandParameter="2"/>
-
-                    <!-- Page 3 -->
-                    <Button Style="{StaticResource DashPaginationButton}"
-                            Content="3"
-                            Command="{Binding NavigatePageCommand}"
-                            CommandParameter="3"/>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                Content="{Binding}"
+                Width="32"
+                Height="32"
+                Margin="4,0"
+                Command="{Binding DataContext.NavigatePageCommand,
+                          RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                CommandParameter="{Binding}">
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
                     <!-- Next page arrow -->
                     <Button Style="{StaticResource DashPaginationButton}"
-                            Command="{Binding NavigatePageCommand}"
-                            CommandParameter="99">
+                            CommandParameter="{Binding CurrentPage, Converter={StaticResource NextPageConverter}}"
+                            >
                         <fa:IconImage Icon="ChevronRight" Width="10" Height="10"
                                       Foreground="{StaticResource DashTextMuted}"/>
                     </Button>

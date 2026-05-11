@@ -22,8 +22,56 @@
 
             <!-- ===== TOP HEADER ===== -->
             <components:HeaderControl DockPanel.Dock="Top"/>
+            <Grid>
 
-            <ContentControl Content="{Binding CurrentView}"/>
+                <!-- MAIN UI -->
+                <ContentControl Content="{Binding CurrentView}" />
+
+                <!-- TOAST -->
+                <ItemsControl ItemsSource="{Binding Toasts}"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Margin="0,20,20,0"
+                  Panel.ZIndex="999">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+
+                            <Border Width="320"
+                        Margin="0,0,0,10"
+                        Padding="16"
+                        CornerRadius="12"
+                        Background="{Binding Background}"
+                        BorderBrush="{Binding BorderBrush}"
+                        BorderThickness="2">
+
+                                <StackPanel>
+
+                                    <TextBlock Text="{Binding Title}"
+                                   FontWeight="Bold"
+                                   FontSize="15"
+                                   Foreground="White"/>
+
+                                    <TextBlock Text="{Binding Message}"
+                                   Margin="0,6,0,0"
+                                   TextWrapping="Wrap"
+                                   Foreground="White"/>
+
+                                </StackPanel>
+
+                            </Border>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </Grid>
         </DockPanel>
     </DockPanel>
 </Window>

@@ -173,7 +173,7 @@
                  ============================================================ -->
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="220"/>
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -395,7 +395,95 @@
                             </Grid>
                         </StackPanel>
                     </Border>
+                    <!-- EXTRA MEDICAL INFO -->
+                    <Border Background="White"
+        CornerRadius="12"
+        Padding="28,24"
+        BorderBrush="#E5E7EB"
+        BorderThickness="1"
+        Margin="0,0,0,16">
 
+                        <StackPanel>
+
+                            <TextBlock Text="Thông tin y tế bổ sung"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Foreground="#111827"
+                   Margin="0,0,0,20"/>
+
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                    CCCD
+                                    </TextBlock>
+
+                                    <TextBox Style="{StaticResource FormInput}"
+                         Text="{Binding Patient.IdCard, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="012345678901"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                    NHÓM MÁU
+                                    </TextBlock>
+
+                                    <ComboBox Style="{StaticResource FormCombo}"
+                          ItemsSource="{Binding BloodTypeOptions}"
+                          SelectedItem="{Binding Patient.BloodType}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel Margin="0,0,0,16">
+                                <TextBlock Style="{StaticResource FieldLabel}">
+                DỊ ỨNG
+                                </TextBlock>
+
+                                <TextBox Style="{StaticResource FormInput}"
+                     Height="80"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalContentAlignment="Top"
+                     Padding="14,12"
+                     Text="{Binding Patient.Allergies, UpdateSourceTrigger=PropertyChanged}"
+                     Tag="Thông tin dị ứng thuốc/thực phẩm"/>
+                            </StackPanel>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                    NGƯỜI LIÊN HỆ KHẨN CẤP
+                                    </TextBlock>
+
+                                    <TextBox Style="{StaticResource FormInput}"
+                         Text="{Binding Patient.EmergencyContactName, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="Nguyễn Văn A"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                    SĐT KHẨN CẤP
+                                    </TextBlock>
+
+                                    <TextBox Style="{StaticResource FormInput}"
+                         Text="{Binding Patient.EmergencyContactPhone, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="0901234567"/>
+                                </StackPanel>
+
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                     <!-- ====================================================
                          ERROR MESSAGE BOX
                          Shown when validation fails or save error occurs
@@ -492,8 +580,11 @@
                                         <StackPanel Orientation="Horizontal"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center">
-                                            <TextBlock x:Name="BtnIcon" Text="💾" FontSize="14"
-                                                       Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="BtnIcon"
+                                                        Text="⏳"
+                                                        FontSize="14"
+                                                        Margin="0,0,8,0"
+                                                        VerticalAlignment="Center"/>
                                             <TextBlock x:Name="BtnText"
                                                        Text="Lưu bệnh nhân"
                                                        Foreground="White" FontSize="14"

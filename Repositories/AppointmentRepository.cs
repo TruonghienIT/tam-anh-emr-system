@@ -41,8 +41,17 @@ namespace TamAnh_EMR_System.Repositories
                 cmd.Parameters.Add("@appointment_date", SqlDbType.Date)
                     .Value = appointment.AppointmentDate.Date;
 
-                cmd.Parameters.Add("@appointment_time", SqlDbType.VarChar, 20)
-                    .Value = appointment.AppointmentTime ?? "";
+                TimeSpan appointmentTime;
+
+                if (!TimeSpan.TryParse(
+                        appointment.AppointmentTime?.Split('-')[0].Trim(),
+                        out appointmentTime))
+                {
+                    appointmentTime = new TimeSpan(8, 0, 0);
+                }
+
+                cmd.Parameters.Add("@appointment_time", SqlDbType.Time)
+                    .Value = appointmentTime;
 
                 cmd.Parameters.Add("@status", SqlDbType.NVarChar, 30)
                     .Value = "Đang chờ";
@@ -127,11 +136,8 @@ namespace TamAnh_EMR_System.Repositories
                             _ => ""
                         };
 
-                        var timeSlot = reader["appointment_time"]?.ToString() ?? "";
-                        // Extract start time from "08:00 - 08:30" format
-                        var displayTime = timeSlot.Contains("-")
-                            ? timeSlot.Split('-')[0].Trim()
-                            : timeSlot;
+                        var timeValue = (TimeSpan)reader["appointment_time"];
+                        var displayTime = timeValue.ToString(@"hh\:mm");
 
                         list.Add(new DashboardAppointment
                         {
@@ -304,8 +310,17 @@ namespace TamAnh_EMR_System.Repositories
                     cmd.Parameters.Add("@appointment_date", SqlDbType.Date)
                         .Value = appointment.AppointmentDate.Date;
 
-                    cmd.Parameters.Add("@appointment_time", SqlDbType.VarChar, 20)
-                        .Value = appointment.AppointmentTime ?? "";
+                    TimeSpan appointmentTime;
+
+                    if (!TimeSpan.TryParse(
+                            appointment.AppointmentTime?.Split('-')[0].Trim(),
+                            out appointmentTime))
+                    {
+                        appointmentTime = new TimeSpan(8, 0, 0);
+                    }
+
+                    cmd.Parameters.Add("@appointment_time", SqlDbType.Time)
+                        .Value = appointmentTime;
 
                     cmd.Parameters.Add("@status", SqlDbType.NVarChar, 30)
                         .Value = "Đang chờ";
@@ -343,6 +358,39 @@ namespace TamAnh_EMR_System.Repositories
             int hash = 0;
             foreach (char c in name) hash += c;
             return colors[hash % colors.Length];
+        }
+        public async Task<List<ChartDataPoint>> GetTodayChartDataAsync()
+        {
+            var result = new List<ChartDataPoint>();
+
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+
+                string query = @"
+        SELECT 
+            FORMAT(appointment_time, 'hh\:mm') AS HourLabel,
+            COUNT(*) AS Total
+        FROM appointments
+        WHERE appointment_date = CAST(GETDATE() AS DATE)
+        GROUP BY appointment_time
+        ORDER BY appointment_time";
+
+                using (var cmd = new SqlCommand(query, conn))
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        result.Add(new ChartDataPoint
+                        {
+                            Label = reader["HourLabel"].ToString(),
+                            Value = Convert.ToInt32(reader["Total"])
+                        });
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

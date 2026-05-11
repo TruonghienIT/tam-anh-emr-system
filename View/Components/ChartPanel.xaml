@@ -2,93 +2,188 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- ================================================================
-         CHART PANEL
-         Bar chart showing hourly appointment density ("Mật độ lịch khám 24h tới").
-         Contains:
-         - Title with tab toggles (Theo giờ / Theo khoa)
-         - Dual-bar chart rendered via ItemsControl
-         - Hour labels below each bar group
-         
-         Each bar group has two bars (primary darker blue, secondary lighter blue).
-         Bar heights are calculated from ChartDataPoint.Bar1Height/Bar2Height properties.
-         ================================================================ -->
-
     <Border Style="{StaticResource DashCardStyle}">
         <StackPanel>
 
-            <!-- ===== Chart Header: Title + Tab Toggles ===== -->
+            <!-- ========================================================= -->
+            <!-- HEADER -->
+            <!-- ========================================================= -->
+
             <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0"
-                           Text="Mật độ lịch khám (24h tới)"
-                           FontFamily="{StaticResource DashFontFamily}"
-                           FontSize="15" FontWeight="Bold"
-                           Foreground="{StaticResource DashTextPrimary}"
-                           VerticalAlignment="Center"/>
+                <TextBlock
+                    Grid.Column="0"
+                    Text="Mật độ lịch khám (24h tới)"
+                    FontFamily="{StaticResource DashFontFamily}"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource DashTextPrimary}"
+                    VerticalAlignment="Center"/>
 
-                <!-- Tab toggles -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Style="{StaticResource DashTabButtonActive}"
-                            Content="Theo giờ" Margin="0,0,4,0"/>
-                    <Button Style="{StaticResource DashTabButton}"
-                            Content="Theo khoa"/>
+                <!-- FILTER TABS -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal">
+
+                    <Button
+                        Style="{StaticResource DashTabButtonActive}"
+                        Content="Theo giờ"
+                        Margin="0,0,4,0"/>
+
+                    <Button
+                        Style="{StaticResource DashTabButton}"
+                        Content="Theo khoa"/>
                 </StackPanel>
             </Grid>
 
-            <!-- ===== Chart Area ===== -->
-            <!-- ItemsControl renders bar groups horizontally -->
-            <ItemsControl ItemsSource="{Binding ChartData}" Height="160">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Rows="1"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+            <!-- ========================================================= -->
+            <!-- CHART AREA -->
+            <!-- ========================================================= -->
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Center">
-                            <!-- Dual bar group -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Bottom">
-                                <!-- Primary bar (darker blue) -->
-                                <Border Width="16"
-                                        Height="{Binding Bar1Height}"
-                                        CornerRadius="3,3,0,0"
-                                        Margin="1,0">
-                                    <Border.Background>
-                                        <SolidColorBrush Color="#3B82F6"/>
-                                    </Border.Background>
-                                </Border>
+            <Grid Height="260">
 
-                                <!-- Secondary bar (lighter blue) -->
-                                <Border Width="16"
-                                        Height="{Binding Bar2Height}"
-                                        CornerRadius="3,3,0,0"
-                                        Margin="1,0">
-                                    <Border.Background>
-                                        <SolidColorBrush Color="#93C5FD"/>
-                                    </Border.Background>
-                                </Border>
-                            </StackPanel>
+                <!-- ===================================================== -->
+                <!-- LOADING SKELETON -->
+                <!-- ===================================================== -->
 
-                            <!-- Hour label -->
-                            <TextBlock Text="{Binding Label}"
-                                       FontFamily="{StaticResource DashFontFamily}"
-                                       FontSize="11"
-                                       Foreground="{StaticResource DashTextMuted}"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,6,0,0"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                <Border
+                    Background="#F3F4F6"
+                    CornerRadius="12"
+                    Padding="20">
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+
+                            <Setter Property="Visibility"
+                                    Value="Collapsed"/>
+
+                            <Style.Triggers>
+
+                                <DataTrigger
+                                    Binding="{Binding IsChartLoading}"
+                                    Value="True">
+
+                                    <Setter Property="Visibility"
+                                            Value="Visible"/>
+
+                                </DataTrigger>
+
+                            </Style.Triggers>
+
+                        </Style>
+                    </Border.Style>
+
+                    <StackPanel>
+
+                        <Rectangle
+                            Height="20"
+                            RadiusX="4"
+                            RadiusY="4"
+                            Fill="#E5E7EB"
+                            Margin="0,0,0,16"/>
+
+                        <Rectangle
+                            Height="180"
+                            RadiusX="8"
+                            RadiusY="8"
+                            Fill="#E5E7EB"/>
+
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ===================================================== -->
+                <!-- REAL CHART -->
+                <!-- ===================================================== -->
+
+                <ItemsControl
+                    ItemsSource="{Binding ChartData}">
+
+                    <ItemsControl.Style>
+
+                        <Style TargetType="ItemsControl">
+
+                            <Setter Property="Visibility"
+                                    Value="Visible"/>
+
+                            <Style.Triggers>
+
+                                <DataTrigger
+                                    Binding="{Binding IsChartLoading}"
+                                    Value="True">
+
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed"/>
+
+                                </DataTrigger>
+
+                            </Style.Triggers>
+
+                        </Style>
+
+                    </ItemsControl.Style>
+
+                    <!-- HORIZONTAL LAYOUT -->
+                    <ItemsControl.ItemsPanel>
+
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1"/>
+                        </ItemsPanelTemplate>
+
+                    </ItemsControl.ItemsPanel>
+
+                    <!-- ITEM TEMPLATE -->
+                    <ItemsControl.ItemTemplate>
+
+                        <DataTemplate>
+
+                            <Grid Margin="6">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- BAR AREA -->
+                                <Grid Grid.Row="0"
+                                      VerticalAlignment="Bottom"
+                                      Height="190">
+
+                                    <Border
+                                        Width="32"
+                                        Height="{Binding Height}"
+                                        MinHeight="12"
+                                        MaxHeight="180"
+                                        Background="#3B82F6"
+                                        CornerRadius="6,6,0,0"
+                                        VerticalAlignment="Bottom"
+                                        HorizontalAlignment="Center"/>
+
+                                </Grid>
+
+                                <!-- LABEL -->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Text="{Binding Label}"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,10,0,0"
+                                    FontSize="11"
+                                    Foreground="#6B7280"/>
+
+                            </Grid>
+
+                        </DataTemplate>
+
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+
+            </Grid>
+
         </StackPanel>
     </Border>
+
 </UserControl>

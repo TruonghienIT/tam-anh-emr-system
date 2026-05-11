@@ -1,6 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
 

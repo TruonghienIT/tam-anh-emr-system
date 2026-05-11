@@ -4,17 +4,18 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model;
+using TamAnh_EMR_System.Model.Doctor;
 using TamAnh_EMR_System.Model.Receptionist;
 using TamAnh_EMR_System.Repositories;
 using TamAnh_EMR_System.Services;
-using System.Threading;
 using TamAnh_EMR_System.View.Receptionist;
-using System.Threading.Tasks;
 
 namespace TamAnh_EMR_System.ViewModel.Receptionist
 {
@@ -588,11 +589,27 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 System.Diagnostics.Debug.WriteLine(
                     $"Saved appointment: {appointment.Id}");
 
-                MessageBox.Show(
-                    "Tạo lịch hẹn thành công!",
-                    "Thành công",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window.DataContext is ReceptionistDashboardViewModel dashboardVm)
+                        {
+                            dashboardVm.ShowSuccessToast(
+                                "Tạo lịch hẹn",
+                                "Lịch hẹn đã được tạo thành công"
+                            );
+
+                            dashboardVm.AddNotification(
+                                "Lịch hẹn mới",
+                                $"{patient.Name} - {SelectedTimeSlot}",
+                                "success"
+                            );
+
+                            break;
+                        }
+                    }
+                });
 
                 CloseAction?.Invoke(true);
             }
