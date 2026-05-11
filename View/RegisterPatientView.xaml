@@ -185,13 +185,12 @@
                 <StackPanel Grid.Column="0" Margin="0,8,0,0">
 
                     <!-- Step 1: Active -->
-                    <Border BorderThickness="3,0,0,0" BorderBrush="#3B82F6" Padding="16,14"
-                            Cursor="Hand" Margin="0,0,0,0">
+                    <Border Style="{StaticResource StepItem}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="User" Width="16" Height="16"
-                                          Foreground="#3B82F6" Margin="0,0,10,0"/>
+                                          Foreground="#9CA3AF" Margin="0,0,10,0"/>
                             <TextBlock Text="Thông tin cá nhân" FontSize="14"
-                                       FontWeight="SemiBold" Foreground="#3B82F6"/>
+                                       Foreground="#9CA3AF"/>
                         </StackPanel>
                     </Border>
 
@@ -201,7 +200,7 @@
                             <fa:IconImage Icon="AddressCard" Width="16" Height="16"
                                           Foreground="#9CA3AF" Margin="0,0,10,0"/>
                             <TextBlock Text="Thông tin liên hệ" FontSize="14"
-                                       Foreground="#6B7280"/>
+                                        Foreground="#6B7280"/>
                         </StackPanel>
                     </Border>
 
@@ -216,16 +215,6 @@
                                 <TextBlock Text="cấp" FontSize="14"
                                            Foreground="#6B7280"/>
                             </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Step 4: Inactive -->
-                    <Border Style="{StaticResource StepItem}">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:IconImage Icon="ShieldHalved" Width="16" Height="16"
-                                          Foreground="#9CA3AF" Margin="0,0,10,0"/>
-                            <TextBlock Text="Thông tin bảo hiểm" FontSize="14"
-                                       Foreground="#6B7280"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -308,25 +297,6 @@
                                               Text="Chọn giới tính" IsEditable="False"/>
                                 </StackPanel>
                             </Grid>
-
-                            <!-- Row 3: Tình trạng hôn nhân -->
-                            <StackPanel>
-                                <TextBlock Text="TÌNH TRẠNG HÔN NHÂN"
-                                           Style="{StaticResource FieldLabel}" Margin="0,0,0,10"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <RadioButton Style="{StaticResource MaritalToggle}"
-                                                 Content="Độc thân" GroupName="Marital"
-                                                 IsChecked="{Binding IsSingle}"
-                                                 Margin="0,0,8,0"/>
-                                    <RadioButton Style="{StaticResource MaritalToggle}"
-                                                 Content="Đã kết hôn" GroupName="Marital"
-                                                 IsChecked="{Binding IsMarried}"
-                                                 Margin="0,0,8,0"/>
-                                    <RadioButton Style="{StaticResource MaritalToggle}"
-                                                 Content="Ly hôn" GroupName="Marital"
-                                                 IsChecked="{Binding IsDivorced}"/>
-                                </StackPanel>
-                            </StackPanel>
                         </StackPanel>
                     </Border>
 
@@ -484,36 +454,6 @@
                                 <TextBlock Text="{Binding SuccessMessage}"
                                            TextWrapping="Wrap" FontSize="13"
                                            Foreground="#047857" LineHeight="20"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- ====================================================
-                         WARNING BOX: Insurance verification notice
-                         ==================================================== -->
-                    <Border Background="#FEF2F2" CornerRadius="10"
-                            BorderBrush="#FECACA" BorderThickness="1"
-                            Padding="20,16" Margin="0,0,0,24">
-                        <StackPanel Orientation="Horizontal">
-                            <!-- Warning icon -->
-                            <Border Width="24" Height="24" CornerRadius="12"
-                                    Background="#FEE2E2" Margin="0,0,14,0"
-                                    VerticalAlignment="Top">
-                                <TextBlock Text="!" FontSize="14" FontWeight="Bold"
-                                           Foreground="#EF4444"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                            </Border>
-
-                            <!-- Warning text -->
-                            <StackPanel MaxWidth="600">
-                                <TextBlock Text="Chưa xác minh bảo hiểm"
-                                           FontSize="14" FontWeight="Bold"
-                                           Foreground="#DC2626" Margin="0,0,0,4"/>
-                                <TextBlock TextWrapping="Wrap" FontSize="13"
-                                           Foreground="#991B1B" LineHeight="20">
-                                    Nhà cung cấp bảo hiểm của bệnh nhân cần được xác minh trước khi hoàn tất đăng ký. Bạn vẫn có thể lưu hồ sơ dưới dạng bản nháp.
-                                </TextBlock>
                             </StackPanel>
                         </StackPanel>
                     </Border>

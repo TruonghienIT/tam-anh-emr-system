@@ -3,15 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp">
 
-    <!-- ================================================================
-         HEADER CONTROL
-         Top bar containing:
-         - Search box with placeholder and icon
-         - Notification bell icon with count badge
-         - Help/info icon
-         - User avatar + display name + dropdown arrow
-         ================================================================ -->
-
     <Border Background="{StaticResource DashHeaderBackground}"
             BorderBrush="{StaticResource DashBorderColor}"
             BorderThickness="0,0,0,1"
@@ -29,14 +20,16 @@
             <Grid Grid.Column="0" MaxWidth="500" HorizontalAlignment="Left">
                 <TextBox Style="{StaticResource DashSearchBox}"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                         MinWidth="400"/>
+                         MinWidth="400"
+                         FontSize="15"
+                         Padding="16,0,10,0"/>
                 <!-- Search icon overlay -->
                 <fa:IconImage Icon="MagnifyingGlass" Width="14" Height="14"
                               Foreground="{StaticResource DashTextMuted}"
-                              HorizontalAlignment="Left" Margin="14,0,0,0"
+                              HorizontalAlignment="Left" Margin="15,0,15,0"
                               IsHitTestVisible="False"/>
                 <!-- Placeholder text (hidden when user types) -->
-                <TextBlock Text="  🔍  Tìm kiếm bệnh nhân, hồ sơ hoặc bác sĩ..."
+                <TextBlock Text="      Tìm kiếm bệnh nhân, hồ sơ hoặc bác sĩ..."
                            FontFamily="{StaticResource DashFontFamily}"
                            FontSize="13"
                            Foreground="{StaticResource DashTextMuted}"

@@ -11,20 +11,6 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False">
 
-    <!-- ================================================================
-         APPOINTMENT WINDOW WRAPPER
-         
-         This is a borderless Window that wraps the existing
-         CreateAppointmentView (UserControl) to display it as a
-         modal popup from the dashboard.
-         
-         Features:
-         - Custom title bar with drag support
-         - Rounded corners with drop shadow
-         - Close button
-         - Embeds the existing CreateAppointmentView UserControl
-         ================================================================ -->
-
     <Border CornerRadius="16" Background="#F8F9FC" Margin="16"
             BorderBrush="#D1D5DB" BorderThickness="1">
         <Border.Effect>

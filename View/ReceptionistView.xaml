@@ -23,18 +23,6 @@
             <!-- ===== TOP HEADER ===== -->
             <components:HeaderControl DockPanel.Dock="Top"/>
 
-            <!-- ===== DYNAMIC CONTENT AREA =====
-                 ContentControl binds to CurrentView property in ViewModel.
-                 
-                 When sidebar menu is clicked:
-                 1. MenuNavigateCommand fires
-                 2. ExecuteMenuNavigate sets CurrentView to the target UserControl
-                 3. ContentControl re-renders the new view
-                 
-                 CurrentView starts with DashboardContentControl (default).
-                 "Đăng ký" sets it to RegisterPatientView.
-                 All child views inherit DataContext from the ViewModel.
-                 ===== -->
             <ContentControl Content="{Binding CurrentView}"/>
         </DockPanel>
     </DockPanel>
