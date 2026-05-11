@@ -1,103 +1,81 @@
-using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model.Doctor;
+using TamAnh_EMR_System.Repositories;
 
 namespace TamAnh_EMR_System.ViewModel.Doctor
 {
-    /// <summary>
-    /// ViewModel for Doctor Prescription screen ("Đơn thuốc").
-    /// Left panel: search + prescription list. Right panel: detail + medicines.
-    /// FUTURE: Replace sample data with API calls.
-    /// </summary>
     public class PrescriptionViewModel : ViewModelBase
     {
-        // ===== SEARCH =====
-        private string _searchText;
-        public string SearchText
-        {
-            get => _searchText;
-            set { _searchText = value; OnPropertyChanged(nameof(SearchText)); }
-        }
+        private readonly PrescriptionRepository _repository;
 
-        // ===== PRESCRIPTION LIST =====
+        // Danh sách Đơn thuốc (Trái)
         public ObservableCollection<Prescription> Prescriptions { get; set; }
 
+        // Danh sách Thuốc chi tiết (Phải)
+        public ObservableCollection<MedicineItem> SelectedPrescriptionDetails { get; set; }
+
+        // Biến lưu Đơn thuốc đang được chọn
         private Prescription _selectedPrescription;
         public Prescription SelectedPrescription
         {
             get => _selectedPrescription;
             set
             {
-                if (_selectedPrescription != null) _selectedPrescription.IsSelected = false;
                 _selectedPrescription = value;
-                if (_selectedPrescription != null) _selectedPrescription.IsSelected = true;
                 OnPropertyChanged(nameof(SelectedPrescription));
-                OnPropertyChanged(nameof(HasSelection));
-                LoadMedicinesForPrescription();
+
+                // Khi click chọn toa thuốc khác, lập tức tải danh sách thuốc tương ứng
+                if (_selectedPrescription != null)
+                {
+                    _ = LoadMedicineDetailsAsync(_selectedPrescription.RecordId);
+                }
             }
         }
 
-        public bool HasSelection => SelectedPrescription != null;
-
-        // ===== MEDICINE DETAIL =====
-        public ObservableCollection<MedicineItem> Medicines { get; set; }
-
-        // ===== COMMANDS =====
-        public ICommand SearchCommand { get; }
-        public ICommand AddPatientCommand { get; }
-        public ICommand SelectPrescriptionCommand { get; }
         public ICommand PrintCommand { get; }
+        public ICommand AddPatientCommand { get; }
 
         public PrescriptionViewModel()
         {
+            _repository = new PrescriptionRepository();
             Prescriptions = new ObservableCollection<Prescription>();
-            Medicines = new ObservableCollection<MedicineItem>();
+            SelectedPrescriptionDetails = new ObservableCollection<MedicineItem>();
 
-            SearchCommand = new RelayCommand(_ => MessageBox.Show($"Tìm kiếm: {SearchText}", "Tìm kiếm"));
-            AddPatientCommand = new RelayCommand(_ => MessageBox.Show("Thêm bệnh nhân mới", "Thêm"));
-            SelectPrescriptionCommand = new RelayCommand(p => { if (p is Prescription rx) SelectedPrescription = rx; });
-            PrintCommand = new RelayCommand(_ => MessageBox.Show($"In đơn thuốc cho {SelectedPrescription?.PatientName}", "In đơn thuốc"));
+            PrintCommand = new RelayCommand(_ => MessageBox.Show("Đang kết nối máy in...", "In Đơn Thuốc"));
+            AddPatientCommand = new RelayCommand(_ => MessageBox.Show("Mở form thêm hồ sơ mới", "Tra Cứu"));
 
-            LoadSampleData();
+            // Tải danh sách đơn thuốc khi mở trang
+            _ = LoadPrescriptionsAsync();
         }
 
-        private void LoadMedicinesForPrescription()
+        private async Task LoadPrescriptionsAsync()
         {
-            Medicines.Clear();
-            if (SelectedPrescription == null) return;
-
-            if (SelectedPrescription.Status == "Mới kê")
+            var data = await _repository.GetAllPrescriptionsAsync();
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Medicines.Add(new MedicineItem { Name = "Amoxicillin 500mg", Dosage = "Uống 2 lần/ngày, mỗi lần 1 viên.", Instruction = "Sau bữa ăn.", Quantity = 20 });
-                Medicines.Add(new MedicineItem { Name = "Paracetamol 500mg", Dosage = "Uống khi đau hoặc sốt > 38.5 độ.", Instruction = "Cách nhau ít nhất 4 tiếng.", Quantity = 10 });
-            }
-            else
-            {
-                Medicines.Add(new MedicineItem { Name = "Omeprazole 20mg", Dosage = "Uống 1 lần/ngày trước ăn sáng.", Instruction = "Không nhai viên thuốc.", Quantity = 14 });
-            }
+                Prescriptions.Clear();
+                foreach (var item in data)
+                {
+                    Prescriptions.Add(item);
+                }
+            });
         }
 
-        private void LoadSampleData()
+        private async Task LoadMedicineDetailsAsync(string recordId)
         {
-            var rx1 = new Prescription
+            var details = await _repository.GetMedicineDetailsAsync(recordId);
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                PatientName = "Nguyễn Văn A", PatientId = "BN-2023-0891",
-                Date = new DateTime(2023, 10, 12, 9, 30, 0),
-                DoctorName = "BS. Trần Thanh Bình", Status = "Mới kê"
-            };
-            var rx2 = new Prescription
-            {
-                PatientName = "Trần Thị B", PatientId = "BN-2023-0742",
-                Date = new DateTime(2023, 10, 12, 8, 15, 0),
-                DoctorName = "BS. Lê Hoàng", Status = "Đã nhận"
-            };
-
-            Prescriptions.Add(rx1);
-            Prescriptions.Add(rx2);
-            SelectedPrescription = rx1;
+                SelectedPrescriptionDetails.Clear();
+                foreach (var item in details)
+                {
+                    SelectedPrescriptionDetails.Add(item);
+                }
+            });
         }
     }
 }

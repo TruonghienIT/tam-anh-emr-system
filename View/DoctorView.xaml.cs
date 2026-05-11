@@ -23,5 +23,10 @@ namespace TamAnh_EMR_System.View
         {
             InitializeComponent();
         }
+
+        private void DoctorDashboardView_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

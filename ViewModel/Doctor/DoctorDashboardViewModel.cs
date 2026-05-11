@@ -1,18 +1,25 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model.Doctor;
+using TamAnh_EMR_System.Repositories; // Đã đổi sang dùng thư mục Repositories của bạn
 
 namespace TamAnh_EMR_System.ViewModel.Doctor
 {
     /// <summary>
     /// ViewModel for Doctor Dashboard ("Trang chủ Bác sĩ").
     /// Provides stats, appointments, queue, and action commands.
-    /// FUTURE: Replace LoadSampleData with API calls.
+    /// Dùng ADO.NET thông qua Repository Pattern.
     /// </summary>
     public class DoctorDashboardViewModel : ViewModelBase
     {
+        // ===== REPOSITORY =====
+        private readonly DoctorDashboardRepository _repository;
+
         // ===== STATS =====
         private int _patientsTodayCount;
         public int PatientsTodayCount
@@ -50,6 +57,9 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
         public DoctorDashboardViewModel()
         {
+            // Khởi tạo Repository để gọi DB
+            _repository = new DoctorDashboardRepository();
+
             Appointments = new ObservableCollection<AppointmentItem>();
             QueuePatients = new ObservableCollection<QueuePatient>();
             ChartLine = new ObservableCollection<DoctorDashboardData>();
@@ -58,39 +68,108 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             RegisterPatientCommand = new RelayCommand(_ => MessageBox.Show("Đăng ký bệnh nhân", "Đăng ký"));
             CreateAppointmentCommand = new RelayCommand(_ => MessageBox.Show("Tạo lịch hẹn", "Lịch hẹn"));
             SearchPatientCommand = new RelayCommand(_ => MessageBox.Show("Tra cứu bệnh nhân", "Tra cứu"));
+
             CallPatientCommand = new RelayCommand(p =>
             {
-                if (p is QueuePatient q) MessageBox.Show($"Gọi bệnh nhân: {q.Name}", "Gọi");
+                if (p is QueuePatient q)
+                {
+                    // Tương lai: Update status trong DB từ "Đang chờ" -> "Đang khám" ở đây
+                    MessageBox.Show($"Đang gọi bệnh nhân: {q.Name} vào phòng khám Tâm Anh.", "Gọi Bệnh Nhân");
+                }
             });
+
             ViewAllCommand = new RelayCommand(_ => MessageBox.Show("Xem tất cả lịch hẹn", "Xem"));
 
-            LoadSampleData();
+            // Gọi hàm lấy dữ liệu bất đồng bộ từ DB
+            _ = LoadDataFromDatabaseAsync();
         }
 
-        private void LoadSampleData()
+        private async Task LoadDataFromDatabaseAsync()
         {
-            PatientsTodayCount = 42;
-            DiseaseStatsCount = 15;
-            QueueCount = 5;
+            try
+            {
+                // 1. KÉO DỮ LIỆU TỪ DATABASE QUA REPOSITORY
+                var todaysAppointments = await _repository.GetTodaysAppointmentsAsync();
+                int totalDiseases = await _repository.GetTotalDiseasesCountAsync();
 
-            Appointments.Add(new AppointmentItem { Time = "09:00 AM", PatientName = "Nguyễn Văn A", DoctorName = "BS Lê tân", Status = "Đang chờ" });
-            Appointments.Add(new AppointmentItem { Time = "09:30 AM", PatientName = "Trần Thị B", DoctorName = "BS Lê tân", Status = "Đã khám" });
-            Appointments.Add(new AppointmentItem { Time = "10:00 AM", PatientName = "Lê Hoàng C", DoctorName = "BS Lê tân", Status = "Khẩn cấp" });
+                // Lọc danh sách hàng đợi
+                var queueList = todaysAppointments
+                    .Where(a => a.Status == "Đang chờ" || a.Status == "Khẩn cấp")
+                    .ToList();
 
-            QueuePatients.Add(new QueuePatient { Name = "Nguyễn Văn D", Initials = "NV", AvatarColor = "#6366F1", WaitingTime = "Waiting: 15 mins", IsUrgent = false });
-            QueuePatients.Add(new QueuePatient { Name = "Phạm Thị E", Initials = "PT", AvatarColor = "#6366F1", WaitingTime = "Waiting: 22 mins", IsUrgent = false });
-            QueuePatients.Add(new QueuePatient { Name = "Hoàng Minh F", Initials = "HM", AvatarColor = "#F59E0B", WaitingTime = "Waiting: 5 mins", IsUrgent = true });
+                // 2. CẬP NHẬT GIAO DIỆN TRÊN UI THREAD (Vì đang chạy async)
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    // Cập nhật các con số thống kê
+                    PatientsTodayCount = todaysAppointments.Count;
+                    QueueCount = queueList.Count;
+                    DiseaseStatsCount = totalDiseases;
 
-            // Line chart data points
-            for (int i = 0; i < 8; i++)
-                ChartLine.Add(new DoctorDashboardData { Value = new[] { 10, 15, 12, 25, 30, 28, 35, 42 }[i] });
+                    // Clear List cũ
+                    Appointments.Clear();
+                    QueuePatients.Clear();
 
-            // Bar chart data points
-            ChartBars.Add(new DoctorDashboardData { Value = 30 });
-            ChartBars.Add(new DoctorDashboardData { Value = 50 });
-            ChartBars.Add(new DoctorDashboardData { Value = 70 });
-            ChartBars.Add(new DoctorDashboardData { Value = 45 });
-            ChartBars.Add(new DoctorDashboardData { Value = 60 });
+                    // Đổ dữ liệu vào bảng Lịch Hẹn
+                    foreach (var appt in todaysAppointments)
+                    {
+                        Appointments.Add(new AppointmentItem
+                        {
+                            Time = appt.AppointmentTime.ToString(@"hh\:mm"), // Lấy giờ:phút
+                            PatientName = appt.PatientName,
+                            DoctorName = appt.DoctorName,
+                            Status = appt.Status
+                        });
+                    }
+
+                    // Đổ dữ liệu vào Hàng Đợi
+                    foreach (var q in queueList)
+                    {
+                        // Cắt chữ cái cuối cùng trong tên để làm Avatar
+                        string pName = q.PatientName ?? "Unknown";
+                        string initials = pName.Split(' ').LastOrDefault()?.Substring(0, 1).ToUpper() ?? "U";
+                        bool isUrgent = q.Status == "Khẩn cấp";
+
+                        QueuePatients.Add(new QueuePatient
+                        {
+                            Name = pName,
+                            Initials = initials,
+                            AvatarColor = isUrgent ? "#F59E0B" : "#6366F1", // Cam cho Khẩn cấp, Xanh cho bình thường
+                            WaitingTime = isUrgent ? "Khẩn cấp" : "Đang chờ",
+                            IsUrgent = isUrgent
+                        });
+                    }
+
+                    // Tạm thời giữ Mock Data cho Biểu đồ (Chart)
+                    LoadChartData();
+                });
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"Lỗi kết nối cơ sở dữ liệu: {ex.Message}", "Lỗi DB", MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+            }
+        }
+
+        private void LoadChartData()
+        {
+            ChartLine.Clear();
+            ChartBars.Clear();
+
+            // Line chart data points (Giả lập số bệnh nhân theo giờ)
+            int[] lineValues = { 10, 15, 12, 25, 30, 28, 35, 42 };
+            foreach (var val in lineValues)
+            {
+                ChartLine.Add(new DoctorDashboardData { Value = val });
+            }
+
+            // Bar chart data points (Giả lập số ca mắc các bệnh phổ biến)
+            int[] barValues = { 30, 50, 70, 45, 60 };
+            foreach (var val in barValues)
+            {
+                ChartBars.Add(new DoctorDashboardData { Value = val });
+            }
         }
     }
 }

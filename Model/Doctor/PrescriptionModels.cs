@@ -23,6 +23,8 @@ namespace TamAnh_EMR_System.Model.Doctor
             get => _isSelected;
             set { _isSelected = value; OnProp(nameof(IsSelected)); }
         }
+        // Thêm dòng này vào class Prescription hiện tại của bạn:
+        public string RecordId { get; set; }
     }
 
     /// <summary>Medicine line item within a prescription.</summary>
