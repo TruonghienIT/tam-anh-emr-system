@@ -43,15 +43,47 @@
                     </StackPanel>
                 </Button>
 
-                <!-- + Hẹn lịch mới button -->
-                <Button Style="{StaticResource DashPrimaryButton}"
-                        Command="{Binding AddAppointmentCommand}"
-                        Margin="0,0,0,12"
-                        HorizontalAlignment="Stretch">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="+" FontSize="16" FontWeight="Bold" Margin="0,0,8,0"
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Text="Hẹn lịch mới" VerticalAlignment="Center"/>
+                <!-- + Hẹn lịch mới -->
+                <Button Command="{Binding MenuNavigateCommand}"
+        CommandParameter="Hẹn lịch mới"
+        Margin="0,0,0,12"
+        HorizontalAlignment="Stretch">
+
+                    <Button.Style>
+                        <Style TargetType="Button"
+               BasedOn="{StaticResource DashPrimaryButton}">
+
+                            <Style.Triggers>
+
+                                <!-- Active state -->
+                                <DataTrigger Binding="{Binding SelectedMenu}"
+                             Value="Hẹn lịch mới">
+
+                                    <Setter Property="Background"
+                            Value="{StaticResource DashPrimaryBlueLight}"/>
+
+                                    <Setter Property="Foreground"
+                            Value="{StaticResource DashPrimaryBlue}"/>
+
+                                    <Setter Property="FontWeight"
+                            Value="SemiBold"/>
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+
+                    <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Center">
+
+                        <TextBlock Text="+"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   Margin="0,0,8,0"
+                   VerticalAlignment="Center"/>
+
+                        <TextBlock Text="Hẹn lịch mới"
+                   VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

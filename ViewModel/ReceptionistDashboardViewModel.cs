@@ -546,17 +546,9 @@ namespace TamAnh_EMR_System.ViewModel
 
         private void ExecuteAddAppointment(object parameter)
         {
-            // Open CreateAppointmentWindow as a modal dialog
-            var window = new CreateAppointmentWindow();
-            window.Owner = Application.Current.MainWindow;
-            var result = window.ShowDialog();
+            SelectedMenu = "Hẹn lịch mới";
 
-            // If appointment was created successfully, reload dashboard from DB
-            if (result == true)
-            {
-                _ = LoadDashboardFromDatabaseAsync();
-                _ = LoadChartAsync();
-            }
+            CurrentView = new CreateAppointmentWindow();
         }
 
         private async void ExecuteExportReport(object parameter)
@@ -791,6 +783,9 @@ namespace TamAnh_EMR_System.ViewModel
                     CurrentView = new RegisterPatientView();
                     break;
 
+                case "Hẹn lịch mới":
+                    CurrentView = new CreateAppointmentWindow();
+                    break;
                 // Future: uncomment when views are ready
                 // case "Tìm kiếm bệnh nhân":
                 //     CurrentView = new SearchPatientView();

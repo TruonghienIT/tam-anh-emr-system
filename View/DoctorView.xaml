@@ -76,13 +76,14 @@
                         </StackPanel>
                     </RadioButton>
 
-                    <RadioButton GroupName="MainMenu" Style="{StaticResource MenuButton}">
+                    <RadioButton x:Name="MenuQuanLyLichHen" GroupName="MainMenu" Style="{StaticResource MenuButton}">
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconImage Icon="Stethoscope" Width="18" Height="18" Margin="0,0,16,0"
+                            <fa:IconImage Icon="Calendar" Width="18" Height="18" Margin="0,0,16,0"
                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"/>
-                            <TextBlock Text="Tư vấn" FontSize="15"/>
+                            <TextBlock Text="Quản lý lịch hẹn" FontSize="15"/>
                         </StackPanel>
                     </RadioButton>
+
                     <RadioButton x:Name="MenuDonThuoc" GroupName="MainMenu" Style="{StaticResource MenuButton}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="FilePrescription" Width="18" Height="18" Margin="0,0,16,0"
@@ -96,14 +97,6 @@
                             <fa:IconImage Icon="FolderOpen" Width="18" Height="18" Margin="0,0,16,0"
                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"/>
                             <TextBlock Text="Hồ sơ bệnh án" FontSize="15"/>
-                        </StackPanel>
-                    </RadioButton>
-
-                    <RadioButton GroupName="MainMenu" Style="{StaticResource MenuButton}">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:IconImage Icon="ChartSimple" Width="18" Height="18" Margin="0,0,16,0"
-                                          Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"/>
-                            <TextBlock Text="Phân tích" FontSize="15"/>
                         </StackPanel>
                     </RadioButton>
                 </StackPanel>

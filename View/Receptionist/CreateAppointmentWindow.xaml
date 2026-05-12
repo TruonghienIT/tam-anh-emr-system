@@ -1,66 +1,11 @@
-<Window x:Class="TamAnh_EMR_System.View.Receptionist.CreateAppointmentWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:TamAnh_EMR_System.View.Receptionist"
-        Title="Tạo lịch hẹn mới"
-        Width="1100" Height="780"
-        WindowStartupLocation="CenterOwner"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        ResizeMode="NoResize"
-        ShowInTaskbar="False">
+<UserControl x:Class="TamAnh_EMR_System.View.Receptionist.CreateAppointmentWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:TamAnh_EMR_System.View.Receptionist"
+             Background="{StaticResource DashPageBackground}"
+             FontFamily="{StaticResource DashFontFamily}">
 
-    <Border CornerRadius="16" Background="#F8F9FC" Margin="16"
-            BorderBrush="#D1D5DB" BorderThickness="1">
-        <Border.Effect>
-            <DropShadowEffect ShadowDepth="4" BlurRadius="24" Opacity="0.18" Color="#000000"/>
-        </Border.Effect>
-
-        <Grid>
-            <Grid.RowDefinitions>
-                <!-- Custom title bar -->
-                <RowDefinition Height="52"/>
-                <!-- Content -->
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <!-- ===== CUSTOM TITLE BAR ===== -->
-            <Border Grid.Row="0" Background="White" CornerRadius="16,16,0,0"
-                    BorderBrush="#E5E7EB" BorderThickness="0,0,0,1"
-                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                <Grid Margin="20,0">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Ellipse Width="10" Height="10" Fill="#3B82F6" Margin="0,0,10,0"/>
-                        <TextBlock Text="Tạo lịch hẹn mới" 
-                                   FontSize="15" FontWeight="SemiBold" 
-                                   Foreground="#111827" FontFamily="Segoe UI"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-
-                    <!-- Close button -->
-                    <Button HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Click="CloseButton_Click" Cursor="Hand"
-                            Width="32" Height="32">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="Bd" Background="Transparent" CornerRadius="8">
-                                    <TextBlock Text="✕" FontSize="14" Foreground="#9CA3AF"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Bd" Property="Background" Value="#FEE2E2"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </Grid>
-            </Border>
-
-            <!-- ===== CONTENT: Embed CreateAppointmentView UserControl ===== -->
-            <local:CreateAppointmentView Grid.Row="1" x:Name="AppointmentContent"/>
-        </Grid>
-    </Border>
-</Window>
+    <Grid>
+        <local:CreateAppointmentView/>
+    </Grid>
+</UserControl>

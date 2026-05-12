@@ -25,55 +25,20 @@
         <StackPanel>
 
             <!-- HEADER -->
-            <Grid Margin="0,0,0,24">
-                <StackPanel>
-                    <TextBlock Text="Trang chủ" FontSize="28" FontWeight="Bold" Foreground="#111827"/>
-                    <TextBlock Text="Đây là tổng quan cho ngày hôm nay, ngày 24 tháng 10." FontSize="14" Foreground="#6B7280" Margin="0,6,0,0"/>
-                </StackPanel>
-                <Button Style="{StaticResource B}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="16,8" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconImage Icon="Calendar" Width="14" Height="14" Foreground="#3B82F6" Margin="0,0,6,0"/>
-                        <TextBlock Text="Lịch" FontSize="13" Foreground="#374151" FontWeight="SemiBold"/>
+                <Grid Margin="0,0,0,24">
+                    <StackPanel>
+                        <TextBlock Text="Trang chủ" FontSize="28" FontWeight="Bold" Foreground="#111827"/>
+                        <TextBlock Text="Đây là tổng quan cho ngày hôm nay, ngày 24 tháng 10." FontSize="14" Foreground="#6B7280" Margin="0,6,0,0"/>
                     </StackPanel>
-                </Button>
-            </Grid>
+                    <Button Style="{StaticResource B}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="16,8" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Calendar" Width="14" Height="14" Foreground="#3B82F6" Margin="0,0,6,0"/>
+                            <TextBlock Text="Lịch" FontSize="13" Foreground="#374151" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
 
-            <!-- ACTION CARDS (3 cards) -->
-            <Grid Margin="0,0,0,20">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-
-                <!-- Card 1: Đăng ký bệnh nhân -->
-                <Button Grid.Column="0" Style="{StaticResource B}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="20,18" Command="{Binding RegisterPatientCommand}">
-                    <StackPanel HorizontalAlignment="Left">
-                        <Border Width="44" Height="44" CornerRadius="10" Background="#EFF6FF" Margin="0,0,0,14" HorizontalAlignment="Left">
-                            <fa:IconImage Icon="UserPlus" Width="20" Height="20" Foreground="#3B82F6"/>
-                        </Border>
-                        <TextBlock Text="Đăng ký bệnh nhân" FontSize="15" FontWeight="Bold" Foreground="#111827" TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Button>
-
-                <!-- Card 2: Tạo lịch hẹn -->
-                <Button Grid.Column="2" Style="{StaticResource B}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="20,18" Command="{Binding CreateAppointmentCommand}">
-                    <StackPanel HorizontalAlignment="Left">
-                        <Border Width="44" Height="44" CornerRadius="10" Background="#ECFDF5" Margin="0,0,0,14" HorizontalAlignment="Left">
-                            <fa:IconImage Icon="CalendarCheck" Width="20" Height="20" Foreground="#10B981"/>
-                        </Border>
-                        <TextBlock Text="Tạo lịch hẹn" FontSize="15" FontWeight="Bold" Foreground="#111827"/>
-                    </StackPanel>
-                </Button>
-
-                <!-- Card 3: Tra cứu bệnh nhân -->
-                <Button Grid.Column="4" Style="{StaticResource B}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="20,18" Command="{Binding SearchPatientCommand}">
-                    <StackPanel HorizontalAlignment="Left">
-                        <Border Width="44" Height="44" CornerRadius="10" Background="#F3F4F6" Margin="0,0,0,14" HorizontalAlignment="Left">
-                            <fa:IconImage Icon="MagnifyingGlass" Width="20" Height="20" Foreground="#6B7280"/>
-                        </Border>
-                        <TextBlock Text="Tra cứu bệnh nhân" FontSize="15" FontWeight="Bold" Foreground="#111827" TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Button>
-            </Grid>
-
-            <!-- STATISTICS CARDS -->
+                <!-- STATISTICS CARDS -->
             <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
 

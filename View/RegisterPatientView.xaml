@@ -190,7 +190,7 @@
                             <fa:IconImage Icon="User" Width="16" Height="16"
                                           Foreground="#9CA3AF" Margin="0,0,10,0"/>
                             <TextBlock Text="Thông tin cá nhân" FontSize="14"
-                                       Foreground="#9CA3AF"/>
+                                        Foreground="#6B7280"/>
                         </StackPanel>
                     </Border>
 
@@ -210,7 +210,7 @@
                             <fa:IconImage Icon="Asterisk" Width="16" Height="16"
                                           Foreground="#9CA3AF" Margin="0,0,10,0"/>
                             <StackPanel>
-                                <TextBlock Text="Người liên hệ khẩn" FontSize="14"
+                                <TextBlock Text="Thông tin y tế bổ sung" FontSize="14"
                                            Foreground="#6B7280"/>
                                 <TextBlock Text="cấp" FontSize="14"
                                            Foreground="#6B7280"/>
@@ -371,40 +371,45 @@
                                          Tag="Địa chỉ, Số nhà, Tên đường"/>
                             </StackPanel>
 
-                            <!-- Row 3: City + District + Postal -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="16"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox Grid.Column="0" Style="{StaticResource FormInput}"
-                                         Text="{Binding Patient.City, UpdateSourceTrigger=PropertyChanged}"
-                                         Tag="Thành phố"/>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                    NGƯỜI LIÊN HỆ KHẨN CẤP
+                                    </TextBlock>
 
-                                <TextBox Grid.Column="2" Style="{StaticResource FormInput}"
-                                         Text="{Binding Patient.District, UpdateSourceTrigger=PropertyChanged}"
-                                         Tag="Quận/Huyện"/>
+                                    <TextBox Style="{StaticResource FormInput}"
+                         Text="{Binding Patient.EmergencyContactName, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="Nguyễn Văn A"/>
+                                </StackPanel>
 
-                                <TextBox Grid.Column="4" Style="{StaticResource FormInput}"
-                                         Text="{Binding Patient.PostalCode, UpdateSourceTrigger=PropertyChanged}"
-                                         Tag="Mã bưu điện"/>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource FieldLabel}">
+                    SĐT KHẨN CẤP
+                                    </TextBlock>
+
+                                    <TextBox Style="{StaticResource FormInput}"
+                         Text="{Binding Patient.EmergencyContactPhone, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="0901234567"/>
+                                </StackPanel>
+
                             </Grid>
                         </StackPanel>
                     </Border>
                     <!-- EXTRA MEDICAL INFO -->
                     <Border Background="White"
-        CornerRadius="12"
-        Padding="28,24"
-        BorderBrush="#E5E7EB"
-        BorderThickness="1"
-        Margin="0,0,0,16">
+                            CornerRadius="12"
+                            Padding="28,24"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="1"
+                            Margin="0,0,0,16">
 
                         <StackPanel>
-
                             <TextBlock Text="Thông tin y tế bổ sung"
                    FontSize="18"
                    FontWeight="Bold"
@@ -453,35 +458,6 @@
                      Text="{Binding Patient.Allergies, UpdateSourceTrigger=PropertyChanged}"
                      Tag="Thông tin dị ứng thuốc/thực phẩm"/>
                             </StackPanel>
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="16"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Style="{StaticResource FieldLabel}">
-                    NGƯỜI LIÊN HỆ KHẨN CẤP
-                                    </TextBlock>
-
-                                    <TextBox Style="{StaticResource FormInput}"
-                         Text="{Binding Patient.EmergencyContactName, UpdateSourceTrigger=PropertyChanged}"
-                         Tag="Nguyễn Văn A"/>
-                                </StackPanel>
-
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Style="{StaticResource FieldLabel}">
-                    SĐT KHẨN CẤP
-                                    </TextBlock>
-
-                                    <TextBox Style="{StaticResource FormInput}"
-                         Text="{Binding Patient.EmergencyContactPhone, UpdateSourceTrigger=PropertyChanged}"
-                         Tag="0901234567"/>
-                                </StackPanel>
-
-                            </Grid>
                         </StackPanel>
                     </Border>
                     <!-- ====================================================
