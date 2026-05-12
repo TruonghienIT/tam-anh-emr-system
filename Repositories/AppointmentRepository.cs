@@ -193,14 +193,15 @@ namespace TamAnh_EMR_System.Repositories
                 cmd.Transaction = txn;
 
                 cmd.CommandText = @"
-            SELECT ISNULL(MAX(CAST(SUBSTRING(id, 3, 6) AS INT)), 0) + 1
-            FROM appointments";
+    SELECT 
+        'A' + RIGHT('000' + CAST(
+            ISNULL((
+                SELECT MAX(CAST(SUBSTRING(id,2,LEN(id)) AS INT))
+                FROM patients
+            ),0) + 1 AS VARCHAR
+        ),3)";
 
-                var result = await cmd.ExecuteScalarAsync();
-
-                int nextNum = Convert.ToInt32(result);
-
-                return $"LH{nextNum:D6}";
+                return (await cmd.ExecuteScalarAsync()).ToString();
             }
         }
 
@@ -251,21 +252,26 @@ namespace TamAnh_EMR_System.Repositories
         }
         public async Task<string> GenerateNextIdAsync()
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = GetConnection())
             {
                 await conn.OpenAsync();
 
                 string query = @"
-            SELECT ISNULL(MAX(CAST(SUBSTRING(id, 3, 6) AS INT)), 0) + 1
-            FROM appointments";
+                    SELECT 
+                        'A' + RIGHT('000' + CAST(
+                            ISNULL((
+                                SELECT MAX(CAST(SUBSTRING(id,2,LEN(id)) AS INT))
+                                FROM appointments
+                            ),0) + 1 AS VARCHAR
+                        ),3)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    int nextNum = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-                    return $"LH{nextNum:D6}";
+                    return (await cmd.ExecuteScalarAsync()).ToString();
                 }
             }
         }
+
         public async Task AddAsync(Appointment appointment)
         {
             using (SqlConnection conn = GetConnection())
