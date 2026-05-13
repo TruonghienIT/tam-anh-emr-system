@@ -46,6 +46,7 @@
     <None Remove="Resource\Image\question.png" />
     <None Remove="Resource\Image\receptionist.jpg" />
     <None Remove="Resource\Image\user-icon.png" />
+    <None Remove="Resource\Image\user.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +80,7 @@
     <Resource Include="Resource\Image\question.png" />
     <Resource Include="Resource\Image\receptionist.jpg" />
     <Resource Include="Resource\Image\user-icon.png" />
+    <Resource Include="Resource\Image\user.jpg" />
   </ItemGroup>
 
 </Project>

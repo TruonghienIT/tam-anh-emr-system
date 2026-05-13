@@ -17,6 +17,7 @@
             <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
             <converters:StatusToBackgroundConverter x:Key="StatusToBackgroundConverter"/>
             <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+            <converters:VietnameseDayConverter x:Key="VietnameseDayConverter"/>
             <conv:PrevPageConverter x:Key="PrevPageConverter"/>
             <conv:NextPageConverter x:Key="NextPageConverter"/>
         </ResourceDictionary>

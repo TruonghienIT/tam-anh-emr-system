@@ -151,6 +151,12 @@
                           CanUserAddRows="False"
                           SelectionMode="Single">
 
+                    <DataGrid.Resources>
+                        <Style TargetType="ScrollViewer" BasedOn="{StaticResource ModernScrollViewer}"/>
+
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                    </DataGrid.Resources>
+
                     <!-- HEADER STYLE -->
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">

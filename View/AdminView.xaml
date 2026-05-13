@@ -37,6 +37,10 @@
         <DataTemplate DataType="{x:Type viewModel:PatientPanelViewModel}">
             <local:PatientPanelView/>
         </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModel:AppointmentPanelViewModel}">
+            <local:AppointmentPanelView/>
+        </DataTemplate>
     </Window.Resources>
 
     <Border CornerRadius="10"
@@ -143,7 +147,8 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource menuButton}"
-                                 Tag="{StaticResource color4}">
+                                 Tag="{StaticResource color4}"
+                                 Command="{Binding ShowAppointmentPanelViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="ClipboardList" Style="{StaticResource menuButtonIcon}"/>
                             <TextBlock Text="Lịch hẹn" Style="{StaticResource menuButtonText}"/>
@@ -151,15 +156,8 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource menuButton}"
-                                 Tag="{StaticResource color5}">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:IconImage Icon="ChartColumn" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Thống kê" Style="{StaticResource menuButtonText}"/>
-                        </StackPanel>
-                    </RadioButton>
-
-                    <RadioButton Style="{StaticResource menuButton}"
-                                 Tag="{StaticResource color6}">
+                                 Tag="{StaticResource color6}"
+                                 Command="{Binding LogoutCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="RightFromBracket" Style="{StaticResource menuButtonIcon}"/>
                             <TextBlock Text="Đăng xuất" Style="{StaticResource menuButtonText}"/>

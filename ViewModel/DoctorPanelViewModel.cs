@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
-using TamAnh_EMR_System.Services;   
+using TamAnh_EMR_System.Services;
 
 namespace TamAnh_EMR_System.ViewModel
 {

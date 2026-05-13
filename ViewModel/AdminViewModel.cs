@@ -72,12 +72,12 @@ namespace TamAnh_EMR_System.ViewModel
 
         //Commands
         public ICommand ShowHomeViewCommand { get; }
-
         public ICommand ShowUserPanelViewCommand { get; }
         public ICommand ShowDoctorPanelViewCommand { get; }
         public ICommand ShowReceptionistPanelViewCommand { get; }
-
         public ICommand ShowPatientPanelViewCommand { get; }
+        public ICommand ShowAppointmentPanelViewCommand { get; }
+        public ICommand LogoutCommand { get; }
 
         public AdminViewModel()
         {
@@ -87,7 +87,8 @@ namespace TamAnh_EMR_System.ViewModel
             ShowDoctorPanelViewCommand = new ViewModelCommand(ExecuteShowDoctorViewCommand);
             ShowReceptionistPanelViewCommand = new ViewModelCommand(ExecuteShowReceptionistViewCommand);
             ShowPatientPanelViewCommand = new ViewModelCommand(ExecuteShowPatientViewCommand);
-
+            ShowAppointmentPanelViewCommand = new ViewModelCommand(ExecuteShowAppointmentViewCommand);
+            LogoutCommand = new ViewModelCommand(ExecuteLogoutCommand);
 
             //Default View
             ExecuteShowHomeViewCommand(null);
@@ -127,7 +128,28 @@ namespace TamAnh_EMR_System.ViewModel
             Caption = "Bệnh nhân";
             Icon = IconChar.Bed;
         }
+        public void ExecuteShowAppointmentViewCommand (object obj)
+        {
+            CurrentChildView = new AppointmentPanelViewModel();
+            Caption = "Lịch hẹn";
+            Icon = IconChar.ClipboardList;
+        }
+        private void ExecuteLogoutCommand(object obj)
+        {
+            var result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question);
 
+            if (result == MessageBoxResult.Yes)
+            {
+                LoginView loginView = new LoginView();
+                loginView.Show();
+                Application.Current.Windows
+                    .OfType<Window>()
+                    .SingleOrDefault(w => w is AdminView)
+                    ?.Close();
+            }
+        }
         private void LoadCurrentUserData()
         {
             var user = UserSession.CurrentUser;
