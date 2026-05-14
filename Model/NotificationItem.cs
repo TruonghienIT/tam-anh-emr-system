@@ -28,6 +28,7 @@ namespace TamAnh_EMR_System.Model
                     "success" => Brushes.LimeGreen,
                     "error" => Brushes.IndianRed,
                     "warning" => Brushes.DarkOrange,
+                    "info" => Brushes.MediumPurple,
                     _ => Brushes.DodgerBlue
                 };
             }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
 
@@ -12,11 +13,12 @@ namespace TamAnh_EMR_System.ViewModel
     {
         private readonly HomeViewRepository repository;
 
+        private DispatcherTimer _timer;
+
         public HomeViewModel()
         {
             repository = new HomeViewRepository();
 
-            CurrentDate = DateTime.Now.ToString("dddd, dd/MM/yyyy | HH:mm");
 
             ChartTypes = new ObservableCollection<string>
             {
@@ -30,7 +32,38 @@ namespace TamAnh_EMR_System.ViewModel
             LoadDashboardCommand = new ViewModelCommand(_ => LoadDashboard());
 
             LoadDashboard();
+
+            StartAutoRefresh();
         }
+
+        #region AUTO REFRESH TIMER
+
+        private void StartAutoRefresh()
+        {
+            _timer = new DispatcherTimer();
+
+            _timer.Interval = TimeSpan.FromSeconds(10);
+
+            _timer.Tick += (s, e) =>
+            {
+                LoadDashboard();
+            };
+
+            _timer.Start();
+        }
+
+        public void StopAutoRefresh()
+        {
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer.Tick -= null;
+                _timer = null;
+            }
+        }
+
+        #endregion
+
 
         #region Dashboard Count
 
@@ -229,12 +262,29 @@ namespace TamAnh_EMR_System.ViewModel
 
         #endregion
 
+        private void LoadRecentActivities()
+        {
+            var data = repository.GetRecentActivities();
+
+            if (RecentActivities == null)
+                RecentActivities = new ObservableCollection<NotificationItem>();
+
+            RecentActivities.Clear();
+
+            foreach (var item in data)
+            {
+                RecentActivities.Add(item);
+            }
+        }
+
         public ICommand LoadDashboardCommand { get; }
 
-        private void LoadDashboard()
+        public void LoadDashboard()
         {
             try
             {
+                CurrentDate = DateTime.Now.ToString("dddd, dd/MM/yyyy | HH:mm");
+
                 PatientCount = repository.GetPatientCount();
 
                 AppointmentCount = repository.GetAppointmentCount();
@@ -256,7 +306,8 @@ namespace TamAnh_EMR_System.ViewModel
 
                 RecentAppointments = repository.GetTodayAppointments();
 
-                RecentActivities = repository.GetRecentActivities();
+                LoadRecentActivities();
+
                 LoadChartByType();
             }
             catch (Exception ex)

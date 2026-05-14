@@ -254,12 +254,14 @@ namespace TamAnh_EMR_System.Repositories
                 cmd.Transaction = txn;
 
                 cmd.CommandText = @"
-                    SELECT ISNULL(MAX(
-                        CAST(SUBSTRING(id,3,LEN(id)-2) AS INT)
-                    ), 0) + 1
-                    FROM patients
-                    WHERE id LIKE 'BN%'";
-
+                SELECT 
+                    'P' + RIGHT('000' + CAST(
+                        ISNULL(
+                            (SELECT MAX(CAST(SUBSTRING(id, 2, LEN(id)) AS INT)) FROM patients),
+                            0
+                        ) + 1 AS VARCHAR(10)
+                    ), 3)
+                ";
                 int nextNum = Convert.ToInt32(await cmd.ExecuteScalarAsync());
 
                 return $"BN{nextNum:D6}";

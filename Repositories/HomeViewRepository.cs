@@ -315,49 +315,49 @@ namespace TamAnh_EMR_System.Repositories
             conn.Open();
 
             string query = @"
-        SELECT TOP 3 *
-        FROM
-        (
-            -- =========================
-            -- BỆNH ÁN MỚI
-            -- =========================
-            SELECT 
-                N'Tạo bệnh án mới' AS Title,
-                CONCAT(N'Bệnh nhân: ', p.name) AS Description,
-                mr.created_at AS CreatedAt,
-                'success' AS Type
-            FROM medical_records mr
-            INNER JOIN patients p ON mr.patient_id = p.id
+                SELECT TOP 3 *
+                FROM
+                (
+                    -- =========================
+                    -- BỆNH ÁN MỚI
+                    -- =========================
+                    SELECT 
+                        N'Tạo bệnh án mới' AS Title,
+                        CONCAT(N'Bệnh nhân: ', p.name) AS Description,
+                        mr.created_at AS CreatedAt,
+                        'success' AS Type
+                    FROM medical_records mr
+                    INNER JOIN patients p ON mr.patient_id = p.id
 
-            UNION ALL
+                    UNION ALL
 
-            -- =========================
-            -- LỊCH KHÁM MỚI (FIX CHUẨN)
-            -- =========================
-            SELECT 
-                N'Đặt lịch khám' AS Title,
-                CONCAT(N'Bệnh nhân: ', p.name) AS Description,
-                DATEADD(SECOND,
-                    DATEDIFF(SECOND, '00:00:00', a.appointment_time),
-                    CAST(a.appointment_date AS DATETIME)
-                ) AS CreatedAt,
-                'warning' AS Type
-            FROM appointments a
-            INNER JOIN patients p ON a.patient_id = p.id
+                    -- =========================
+                    -- LỊCH KHÁM MỚI (FIX CHUẨN)
+                    -- =========================
+                    SELECT 
+                        N'Đặt lịch khám' AS Title,
+                        CONCAT(N'Bệnh nhân: ', p.name) AS Description,
+                        DATEADD(SECOND,
+                            DATEDIFF(SECOND, '00:00:00', a.appointment_time),
+                            CAST(a.appointment_date AS DATETIME)
+                        ) AS CreatedAt,
+                        'warning' AS Type
+                    FROM appointments a
+                    INNER JOIN patients p ON a.patient_id = p.id
 
-            UNION ALL
+                    UNION ALL
 
-            -- =========================
-            -- BỆNH NHÂN MỚI
-            -- =========================
-            SELECT 
-                N'Thêm bệnh nhân mới' AS Title,
-                CONCAT(N'Bệnh nhân: ', p.name) AS Description,
-                p.created_at AS CreatedAt,
-                'info' AS Type
-            FROM patients p
-        ) AS A
-        ORDER BY CreatedAt DESC";
+                    -- =========================
+                    -- BỆNH NHÂN MỚI
+                    -- =========================
+                    SELECT 
+                        N'Thêm bệnh nhân mới' AS Title,
+                        CONCAT(N'Bệnh nhân: ', p.name) AS Description,
+                        p.created_at AS CreatedAt,
+                        'info' AS Type
+                    FROM patients p
+                ) AS A
+                ORDER BY CreatedAt DESC";
 
             using var cmd = new SqlCommand(query, conn);
             using var reader = cmd.ExecuteReader();
@@ -384,9 +384,6 @@ namespace TamAnh_EMR_System.Repositories
             return list;
         }
 
-        // =====================================================
-        // TIME FORMAT
-        // =====================================================
         private string GetTimeAgo(DateTime dateTime)
         {
             TimeSpan span = DateTime.Now - dateTime;

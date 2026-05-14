@@ -225,14 +225,10 @@ namespace TamAnh_EMR_System.ViewModel
             };
             BloodTypeOptions = new ObservableCollection<string>
             {
-                "A+",
-                "A-",
-                "B+",
-                "B-",
-                "AB+",
-                "AB-",
-                "O+",
-                "O-"
+                "A",
+                "B",
+                "AB",
+                "O"
             };
 
             // Wire up commands
