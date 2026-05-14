@@ -31,6 +31,17 @@
                                Margin="0,5,0,10"
                                FontFamily="Montserrat"/>
                 </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                    VerticalAlignment="Center"  
+                    HorizontalAlignment="Right">
+
+                    <TextBlock Text="{Binding CurrentDate}"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Foreground="#B6A8E5"
+                    HorizontalAlignment="Right"/>
+                </StackPanel>
             </Grid>
 
             <ScrollViewer Grid.Row="1"
@@ -51,13 +62,13 @@
                                 <Border Width="55"
                                         Height="55"
                                         CornerRadius="27.5"
-                                        Background="#FFFFFF20">
+                                        Background="{StaticResource color3}">
                                     <fa:IconImage Icon="Users"
                                                   Width="26"
                                                   Height="26"
                                                   Foreground="White"
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"/>
+                                                  VerticalAlignment="Bottom"
+                                                  HorizontalAlignment="Center" Margin="0,0,0,15"/>
                                 </Border>
 
                                 <StackPanel Grid.Column="1"
@@ -68,13 +79,13 @@
                                                FontSize="14"
                                                FontFamily="Montserrat"/>
 
-                                    <TextBlock Text="1,248"
+                                    <TextBlock Text="{Binding PatientCount}"
                                                FontSize="34"
                                                FontWeight="Bold"
                                                Foreground="White"
                                                FontFamily="Montserrat"/>
 
-                                    <TextBlock Text="+12% tháng này"
+                                    <TextBlock Text="{Binding PatientGrowth}"
                                                Foreground="#E4FFEA"
                                                FontSize="12"/>
                                 </StackPanel>
@@ -97,7 +108,7 @@
                                 <Border Width="55"
                                         Height="55"
                                         CornerRadius="27.5"
-                                        Background="#FFFFFF20">
+                                        Background="{StaticResource color4}">
 
                                     <fa:IconImage Icon="CalendarCheck"
                                                   Width="24"
@@ -114,12 +125,12 @@
                                                Foreground="#EAF7FF"
                                                FontSize="14"/>
 
-                                    <TextBlock Text="86"
+                                    <TextBlock Text="{Binding AppointmentCount}"
                                                FontSize="34"
                                                FontWeight="Bold"
                                                Foreground="White"/>
 
-                                    <TextBlock Text="12 đang chờ"
+                                    <TextBlock Text="{Binding AppointmentPending}"
                                                Foreground="#E4FFEA"
                                                FontSize="12"/>
                                 </StackPanel>
@@ -127,7 +138,7 @@
                             </Grid>
                         </Border>
 
-                        <Border Background="#FF5EA8"
+                        <Border Background="#F97316"
                                 CornerRadius="24"
                                 Padding="22"
                                 Margin="0,0,18,0">
@@ -142,7 +153,7 @@
                                 <Border Width="55"
                                         Height="55"
                                         CornerRadius="27.5"
-                                        Background="#FFFFFF20">
+                                        Background="{StaticResource color8}">
 
                                     <fa:IconImage Icon="FileWaveform"
                                                   Width="24"
@@ -159,12 +170,12 @@
                                                Foreground="#FFEAF4"
                                                FontSize="14"/>
 
-                                    <TextBlock Text="4,780"
+                                    <TextBlock Text="{Binding MedicalRecordCount}"
                                                FontSize="34"
                                                FontWeight="Bold"
                                                Foreground="White"/>
 
-                                    <TextBlock Text="+48 hôm nay"
+                                    <TextBlock Text="{Binding MedicalRecordToday}"
                                                Foreground="#E4FFEA"
                                                FontSize="12"/>
                                 </StackPanel>
@@ -186,7 +197,7 @@
                                 <Border Width="55"
                                         Height="55"
                                         CornerRadius="27.5"
-                                        Background="#FFFFFF20">
+                                        Background="{StaticResource color2}">
 
                                     <fa:IconImage Icon="UserDoctor"
                                                   Width="24"
@@ -199,18 +210,18 @@
                                 <StackPanel Grid.Column="1"
                                             Margin="15,0,0,0">
 
-                                    <TextBlock Text="Bác sĩ trực"
+                                    <TextBlock Text="Bác sĩ"
                                                Foreground="#F2EAFF"
                                                FontSize="14"/>
 
-                                    <TextBlock Text="12"
+                                    <TextBlock Text="{Binding DoctorCount}"
                                                FontSize="34"
                                                FontWeight="Bold"
                                                Foreground="White"/>
 
-                                    <TextBlock Text="3 khoa hoạt động"
-                                               Foreground="#E4FFEA"
-                                               FontSize="12"/>
+                                    <TextBlock Text="{Binding DoctorSpecializationInfo}"
+                                                Foreground="#E4FFEA"
+                                                FontSize="12"/>
                                 </StackPanel>
 
                             </Grid>
@@ -243,18 +254,15 @@
                                                    Foreground="White"
                                                    VerticalAlignment="Center"/>
                                         <ComboBox Grid.Column="1"
+                                                  ItemsSource="{Binding ChartTypes}"
+                                                  SelectedItem="{Binding SelectedChartType}"
                                                   Height="38"
-                                                  SelectedIndex="0"
-                                                  Background="{StaticResource color2}"
+                                                  Background="{StaticResource panelColor}"
                                                   Foreground="White"
                                                   BorderThickness="0"
                                                   FontFamily="Montserrat"
                                                   FontSize="13"
                                                   Cursor="Hand">
-                                            <ComboBoxItem Content="7 ngày"/>
-                                            <ComboBoxItem Content="30 ngày"/>
-                                            <ComboBoxItem Content="6 tháng"/>
-                                            <ComboBoxItem Content="1 năm"/>
                                             <ComboBox.ItemContainerStyle>
                                                 <Style TargetType="ComboBoxItem">
                                                     <Setter Property="Foreground" Value="White"/>
@@ -360,16 +368,49 @@
                                                     Margin="0,25"/>
                                         </StackPanel>
 
-                                        <Canvas>
+                                        <Canvas Height="220" Background="Transparent">
 
-                                            <Polyline Points="20,200 120,120 220,140 320,90 420,100 520,40"
-                                                      Stroke="#6C63FF"
-                                                      StrokeThickness="5"/>
+                                            <ItemsControl ItemsSource="{Binding PatientBars}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <Canvas />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
 
-                                            <Polyline Points="20,220 120,180 220,120 320,140 420,90 520,70"
-                                                      Stroke="#3DA9FC"
-                                                      StrokeThickness="5"/>
+                                                <ItemsControl.ItemContainerStyle>
+                                                    <Style>
+                                                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                                    </Style>
+                                                </ItemsControl.ItemContainerStyle>
 
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding Value}"
+                                                                       FontSize="13"
+                                                                       Foreground="{StaticResource color7}"
+                                                                       HorizontalAlignment="Center"
+                                                                       Margin="0,0,0,2"/>
+
+                                                            <Rectangle Width="{Binding Width}"
+                                                                       Height="{Binding Height}"
+                                                                       Fill="DodgerBlue"
+                                                                       RadiusX="4"
+                                                                       RadiusY="4"/>
+
+                                                            <TextBlock Text="{Binding Label}"
+                                                                       FontSize="13"
+                                                                       Foreground="#B6A8E5"
+                                                                       HorizontalAlignment="Center"
+                                                                       Margin="0,5,0,0"/>
+                                                        </StackPanel>
+
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+
+                                            </ItemsControl>
                                         </Canvas>
 
                                     </Grid>
@@ -383,110 +424,98 @@
                                     Padding="25"
                                     Margin="0,0,20,20">
 
-
                                 <StackPanel>
 
+                                    <!-- HEADER -->
                                     <Grid Margin="0,0,0,20">
-
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Text="Lịch hẹn gần đây"
-                                                   FontSize="22"
-                                                   FontWeight="Bold"
-                                                   Foreground="White"/>
+                                        <TextBlock Text="Lịch hẹn hôm nay"
+                                                    FontSize="22"
+                                                    FontWeight="Bold"
+                                                    Foreground="White"/>
 
                                         <TextBlock Grid.Column="1"
                                                    Text="Xem tất cả"
                                                    Foreground="#8F7DFF"
                                                    FontWeight="SemiBold"
-                                                   VerticalAlignment="Center"/>
+                                                   VerticalAlignment="Center"
+                                                   Cursor="Hand"/>
                                     </Grid>
 
-                                    <Border Background="{StaticResource color2}"
-                                            CornerRadius="16"
-                                            Padding="15"
-                                            Margin="0,0,0,10">
+                                    <ItemsControl ItemsSource="{Binding RecentAppointments}">
 
-                                        <Grid>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
 
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
+                                                <Border Background="{StaticResource color2}"
+                                                    CornerRadius="16"
+                                                    Padding="15"
+                                                    Margin="0,0,0,10">
 
-                                            <TextBlock Text="Nguyễn Văn A"
-                                                       Foreground="White"
-                                                       FontWeight="SemiBold"/>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="2*"/>
+                                                            <ColumnDefinition Width="2*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="1"
-                                                       Text="Khám tổng quát"
-                                                       Foreground="#B6A8E5"/>
+                                                        <TextBlock Text="{Binding Patient.Name}"
+                                                                   Foreground="White"
+                                                                   FontWeight="SemiBold"/>
 
-                                            <TextBlock Grid.Column="2"
-                                                       Text="14:00"
-                                                       Foreground="#3DA9FC"
-                                                       FontWeight="Bold"/>
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding Reason}"
+                                                                   Foreground="#B6A8E5"/>
 
-                                            <Border Grid.Column="3"
-                                                    Background="#3BCF7A"
-                                                    CornerRadius="10"
-                                                    Padding="8,3"
-                                                    HorizontalAlignment="Right">
+                                                        <TextBlock Grid.Column="2"
+                                                                   Text="{Binding AppointmentTime}"
+                                                                   Foreground="#3DA9FC"
+                                                                   FontWeight="Bold"/>
 
-                                                <TextBlock Text="Hoàn thành"
-                                                           Foreground="White"
-                                                           FontSize="11"/>
-                                            </Border>
+                                                        <Border Grid.Column="3"
+                                                                CornerRadius="10"
+                                                                Padding="8,3"
+                                                                HorizontalAlignment="Right">
 
-                                        </Grid>
+                                                            <Border.Style>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="Background" Value="#3BCF7A"/>
 
-                                    </Border>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                                            <Setter Property="Background" Value="#FFB84D"/>
+                                                                        </DataTrigger>
 
-                                    <Border Background="{StaticResource color2}"
-                                            CornerRadius="16"
-                                            Padding="15">
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Waiting">
+                                                                            <Setter Property="Background" Value="#FF5EA8"/>
+                                                                        </DataTrigger>
 
-                                        <Grid>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                                            <Setter Property="Background" Value="#3BCF7A"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
 
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Text="{Binding Status}"
+                                           Foreground="White"
+                                           FontSize="11"/>
 
-                                            <TextBlock Text="Trần Minh K"
-                                                       Foreground="White"
-                                                       FontWeight="SemiBold"/>
+                                                        </Border>
 
-                                            <TextBlock Grid.Column="1"
-                                                       Text="Nội tim mạch"
-                                                       Foreground="#B6A8E5"/>
+                                                    </Grid>
 
-                                            <TextBlock Grid.Column="2"
-                                                       Text="16:30"
-                                                       Foreground="#FFB84D"
-                                                       FontWeight="Bold"/>
+                                                </Border>
 
-                                            <Border Grid.Column="3"
-                                                    Background="#FF5EA8"
-                                                    CornerRadius="10"
-                                                    Padding="8,3"
-                                                    HorizontalAlignment="Right">
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
 
-                                                <TextBlock Text="Đang chờ"
-                                                           Foreground="White"
-                                                           FontSize="11"/>
-                                            </Border>
-
-                                        </Grid>
-
-                                    </Border>
+                                    </ItemsControl>
 
                                 </StackPanel>
 
@@ -509,7 +538,7 @@
                                                Foreground="White"
                                                Margin="0,0,0,20"/>
 
-                                    <Border Background="{StaticResource color2}"
+                                    <!--<Border Background="{StaticResource color2}"
                                             CornerRadius="16"
                                             Padding="14"
                                             Margin="0,0,0,12">
@@ -575,7 +604,48 @@
                                             </StackPanel>
 
                                         </StackPanel>
-                                    </Border>
+                                    </Border>-->
+
+                                    <ItemsControl ItemsSource="{Binding RecentActivities}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="{StaticResource color2}"
+                                                        CornerRadius="16"
+                                                        Padding="14"
+                                                        Margin="0,0,0,12">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Width="42"
+                                                            Height="42"
+                                                            CornerRadius="21"
+                                                            Background="{Binding DotColor}"
+                                                            Margin="0,0,12,0">
+
+                                                            <fa:IconImage Icon="{Binding Icon}"
+                                                                          Width="18"
+                                                                          Height="18"
+                                                                          Foreground="White"
+                                                                          VerticalAlignment="Center"
+                                                                          HorizontalAlignment="Center"/>
+                                                        </Border>
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding Title}"
+                                                                       Foreground="White"
+                                                                       FontWeight="SemiBold"
+                                                                       FontSize="14"/>
+                                                            <TextBlock Text="{Binding Description}"
+                                                                        Foreground="#B6A8E5"
+                                                                        FontSize="12"
+                                                                        Margin="0,2,0,0"/>
+                                                            <TextBlock Text="{Binding TimeText}"
+                                                                       Foreground="#8A84B8"
+                                                                       FontSize="11"
+                                                                       Margin="0,4,0,0"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </StackPanel>
                             </Border>
 
