@@ -538,7 +538,11 @@
                                                Foreground="White"
                                                Margin="0,0,0,20"/>
 
-                                    <!--<Border Background="{StaticResource color2}"
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                                                  HorizontalScrollBarVisibility="Disabled"
+                                                  MaxHeight="270">
+
+                                        <!--<Border Background="{StaticResource color2}"
                                             CornerRadius="16"
                                             Padding="14"
                                             Margin="0,0,0,12">
@@ -606,46 +610,48 @@
                                         </StackPanel>
                                     </Border>-->
 
-                                    <ItemsControl ItemsSource="{Binding RecentActivities}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Background="{StaticResource color2}"
+                                        <ItemsControl ItemsSource="{Binding RecentActivities}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{StaticResource color2}"
                                                         CornerRadius="16"
                                                         Padding="14"
                                                         Margin="0,0,0,12">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Border Width="42"
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Width="42"
                                                             Height="42"
                                                             CornerRadius="21"
                                                             Background="{Binding DotColor}"
                                                             Margin="0,0,12,0">
 
-                                                            <fa:IconImage Icon="{Binding Icon}"
+                                                                <fa:IconImage Icon="{Binding Icon}"
                                                                           Width="18"
                                                                           Height="18"
                                                                           Foreground="White"
                                                                           VerticalAlignment="Center"
                                                                           HorizontalAlignment="Center"/>
-                                                        </Border>
-                                                        <StackPanel>
-                                                            <TextBlock Text="{Binding Title}"
-                                                                       Foreground="White"
-                                                                       FontWeight="SemiBold"
-                                                                       FontSize="14"/>
-                                                            <TextBlock Text="{Binding Description}"
-                                                                        Foreground="#B6A8E5"
-                                                                        FontSize="12"
-                                                                        Margin="0,2,0,0"/>
-                                                            <TextBlock Text="{Binding TimeText}"
-                                                                       Foreground="#8A84B8"
-                                                                       FontSize="11"
-                                                                       Margin="0,4,0,0"/>
+                                                            </Border>
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Title}"
+                                                                           Foreground="White"
+                                                                           FontWeight="Bold"
+                                                                           FontSize="15"/>
+                                                                <TextBlock Text="{Binding Description}"
+                                                                           Foreground="#E9E4FF"
+                                                                           FontSize="13"
+                                                                           Margin="0,3,0,0"/>
+                                                                <TextBlock Text="{Binding TimeText}"
+                                                                           Foreground="#9F97D1"
+                                                                           FontSize="11"
+                                                                           FontStyle="Italic"
+                                                                           Margin="0,5,0,0"/>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                    </StackPanel>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
                                 </StackPanel>
                             </Border>
 

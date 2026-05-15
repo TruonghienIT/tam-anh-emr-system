@@ -312,71 +312,142 @@ namespace TamAnh_EMR_System.Repositories
             var list = new ObservableCollection<NotificationItem>();
 
             using var conn = GetConnection();
+
             conn.Open();
 
             string query = @"
-                SELECT TOP 3 *
+                SELECT TOP 10 *
                 FROM
                 (
-                    -- =========================
-                    -- BỆNH ÁN MỚI
-                    -- =========================
-                    SELECT 
-                        N'Tạo bệnh án mới' AS Title,
-                        CONCAT(N'Bệnh nhân: ', p.name) AS Description,
-                        mr.created_at AS CreatedAt,
+                    -- =========================================
+                    -- THÊM BỆNH NHÂN MỚI
+                    -- =========================================
+                    SELECT
+                        N'Thêm bệnh nhân mới' AS Title,
+
+                        CONCAT
+                        (
+                            N'Bệnh nhân: ',
+                            p.name
+                        ) AS Description,
+
+                        p.created_at AS CreatedAt,
+
                         'success' AS Type
-                    FROM medical_records mr
-                    INNER JOIN patients p ON mr.patient_id = p.id
+
+                    FROM patients p
 
                     UNION ALL
 
-                    -- =========================
-                    -- LỊCH KHÁM MỚI (FIX CHUẨN)
-                    -- =========================
-                    SELECT 
+                    -- =========================================
+                    -- ĐẶT LỊCH KHÁM
+                    -- =========================================
+                    SELECT
                         N'Đặt lịch khám' AS Title,
-                        CONCAT(N'Bệnh nhân: ', p.name) AS Description,
-                        DATEADD(SECOND,
-                            DATEDIFF(SECOND, '00:00:00', a.appointment_time),
+
+                        CONCAT
+                        (
+                            N'Bệnh nhân: ',
+                            p.name,
+                            N' - ',
+                            ISNULL(a.status, N'Đang chờ')
+                        ) AS Description,
+
+                        DATEADD
+                        (
+                            SECOND,
+                            DATEDIFF
+                            (
+                                SECOND,
+                                '00:00:00',
+                                a.appointment_time
+                            ),
                             CAST(a.appointment_date AS DATETIME)
                         ) AS CreatedAt,
-                        'warning' AS Type
+
+                        CASE
+                            WHEN a.status = N'Đã hủy'
+                                THEN 'error'
+
+                            WHEN a.status = N'Hoàn thành'
+                                THEN 'success'
+
+                            WHEN a.status = N'Đang khám'
+                                THEN 'warning'
+
+                            ELSE 'info'
+                        END AS Type
+
                     FROM appointments a
-                    INNER JOIN patients p ON a.patient_id = p.id
+
+                    INNER JOIN patients p
+                        ON a.patient_id = p.id
+
+                    WHERE
+                        DATEADD
+                        (
+                            SECOND,
+                            DATEDIFF
+                            (
+                                SECOND,
+                                '00:00:00',
+                                a.appointment_time
+                            ),
+                            CAST(a.appointment_date AS DATETIME)
+                        ) <= GETDATE()
 
                     UNION ALL
 
-                    -- =========================
-                    -- BỆNH NHÂN MỚI
-                    -- =========================
-                    SELECT 
-                        N'Thêm bệnh nhân mới' AS Title,
-                        CONCAT(N'Bệnh nhân: ', p.name) AS Description,
-                        p.created_at AS CreatedAt,
+                    -- =========================================
+                    -- TẠO BỆNH ÁN
+                    -- =========================================
+                    SELECT
+                        N'Tạo bệnh án mới' AS Title,
+
+                        CONCAT
+                        (
+                            N'Bệnh nhân: ',
+                            p.name
+                        ) AS Description,
+
+                        mr.created_at AS CreatedAt,
+
                         'info' AS Type
-                    FROM patients p
-                ) AS A
-                ORDER BY CreatedAt DESC";
+
+                    FROM medical_records mr
+
+                    INNER JOIN patients p
+                        ON mr.patient_id = p.id
+
+                ) AS Activities
+
+                WHERE CreatedAt IS NOT NULL
+
+                ORDER BY
+                    ABS(DATEDIFF(SECOND, CreatedAt, GETDATE()))
+            ";
 
             using var cmd = new SqlCommand(query, conn);
+
             using var reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                var createdAtObj = reader["CreatedAt"];
-
                 DateTime createdAt =
-                    createdAtObj == DBNull.Value
+                    reader["CreatedAt"] == DBNull.Value
                         ? DateTime.Now
-                        : Convert.ToDateTime(createdAtObj);
+                        : Convert.ToDateTime(reader["CreatedAt"]);
 
                 list.Add(new NotificationItem
                 {
                     Title = reader["Title"]?.ToString() ?? "",
+
                     Description = reader["Description"]?.ToString() ?? "",
+
                     CreatedAt = createdAt,
+
                     TimeText = GetTimeAgo(createdAt),
+
                     Type = reader["Type"]?.ToString() ?? "info"
                 });
             }

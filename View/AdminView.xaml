@@ -10,6 +10,7 @@
             Title="AdminView" Height="700" Width="1300"
             WindowStartupLocation="CenterScreen"
             WindowStyle="None"
+            WindowState="Maximized"
             Background="Transparent"
             AllowsTransparency="True">
 

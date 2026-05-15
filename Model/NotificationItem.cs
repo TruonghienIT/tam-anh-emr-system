@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FontAwesome.Sharp;
+using System;
 using System.Windows.Media;
 
 namespace TamAnh_EMR_System.Model
@@ -30,6 +31,27 @@ namespace TamAnh_EMR_System.Model
                     "warning" => Brushes.DarkOrange,
                     "info" => Brushes.MediumPurple,
                     _ => Brushes.DodgerBlue
+                };
+            }
+        }
+
+        // =====================================================
+        // ICON
+        // =====================================================
+
+        public IconChar Icon
+        {
+            get
+            {
+                return Title switch
+                {
+                    "Thêm bệnh nhân mới" => IconChar.UserPlus,
+
+                    "Đặt lịch khám" => IconChar.CalendarPlus,
+
+                    "Tạo bệnh án mới" => IconChar.FileCirclePlus,
+
+                    _ => IconChar.CircleInfo
                 };
             }
         }
