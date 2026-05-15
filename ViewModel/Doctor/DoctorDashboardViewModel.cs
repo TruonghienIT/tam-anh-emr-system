@@ -6,7 +6,8 @@ using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model.Doctor;
-using TamAnh_EMR_System.Repositories; // Đã đổi sang dùng thư mục Repositories của bạn
+using TamAnh_EMR_System.Repositories;
+using TamAnh_EMR_System.View; // Đã đổi sang dùng thư mục Repositories của bạn
 
 namespace TamAnh_EMR_System.ViewModel.Doctor
 {
@@ -55,6 +56,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         public ICommand CallPatientCommand { get; }
         public ICommand ViewAllCommand { get; }
 
+        public ICommand LogoutCommand { get; }
+
         public DoctorDashboardViewModel()
         {
             // Khởi tạo Repository để gọi DB
@@ -68,6 +71,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             RegisterPatientCommand = new RelayCommand(_ => MessageBox.Show("Đăng ký bệnh nhân", "Đăng ký"));
             CreateAppointmentCommand = new RelayCommand(_ => MessageBox.Show("Tạo lịch hẹn", "Lịch hẹn"));
             SearchPatientCommand = new RelayCommand(_ => MessageBox.Show("Tra cứu bệnh nhân", "Tra cứu"));
+
+            LogoutCommand = new ViewModelCommand(ExecuteLogoutCommand);
 
             CallPatientCommand = new RelayCommand(p =>
             {
@@ -169,6 +174,23 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             foreach (var val in barValues)
             {
                 ChartBars.Add(new DoctorDashboardData { Value = val });
+            }
+        }
+
+        private void ExecuteLogoutCommand (object obj)
+        {
+            var result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                LoginView loginView = new LoginView();
+                loginView.Show();
+                Application.Current.Windows
+                    .OfType<Window>()
+                    .SingleOrDefault(w => w is DoctorView)
+                    ?.Close();
             }
         }
     }

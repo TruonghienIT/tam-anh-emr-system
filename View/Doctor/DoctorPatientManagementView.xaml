@@ -68,7 +68,7 @@
                         <fa:IconImage Icon="Qrcode" Width="20" Height="20" Foreground="#1E3A8A" Margin="0,0,8,0"/>
                         <TextBlock Text="Quét mã để bắt đầu khám" FontSize="18" FontWeight="Bold" Foreground="#111827"/>
                     </StackPanel>
-                    <TextBlock Text="Đưa thẻ BHYT hoặc mã số bệnh nhân vào máy quét, hoặc nhập thủ công bên dưới." 
+                    <TextBlock Text="Đưa mã QR bệnh án vào máy quét, hoặc nhập thủ công bên dưới." 
                                FontSize="13" Foreground="#6B7280" TextWrapping="Wrap" Margin="0,0,0,16"/>
 
                     <Grid>
@@ -98,8 +98,8 @@
                                 <DropShadowEffect ShadowDepth="2" BlurRadius="4" Opacity="0.1"/>
                             </Border.Effect>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <TextBlock Text="THẺ BẢO HIỂM Y TẾ" FontSize="9" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                                <fa:IconImage Icon="Barcode" Width="120" Height="24" Foreground="#374151"/>
+                                <TextBlock Text="QR BỆNH ÁN" FontSize="9" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                <fa:IconImage Icon="Qrcode" Width="120" Height="24" Foreground="#374151"/>
                                 <TextBlock Text="HS-19283-44" FontSize="9" Foreground="#6B7280" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>

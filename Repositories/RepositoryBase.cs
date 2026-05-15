@@ -19,9 +19,6 @@ namespace TamAnh_EMR_System.Repositories
             return new SqlConnection(_connectionString);
         }
 
-        /// <summary>
-        /// Public connection accessor for the service layer (transaction management).
-        /// </summary>
         public SqlConnection GetPublicConnection()
         {
             return new SqlConnection(_connectionString);

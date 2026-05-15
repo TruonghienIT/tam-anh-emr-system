@@ -45,7 +45,7 @@
                         <TextBlock Text="🏥" FontSize="18" Margin="0,0,8,0"/>
                         <TextBlock Text="Quét mã để bắt đầu khám" FontSize="18" FontWeight="Bold" Foreground="#111827"/>
                     </StackPanel>
-                    <TextBlock Text="Đưa thẻ BHYT hoặc mã số bệnh nhân vào máy quét, hoặc nhập thủ công bên dưới." FontSize="12" Foreground="#6B7280" Margin="0,0,0,14" TextWrapping="Wrap"/>
+                    <TextBlock Text="Đưa mã QR bệnh án vào máy quét, hoặc nhập thủ công bên dưới." FontSize="12" Foreground="#6B7280" Margin="0,0,0,14" TextWrapping="Wrap"/>
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <Grid Grid.Column="0">
@@ -65,7 +65,7 @@
             <!-- Barcode card -->
             <Border Grid.Column="2" Background="White" CornerRadius="14" Padding="16" BorderBrush="#E5E7EB" BorderThickness="1" VerticalAlignment="Stretch">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="THẺ BẢO HIỂM Y TẾ" FontSize="9" Foreground="#9CA3AF" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <TextBlock Text="QR bệnh án" FontSize="9" Foreground="#9CA3AF" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
                     <Border Height="60" Width="160" Margin="0,0,0,8">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock Text="║║║║║║║║║║║║║║║" FontSize="18" Foreground="#111827" FontFamily="Consolas" HorizontalAlignment="Center"/>
