@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Runtime;
 using System.Windows.Interop;
+using TamAnh_EMR_System.ViewModel;
 
 namespace TamAnh_EMR_System.View
 {
@@ -25,6 +26,7 @@ namespace TamAnh_EMR_System.View
         public AdminView()
         {
             InitializeComponent();
+            DataContext = new AdminViewModel();
         }
 
         [DllImport("user32.dll")] //Sử dụng các điều kiện hoặc phương thức của hệ điều hành
