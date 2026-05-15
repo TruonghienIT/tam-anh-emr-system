@@ -473,5 +473,108 @@ namespace TamAnh_EMR_System.Repositories
 
             return dateTime.ToString("dd/MM/yyyy");
         }
+
+        #region Today Progress
+        public double GetCompletedAppointmentProgress()
+        {
+            using var conn = GetConnection();
+
+            conn.Open();
+
+            using var cmd = new SqlCommand(@"
+                DECLARE @Total INT =
+                (
+                    SELECT COUNT(*)
+                    FROM appointments
+                    WHERE CAST(appointment_date AS DATE) = CAST(GETDATE() AS DATE)
+                );
+
+                DECLARE @Completed INT =
+                (
+                    SELECT COUNT(*)
+                    FROM appointments
+                    WHERE CAST(appointment_date AS DATE) = CAST(GETDATE() AS DATE)
+                    AND status = N'Hoàn thành'
+                );
+
+                SELECT
+                    CASE
+                        WHEN @Total = 0 THEN 0
+                        ELSE (@Completed * 100.0 / @Total)
+                    END
+            ", conn);
+
+            double value = Convert.ToDouble(cmd.ExecuteScalar());
+
+            return Math.Min(value, 100);
+        }
+
+        public double GetMedicalRecordProgress()
+        {
+            using var conn = GetConnection();
+
+            conn.Open();
+
+            using var cmd = new SqlCommand(@"
+                DECLARE @PatientToday INT =
+                (
+                    SELECT COUNT(*)
+                    FROM appointments
+                    WHERE CAST(appointment_date AS DATE) = CAST(GETDATE() AS DATE)
+                );
+
+                DECLARE @RecordToday INT =
+                (
+                    SELECT COUNT(*)
+                    FROM medical_records
+                    WHERE CAST(created_at AS DATE) = CAST(GETDATE() AS DATE)
+                );
+
+                SELECT
+                    CASE
+                        WHEN @PatientToday = 0 THEN 0
+                        ELSE (@RecordToday * 100.0 / @PatientToday)
+                    END
+            ", conn);
+
+            double value = Convert.ToDouble(cmd.ExecuteScalar());
+
+            return Math.Min(value, 100);
+        }
+
+        public double GetPatientReceptionProgress()
+        {
+            using var conn = GetConnection();
+
+            conn.Open();
+
+            using var cmd = new SqlCommand(@"
+                DECLARE @Total INT =
+                (
+                    SELECT COUNT(*)
+                    FROM appointments
+                    WHERE CAST(appointment_date AS DATE) = CAST(GETDATE() AS DATE)
+                );
+
+                DECLARE @Handled INT =
+                (
+                    SELECT COUNT(*)
+                    FROM appointments
+                    WHERE CAST(appointment_date AS DATE) = CAST(GETDATE() AS DATE)
+                    AND status IN (N'Đang khám', N'Hoàn thành')
+                );
+
+                SELECT
+                    CASE
+                        WHEN @Total = 0 THEN 0
+                        ELSE (@Handled * 100.0 / @Total)
+                    END
+            ", conn);
+
+            double value = Convert.ToDouble(cmd.ExecuteScalar());
+
+            return Math.Min(value, 100);
+        }
+        #endregion
     }
 }

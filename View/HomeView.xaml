@@ -542,74 +542,6 @@
                                                   HorizontalScrollBarVisibility="Disabled"
                                                   MaxHeight="270">
 
-                                        <!--<Border Background="{StaticResource color2}"
-                                            CornerRadius="16"
-                                            Padding="14"
-                                            Margin="0,0,0,12">
-
-                                        <StackPanel Orientation="Horizontal">
-
-                                            <Border Width="42"
-                                                    Height="42"
-                                                    CornerRadius="21"
-                                                    Background="#3DA9FC22">
-
-                                                <fa:IconImage Icon="FileCirclePlus"
-                                                              Foreground="#3DA9FC"
-                                                              Width="18"
-                                                              Height="18"
-                                                              VerticalAlignment="Center"
-                                                              HorizontalAlignment="Center"/>
-                                            </Border>
-
-                                            <StackPanel Margin="12,0,0,0">
-
-                                                <TextBlock Text="Tạo bệnh án mới"
-                                                           Foreground="White"
-                                                           FontWeight="SemiBold"/>
-
-                                                <TextBlock Text="2 phút trước"
-                                                           Foreground="#A6A6D1"
-                                                           FontSize="12"/>
-                                            </StackPanel>
-
-                                        </StackPanel>
-
-                                    </Border>
-
-                                    <Border Background="{StaticResource color2}"
-                                            CornerRadius="16"
-                                            Padding="14">
-
-                                        <StackPanel Orientation="Horizontal">
-
-                                            <Border Width="42"
-                                                    Height="42"
-                                                    CornerRadius="21"
-                                                    Background="#FF5EA822">
-
-                                                <fa:IconImage Icon="CalendarPlus"
-                                                              Foreground="#FF5EA8"
-                                                              Width="18"
-                                                              Height="18"
-                                                              VerticalAlignment="Center"
-                                                              HorizontalAlignment="Center"/>
-                                            </Border>
-
-                                            <StackPanel Margin="12,0,0,0">
-
-                                                <TextBlock Text="Đặt lịch khám"
-                                                           Foreground="White"
-                                                           FontWeight="SemiBold"/>
-
-                                                <TextBlock Text="10 phút trước"
-                                                           Foreground="#A6A6D1"
-                                                           FontSize="12"/>
-                                            </StackPanel>
-
-                                        </StackPanel>
-                                    </Border>-->
-
                                         <ItemsControl ItemsSource="{Binding RecentActivities}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
@@ -670,7 +602,8 @@
                                                    Foreground="#D9D4FF"
                                                    Margin="0,0,0,8"/>
 
-                                        <ProgressBar Value="75"
+                                        <ProgressBar Value="{Binding CompletedAppointmentProgress}"
+                                                     Maximum="100"
                                                      Height="10"
                                                      Background="#2E1B5B"
                                                      Foreground="#6C63FF"/>
@@ -681,7 +614,8 @@
                                                    Foreground="#D9D4FF"
                                                    Margin="0,0,0,8"/>
 
-                                        <ProgressBar Value="60"
+                                        <ProgressBar Value="{Binding MedicalRecordProgress}"
+                                                     Maximum="100"
                                                      Height="10"
                                                      Background="#2E1B5B"
                                                      Foreground="#3DA9FC"/>
@@ -692,7 +626,8 @@
                                                    Foreground="#D9D4FF"
                                                    Margin="0,0,0,8"/>
 
-                                        <ProgressBar Value="90"
+                                        <ProgressBar Value="{Binding PatientReceptionProgress}"
+                                                     Maximum="100"
                                                      Height="10"
                                                      Background="#2E1B5B"
                                                      Foreground="#FF5EA8"/>

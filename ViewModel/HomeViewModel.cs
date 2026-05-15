@@ -277,6 +277,46 @@ namespace TamAnh_EMR_System.ViewModel
             }
         }
 
+        #region Progress Today
+
+        private double _completedAppointmentProgress;
+
+        public double CompletedAppointmentProgress
+        {
+            get => _completedAppointmentProgress;
+            set
+            {
+                _completedAppointmentProgress = value;
+                OnPropertyChanged(nameof(CompletedAppointmentProgress));
+            }
+        }
+
+        private double _medicalRecordProgress;
+
+        public double MedicalRecordProgress
+        {
+            get => _medicalRecordProgress;
+            set
+            {
+                _medicalRecordProgress = value;
+                OnPropertyChanged(nameof(MedicalRecordProgress));
+            }
+        }
+
+        private double _patientReceptionProgress;
+
+        public double PatientReceptionProgress
+        {
+            get => _patientReceptionProgress;
+            set
+            {
+                _patientReceptionProgress = value;
+                OnPropertyChanged(nameof(PatientReceptionProgress));
+            }
+        }
+
+        #endregion
+
         public ICommand LoadDashboardCommand { get; }
 
         public void LoadDashboard()
@@ -305,6 +345,12 @@ namespace TamAnh_EMR_System.ViewModel
                 PatientGrowth = repository.GetPatientGrowth();
 
                 RecentAppointments = repository.GetTodayAppointments();
+
+                CompletedAppointmentProgress = repository.GetCompletedAppointmentProgress();
+
+                MedicalRecordProgress = repository.GetMedicalRecordProgress();
+
+                PatientReceptionProgress = repository.GetPatientReceptionProgress();
 
                 LoadRecentActivities();
 
