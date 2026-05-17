@@ -52,8 +52,111 @@ namespace TamAnh_EMR_System.Repositories
 
             return list;
         }
+
         // =========================================================
-        // 1. LẤY DANH SÁCH BỆNH NHÂN CHỜ KHÁM HÔM NAY
+        // 3. LẤY LỊCH SỬ BỆNH ÁN THEO BỆNH NHÂN
+        // =========================================================
+        public async Task<List<MedicalRecords>> GetMedicalRecordsByPatientAsync(string patientId)
+        {
+            var list = new List<MedicalRecords>();
+
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+
+                string sql = @"
+                    SELECT mr.id, mr.patient_id, mr.doctor_id, mr.icd_code, mr.diagnosis, mr.treatment, mr.notes, mr.created_at,
+                           d.full_name AS doctor_name
+                    FROM medical_records mr
+                    LEFT JOIN doctors d ON mr.doctor_id = d.id
+                    WHERE mr.patient_id = @patientId
+                    ORDER BY mr.created_at DESC";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@patientId", patientId ?? string.Empty);
+
+                    using (var r = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await r.ReadAsync())
+                        {
+                            var rec = new MedicalRecords
+                            {
+                                Id = r["id"]?.ToString(),
+                                PatientId = r["patient_id"]?.ToString(),
+                                DoctorId = r["doctor_id"]?.ToString(),
+                                IcdCode = r["icd_code"]?.ToString(),
+                                Diagnosis = r["diagnosis"]?.ToString(),
+                                Treatment = r["treatment"]?.ToString(),
+                                Notes = r["notes"]?.ToString(),
+                                CreatedAt = r["created_at"] == DBNull.Value ? DateTime.MinValue : (DateTime)r["created_at"],
+                                Doctor = new Doctors
+                                {
+                                    FullName = r["doctor_name"]?.ToString()
+                                }
+                            };
+
+                            list.Add(rec);
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        // =========================================================
+        // 4. LẤY LỊCH HẸN LỊCH SỬ THEO BỆNH NHÂN
+        // =========================================================
+        public async Task<List<Appointment>> GetAppointmentsByPatientAsync(string patientId)
+        {
+            var list = new List<Appointment>();
+
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+
+                string sql = @"
+                    SELECT a.id, a.patient_id, a.doctor_id, a.appointment_date, a.appointment_time, a.status, a.reason,
+                           d.full_name AS doctor_name
+                    FROM appointments a
+                    LEFT JOIN doctors d ON a.doctor_id = d.id
+                    WHERE a.patient_id = @patientId
+                    ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@patientId", patientId ?? string.Empty);
+
+                    using (var r = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await r.ReadAsync())
+                        {
+                            var ap = new Appointment
+                            {
+                                Id = r["id"]?.ToString(),
+                                PatientId = r["patient_id"]?.ToString(),
+                                DoctorId = r["doctor_id"]?.ToString(),
+                                AppointmentDate = r["appointment_date"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(r["appointment_date"]),
+                                AppointmentTime = r["appointment_time"]?.ToString(),
+                                Status = r["status"]?.ToString(),
+                                Reason = r["reason"]?.ToString(),
+                                Doctor = new Doctors
+                                {
+                                    FullName = r["doctor_name"]?.ToString()
+                                }
+                            };
+
+                            list.Add(ap);
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+        // =========================================================
+        // 1. LẤY DANH SÁCH BỆNH NHÂN CHỜ KHÁM (TẤT CẢ)
         // =========================================================
         public async Task<List<PatientQueueDTO>> GetPatientsQueueAsync()
         {
@@ -63,6 +166,7 @@ namespace TamAnh_EMR_System.Repositories
             {
                 await connection.OpenAsync();
 
+                // Show ALL appointments, not just today's
                 string query = @"
                     SELECT 
                         a.id AS AppointmentId,
@@ -77,8 +181,7 @@ namespace TamAnh_EMR_System.Repositories
                         a.reason
                     FROM appointments a
                     JOIN patients p ON a.patient_id = p.id
-                    WHERE CAST(a.appointment_date AS DATE) = CAST(GETDATE() AS DATE)
-                    ORDER BY a.appointment_time ASC";
+                    ORDER BY a.appointment_date DESC, a.appointment_time ASC";
 
                 using (var command = new SqlCommand(query, connection))
                 using (var reader = await command.ExecuteReaderAsync())

@@ -17,7 +17,7 @@ namespace TamAnh_EMR_System.Repositories
     public class DoctorDashboardRepository : RepositoryBase
     {
         /// <summary>
-        /// Lấy danh sách lịch hẹn của ngày hôm nay, kết nối với bảng patients và doctors để lấy tên
+        /// Lấy danh sách lịch hẹn (tất cả), kết nối với bảng patients và doctors để lấy tên
         /// </summary>
         public async Task<List<AppointmentDTO>> GetTodaysAppointmentsAsync()
         {
@@ -27,18 +27,18 @@ namespace TamAnh_EMR_System.Repositories
             {
                 await connection.OpenAsync();
 
-                // Câu lệnh SQL: Lọc theo ngày hiện tại và sắp xếp theo giờ hẹn
+                // Câu lệnh SQL: Lấy TẤT CẢ appointments, không filter ngày
                 string query = @"
                     SELECT 
                         p.name AS PatientName,
                         d.full_name AS DoctorName,
                         a.appointment_time AS AppointmentTime,
+                        a.appointment_date AS AppointmentDate,
                         a.status AS Status
                     FROM appointments a
                     LEFT JOIN patients p ON a.patient_id = p.id
                     LEFT JOIN doctors d ON a.doctor_id = d.id
-                    WHERE CAST(a.appointment_date AS DATE) = CAST(GETDATE() AS DATE)
-                    ORDER BY a.appointment_time ASC";
+                    ORDER BY a.appointment_date DESC, a.appointment_time ASC";
 
                 using (var command = new SqlCommand(query, connection))
                 using (var reader = await command.ExecuteReaderAsync())
