@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="TamAnh_EMR_System.View.Doctor.DoctorPatientManagementView"
+﻿ <UserControl x:Class="TamAnh_EMR_System.View.Doctor.DoctorPatientManagementView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
@@ -48,7 +48,7 @@
 
     <Grid Margin="28,20,28,28">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="150"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -133,7 +133,10 @@
                             <TextBlock Text="Lịch khám của tôi" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
                         </StackPanel>
                         <Border Background="#DBEAFE" CornerRadius="10" Padding="8,2" HorizontalAlignment="Right">
-                            <TextBlock Text="{Binding PatientQueue.Count, StringFormat='{}{0} Chờ'}" FontSize="11" FontWeight="SemiBold" Foreground="#1E3A8A"/>
+                            <TextBlock Text="{Binding WaitingCount, StringFormat='{}{0} Chờ'}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="#1E3A8A"/>
                         </Border>
                     </Grid>
 
@@ -253,10 +256,147 @@
                                                         Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}, ConverterParameter=Inverted}">
                                             </StackPanel>
 
-                                            <Border Background="#DBEAFE" CornerRadius="6" Padding="8,4" Margin="0,8,0,0" 
-                                                    Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="ĐANG KHÁM" FontSize="10" FontWeight="Bold" Foreground="#1E3A8A"/>
-                                            </Border>
+                                            <ComboBox Width="85"
+                                                    Height="26"
+                                                    Margin="0,8,0,0"
+                                                    Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}"
+                                                    SelectedValue="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    SelectedValuePath="Content"
+                                                    FontSize="10"
+                                                    FontWeight="Bold"
+                                                    BorderThickness="0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalContentAlignment="Center"
+                                                    Padding="0"
+                                                    Cursor="Hand"
+                                                    IsEditable="False">
+
+                                                <ComboBox.Style>
+                                                    <Style TargetType="ComboBox">
+                                                        <Setter Property="Background" Value="#DBEAFE"/>
+                                                        <Setter Property="Foreground" Value="#1E3A8A"/>
+
+                                                        <Style.Triggers>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Đang chờ">
+                                                                <Setter Property="Background" Value="#FEF3C7"/>
+                                                                <Setter Property="Foreground" Value="#92400E"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Đang khám">
+                                                                <Setter Property="Background" Value="#DBEAFE"/>
+                                                                <Setter Property="Foreground" Value="#1E3A8A"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Hoàn thành">
+                                                                <Setter Property="Background" Value="#D1FAE5"/>
+                                                                <Setter Property="Foreground" Value="#065F46"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding Status}" Value="Đã hủy">
+                                                                <Setter Property="Background" Value="#FEE2E2"/>
+                                                                <Setter Property="Foreground" Value="#991B1B"/>
+                                                            </DataTrigger>
+
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ComboBox.Style>
+
+                                                <ComboBox.Template>
+                                                    <ControlTemplate TargetType="ComboBox">
+                                                        <Grid>
+                                                            <ToggleButton x:Name="ToggleButton"
+                                                                          Focusable="False"
+                                                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                          ClickMode="Press"
+                                                                          Background="{TemplateBinding Background}"
+                                                                          BorderThickness="0">
+
+                                                                <Border Background="{TemplateBinding Background}"
+                                                                        CornerRadius="6"
+                                                                        Padding="8,4">
+
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                            <ColumnDefinition Width="14"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <ContentPresenter Grid.Column="0"
+                                                                                          Content="{TemplateBinding SelectionBoxItem}"
+                                                                                          HorizontalAlignment="Center"
+                                                                                          VerticalAlignment="Center"/>
+
+                                                                        <Path Grid.Column="1"
+                                                                                VerticalAlignment="Center"
+                                                                                HorizontalAlignment="Center"
+                                                                                Fill="{TemplateBinding Foreground}"
+                                                                                Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                                                    </Grid>
+                                                                </Border>
+                                                            </ToggleButton>
+
+                                                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                                   Placement="Bottom"
+                                                                   AllowsTransparency="True"
+                                                                   Focusable="False"
+                                                                   PopupAnimation="Slide">
+
+                                                                <Border Background="White"
+                                                                        BorderBrush="#E5E7EB"
+                                                                        BorderThickness="1"
+                                                                        CornerRadius="6"
+                                                                        Margin="0,2,0,0">
+
+                                                                    <ScrollViewer MaxHeight="200">
+                                                                        <StackPanel IsItemsHost="True"/>
+                                                                    </ScrollViewer>
+
+                                                                </Border>
+                                                            </Popup>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </ComboBox.Template>
+
+                                                <ComboBox.ItemContainerStyle>
+                                                    <Style TargetType="ComboBoxItem">
+                                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                        <Setter Property="FontSize" Value="10"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Setter Property="Padding" Value="6"/>
+                                                        <Setter Property="Cursor" Value="Hand"/>
+
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ComboBoxItem">
+                                                                    <Border x:Name="Bd"
+                                                                            Background="White"
+                                                                            Padding="{TemplateBinding Padding}">
+                                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                                          VerticalAlignment="Center"/>
+                                                                    </Border>
+
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsHighlighted" Value="True">
+                                                                            <Setter TargetName="Bd" Property="Background" Value="#EFF6FF"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="IsSelected" Value="True">
+                                                                            <Setter TargetName="Bd" Property="Background" Value="#DBEAFE"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ComboBox.ItemContainerStyle>
+
+                                                <ComboBoxItem Content="Đang chờ"/>
+                                                <ComboBoxItem Content="Đang khám"/>
+                                                <ComboBoxItem Content="Hoàn thành"/>
+                                                <ComboBoxItem Content="Đã hủy"/>
+
+                                            </ComboBox>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -272,7 +412,7 @@
                 </Border.Effect>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="100"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
@@ -290,7 +430,7 @@
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock FontSize="20" FontWeight="Bold" Foreground="#111827" Margin="0,0,0,8">
-                                    <Run Text="Bệnh án điện tử cho "/>
+                                    <Run Text="Bệnh án điện tử cho"/>
                                     <Run Text="{Binding SelectedPatient.Name, FallbackValue='(Chưa chọn)'}"/>
                                 </TextBlock>
 
@@ -315,7 +455,7 @@
                         </Grid>
                     </Border>
 
-                    <ScrollViewer Grid.Row="1" Padding="24" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Hidden">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                                 <fa:IconImage Icon="HeartPulse" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
@@ -336,70 +476,222 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="Mạch (lần/phút)" FontSize="12" Foreground="#6B7280" Margin="0,0,0,4"/>
-                                            <TextBox Style="{StaticResource InputTextBox}" Text="85"/>
+                                            <TextBlock Text="Mạch (lần/phút)" FontSize="12" Foreground="#6B7280"/>
+                                            <TextBox Style="{StaticResource InputTextBox}" Text="{Binding Pulse}"/>
                                         </StackPanel>
+
                                         <StackPanel Grid.Column="2">
-                                            <TextBlock Text="Huyết áp (mmHg)" FontSize="12" Foreground="#6B7280" Margin="0,0,0,4"/>
-                                            <TextBox Style="{StaticResource InputTextBox}" Text="120/80"/>
+                                            <TextBlock Text="Huyết áp (mmHg)" FontSize="12" Foreground="#6B7280"/>
+                                            <TextBox Style="{StaticResource InputTextBox}" Text="{Binding BloodPressure}"/>
                                         </StackPanel>
+
                                         <StackPanel Grid.Column="4">
-                                            <TextBlock Text="Nhiệt độ (°C)" FontSize="12" Foreground="#6B7280" Margin="0,0,0,4"/>
-                                            <TextBox Style="{StaticResource InputTextBox}" Text="38.5" Background="#FEE2E2" Foreground="#991B1B" FontWeight="Bold"/>
+                                            <TextBlock Text="Nhiệt độ (°C)" FontSize="12" Foreground="#6B7280"/>
+                                            <TextBox Style="{StaticResource InputTextBox}" Text="{Binding Temperature}"/>
                                         </StackPanel>
+
                                         <StackPanel Grid.Column="6">
-                                            <TextBlock Text="SpO2 (%)" FontSize="12" Foreground="#6B7280" Margin="0,0,0,4"/>
-                                            <TextBox Style="{StaticResource InputTextBox}" Text="98"/>
+                                            <TextBlock Text="SpO2 (%)" FontSize="12" Foreground="#6B7280"/>
+                                            <TextBox Style="{StaticResource InputTextBox}" Text="{Binding SPO2}"/>
                                         </StackPanel>
                                     </Grid>
-                                    <WrapPanel>
-                                        <Border Background="#DBEAFE" CornerRadius="6" Padding="12,6" Margin="0,0,12,8">
-                                            <StackPanel Orientation="Horizontal">
-                                                <fa:IconImage Icon="CheckSquare" Width="14" Height="14" Foreground="#2563EB" Margin="0,0,6,0"/>
-                                                <TextBlock Text="Sốt" FontSize="13" Foreground="#1E3A8A" FontWeight="SemiBold"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </WrapPanel>
                                 </StackPanel>
                             </Border>
 
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                <fa:IconImage Icon="Flask" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
+                                <TextBlock Text="Xét nghiệm lâm sàng"
+                                            FontSize="16"
+                                            FontWeight="Bold"
+                                            Foreground="#111827"/>
+                            </StackPanel>
+                            <Border Background="#F3F6F9" CornerRadius="8" Padding="16" Margin="0,0,0,24">
+                                <StackPanel>
+                                    <TextBlock Text="Tên xét nghiệm" FontSize="12" Foreground="#6B7280"/>
+                                    <TextBox Style="{StaticResource InputTextBox}" Text="{Binding LabTestName}" Margin="0,4,0,12"/>
+                                    <TextBlock Text="Kết quả xét nghiệm" FontSize="12"  Foreground="#6B7280"/>
+                                    <TextBox Style="{StaticResource InputTextBox}" Height="70" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding LabResult}"/>
+                                </StackPanel>
+                            </Border>
+                            
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                                 <fa:IconImage Icon="Stethoscope" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
                                 <TextBlock Text="Chuẩn đoán" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
                             </StackPanel>
 
-                            <TextBox Style="{StaticResource InputTextBox}" Height="80" TextWrapping="Wrap" VerticalContentAlignment="Top"
-                                     Text="{Binding DiagnosisText, UpdateSourceTrigger=PropertyChanged}" 
-                                     Margin="0,0,0,24" Background="#F0F5FF" BorderBrush="#BFDBFE"/>
+                            <Border Background="#F3F6F9" CornerRadius="8" Padding="16" Margin="0,0,0,24">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Mã bệnh (ICD)" FontSize="12" Foreground="#6B7280"/>
+                                            <ComboBox ItemsSource="{Binding DiseaseList}"
+                                                      SelectedItem="{Binding SelectedDisease, Mode=TwoWay}"
+                                                      Background="White"
+                                                      BorderBrush="#E5E7EB"
+                                                      BorderThickness="1"
+                                                      Padding="14,8"
+                                                      Height="40"
+                                                      FontSize="12"
+                                                      VerticalContentAlignment="Center"
+                                                      Cursor="Hand">
 
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <fa:IconImage Icon="PenToSquare" Width="16" Height="16" Foreground="#6B7280" Margin="0,0,8,0"/>
-                                    <TextBlock Text="Ghi chú / Lời dặn" FontSize="15" FontWeight="Bold" Foreground="#4B5563"/>
-                                </StackPanel>
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding IcdCode}" FontWeight="Bold"/>
+                                                            <TextBlock Text=" - " />
+                                                            <TextBlock Text="{Binding DiseaseName}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
 
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button Style="{StaticResource BaseButton}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="16,10" Margin="0,0,12,0">
-                                        <StackPanel Orientation="Horizontal">
-                                            <fa:IconImage Icon="PrescriptionBottleMedical" Width="14" Height="14" Foreground="#2563EB" Margin="0,0,8,0"/>
-                                            <TextBlock Text="Kê toa thuốc" FontWeight="SemiBold" Foreground="#2563EB"/>
+                                                <ComboBox.Style>
+                                                    <Style TargetType="ComboBox">
+
+                                                        <Setter Property="Background" Value="White"/>
+                                                        <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                        <Setter Property="Padding" Value="14,10"/>
+
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ComboBox">
+
+                                                                    <Grid>
+
+                                                                        <ToggleButton x:Name="ToggleButton"
+                                                                                    IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                                    Focusable="False"
+                                                                                    Background="Transparent"
+                                                                                    BorderThickness="0">
+
+                                                                            <Border x:Name="Border"
+                                                                                    Background="{TemplateBinding Background}"
+                                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                                                    CornerRadius="6"
+                                                                                    Padding="{TemplateBinding Padding}">
+
+                                                                                <Grid>
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="*"/>
+                                                                                        <ColumnDefinition Width="28"/>
+                                                                                    </Grid.ColumnDefinitions>
+
+                                                                                    <TextBlock Margin="10,0"
+                                                                                               VerticalAlignment="Center"
+                                                                                               HorizontalAlignment="Left"
+                                                                                               Text="{Binding SelectedItem.IcdCode, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                                                                                    <Path Grid.Column="1"
+                                                                                            Data="M 0 0 L 4 4 L 8 0 Z"
+                                                                                            Fill="#6B7280"
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"/>
+                                                                                </Grid>
+                                                                            </Border>
+                                                                        </ToggleButton>
+
+                                                                        <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False">
+                                                                            <Border Background="White"
+                                                                                    BorderBrush="#E5E7EB"
+                                                                                    BorderThickness="1"
+                                                                                    CornerRadius="6"
+                                                                                    MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                                <ScrollViewer MaxHeight="220">
+                                                                                    <ItemsPresenter/>
+                                                                                </ScrollViewer>
+                                                                            </Border>
+                                                                        </Popup>
+                                                                    </Grid>
+
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="Border" Property="BorderBrush" Value="#93C5FD"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                                                            <Setter TargetName="Border" Property="BorderBrush" Value="#2563EB"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="IsEnabled" Value="False">
+                                                                            <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ComboBox.Style>
+                                            </ComboBox>
                                         </StackPanel>
-                                    </Button>
 
-                                    <Button Style="{StaticResource BaseButton}" Background="#2563EB" Foreground="White" Padding="20,10" Command="{Binding SaveRecordCommand}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <fa:IconImage Icon="FloppyDisk" Width="14" Height="14" Foreground="White" Margin="0,0,8,0"/>
-                                            <TextBlock Text="Lưu bệnh án" FontWeight="SemiBold"/>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Tên bệnh" FontSize="12" Foreground="#6B7280"/>
+                                            <TextBox Style="{StaticResource InputTextBox}"
+                                                    Text="{Binding DiseaseName}"
+                                                    IsReadOnly="True"/>
                                         </StackPanel>
-                                    </Button>
+                                    </Grid>
+                                    <TextBlock Text="Mô tả bệnh" FontSize="12" Foreground="#6B7280"/>
+                                    <TextBox Style="{StaticResource InputTextBox}" Height="70" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding DiagnosisDescription}"/>
                                 </StackPanel>
-                            </Grid>
+                            </Border>
 
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                <fa:IconImage Icon="NotesMedical" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
+                                <TextBlock Text="Phương pháp điều trị" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
+                            </StackPanel>
+                            <TextBox Style="{StaticResource InputTextBox}" Height="90" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding TreatmentPlan}" Margin="0,0,0,24"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                <fa:IconImage Icon="PenToSquare" Width="16" Height="16" Foreground="#2563EB" Margin="0,0,8,0"/>
+                                <TextBlock Text="Ghi chú / Lời dặn" FontSize="15" FontWeight="Bold" Foreground="#111827"/>
+                            </StackPanel>
+                            <TextBox Style="{StaticResource InputTextBox}" Height="80" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding NotesText}" Margin="0,0,0,24"/>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource BaseButton}"
+                                        Background="White"
+                                        BorderBrush="#E5E7EB"
+                                        BorderThickness="1"
+                                        Padding="16,10"
+                                        Margin="0,0,12,0">
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:IconImage Icon="PrescriptionBottleMedical"
+                                                      Width="14"
+                                                      Height="14"
+                                                      Foreground="#2563EB"
+                                                      Margin="0,0,8,0"/>
+                                        <TextBlock Text="Kê toa thuốc"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#2563EB"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{StaticResource BaseButton}"
+                                        Background="#2563EB"
+                                        Foreground="White"
+                                        Padding="20,10"
+                                        Command="{Binding SaveRecordCommand}">
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:IconImage Icon="FloppyDisk"
+                                                      Width="14"
+                                                      Height="14"
+                                                      Foreground="White"
+                                                      Margin="0,0,8,0"/>
+                                        <TextBlock Text="Lưu bệnh án" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

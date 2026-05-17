@@ -160,7 +160,7 @@
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock FontSize="18" FontWeight="Bold" Foreground="#111827" TextWrapping="Wrap">
-                                <Run Text="Bệnh án điện tử cho "/><Run Text="{Binding Consultation.PatientName}"/>
+                                <Run Text="Bệnh án điện tử cho"/><Run Text="{Binding Consultation.PatientName}"/>
                             </TextBlock>
                             <TextBlock FontSize="12" Foreground="#6B7280" Margin="0,4,0,0">
                                 <Run Text="🏥 ID: "/><Run Text="{Binding Consultation.PatientId}"/>

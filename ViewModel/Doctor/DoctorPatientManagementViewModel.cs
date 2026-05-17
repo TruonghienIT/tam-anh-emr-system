@@ -5,29 +5,60 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
+using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
 
 namespace TamAnh_EMR_System.ViewModel.Doctor
 {
-    // Lớp Model dùng riêng để Binding lên UI của ListBox bên trái
     public class PatientQueueItem : ViewModelBase
     {
         public string PatientId { get; set; }
         public string AppointmentId { get; set; }
+        public string DoctorId { get; set; }
+
         public string Name { get; set; }
         public string Initials { get; set; }
-        public string InfoString { get; set; } // VD: "Nam • 45 tuổi"
+        public string InfoString { get; set; }
         public string Reason { get; set; }
         public string Time { get; set; }
-        public string Status { get; set; }
         public string BloodType { get; set; }
         public string DOBString { get; set; }
+
+        public ObservableCollection<string> StatusOptions { get; set; } =
+            new ObservableCollection<string>
+            {
+                "Đang chờ",
+                "Đang khám",
+                "Hoàn thành",
+                "Đã hủy"
+            };
+
+        private string _status;
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    OnPropertyChanged(nameof(Status));
+                    StatusChanged?.Invoke(this, value);
+                }
+            }
+        }
+
+        public Action<PatientQueueItem, string> StatusChanged { get; set; }
 
         private bool _isActive;
         public bool IsActive
         {
             get => _isActive;
-            set { _isActive = value; OnPropertyChanged(nameof(IsActive)); }
+            set
+            {
+                _isActive = value;
+                OnPropertyChanged(nameof(IsActive));
+            }
         }
     }
 
@@ -35,48 +66,164 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
     {
         private readonly DoctorPatientManagementRepository _repository;
 
-        // Danh sách bệnh nhân (bên trái)
         public ObservableCollection<PatientQueueItem> PatientQueue { get; set; }
 
-        // Bệnh nhân đang được chọn để khám (bên phải)
+        public int WaitingCount => PatientQueue.Count(p => p.Status == "Đang chờ");
+
+        #region Selected Patient
         private PatientQueueItem _selectedPatient;
         public PatientQueueItem SelectedPatient
         {
             get => _selectedPatient;
             set
             {
-                // Hủy active người cũ
-                if (_selectedPatient != null) _selectedPatient.IsActive = false;
+                if (_selectedPatient != null)
+                    _selectedPatient.IsActive = false;
 
                 _selectedPatient = value;
 
-                // Active người mới
-                if (_selectedPatient != null) _selectedPatient.IsActive = true;
+                if (_selectedPatient != null)
+                    _selectedPatient.IsActive = true;
 
                 OnPropertyChanged(nameof(SelectedPatient));
 
-                // Reset form khi đổi bệnh nhân
-                DiagnosisText = "";
-                NotesText = "";
+                ClearMedicalForm();
+            }
+        }
+        #endregion
+
+        #region Vital Signs
+        private string _pulse;
+        public string Pulse
+        {
+            get => _pulse;
+            set
+            {
+                _pulse = value;
+                OnPropertyChanged(nameof(Pulse));
             }
         }
 
-        // --- Các trường dữ liệu trong Form Bệnh Án ---
-        private string _diagnosisText;
-        public string DiagnosisText
+        private string _bloodPressure;
+        public string BloodPressure
         {
-            get => _diagnosisText;
-            set { _diagnosisText = value; OnPropertyChanged(nameof(DiagnosisText)); }
+            get => _bloodPressure;
+            set
+            {
+                _bloodPressure = value;
+                OnPropertyChanged(nameof(BloodPressure));
+            }
         }
 
+        private string _temperature;
+        public string Temperature
+        {
+            get => _temperature;
+            set
+            {
+                _temperature = value;
+                OnPropertyChanged(nameof(Temperature));
+            }
+        }
+
+        private string _spo2;
+        public string SPO2
+        {
+            get => _spo2;
+            set
+            {
+                _spo2 = value;
+                OnPropertyChanged(nameof(SPO2));
+            }
+        }
+        #endregion
+
+        #region Lab
+        private string _labTestName;
+        public string LabTestName
+        {
+            get => _labTestName;
+            set
+            {
+                _labTestName = value;
+                OnPropertyChanged(nameof(LabTestName));
+            }
+        }
+
+        private string _labResult;
+        public string LabResult
+        {
+            get => _labResult;
+            set
+            {
+                _labResult = value;
+                OnPropertyChanged(nameof(LabResult));
+            }
+        }
+        #endregion
+
+        #region Diagnosis
+        private string _diseaseCode;
+        public string DiseaseCode
+        {
+            get => _diseaseCode;
+            set
+            {
+                _diseaseCode = value;
+                OnPropertyChanged(nameof(DiseaseCode));
+            }
+        }
+
+        private string _diseaseName;
+        public string DiseaseName
+        {
+            get => _diseaseName;
+            set
+            {
+                _diseaseName = value;
+                OnPropertyChanged(nameof(DiseaseName));
+            }
+        }
+
+        private string _diagnosisDescription;
+        public string DiagnosisDescription
+        {
+            get => _diagnosisDescription;
+            set
+            {
+                _diagnosisDescription = value;
+                OnPropertyChanged(nameof(DiagnosisDescription));
+            }
+        }
+        #endregion
+
+        #region Treatment
+        private string _treatmentPlan;
+        public string TreatmentPlan
+        {
+            get => _treatmentPlan;
+            set
+            {
+                _treatmentPlan = value;
+                OnPropertyChanged(nameof(TreatmentPlan));
+            }
+        }
+        #endregion
+
+        #region Notes
         private string _notesText;
         public string NotesText
         {
             get => _notesText;
-            set { _notesText = value; OnPropertyChanged(nameof(NotesText)); }
+            set
+            {
+                _notesText = value;
+                OnPropertyChanged(nameof(NotesText));
+            }
         }
+        #endregion
 
-        // --- Commands ---
+
         public ICommand ScanQrCommand { get; }
         public ICommand SaveRecordCommand { get; }
 
@@ -85,27 +232,70 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             _repository = new DoctorPatientManagementRepository();
             PatientQueue = new ObservableCollection<PatientQueueItem>();
 
-            ScanQrCommand = new RelayCommand(_ => MessageBox.Show("Đang kết nối máy quét mã vạch...", "Quét mã"));
+            ScanQrCommand = new RelayCommand(_ =>
+                MessageBox.Show(
+                    "Đang kết nối máy quét mã QR...",
+                    "Quét mã",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information));
+
             SaveRecordCommand = new RelayCommand(ExecuteSaveRecord);
 
             _ = LoadQueueAsync();
+
+            _ = LoadDiseasesAsync();
         }
 
+        #region ICD SELECT
+        public ObservableCollection<Diseases> DiseaseList { get; set; }
+            = new ObservableCollection<Diseases>();
+
+        private Diseases _selectedDisease;
+        public Diseases SelectedDisease
+        {
+            get => _selectedDisease;
+            set
+            {
+                _selectedDisease = value;
+                OnPropertyChanged(nameof(SelectedDisease));
+
+                if (_selectedDisease != null)
+                {
+                    DiseaseCode = _selectedDisease.IcdCode;
+                    DiseaseName = _selectedDisease.DiseaseName;
+                    DiagnosisDescription = _selectedDisease.Description;
+                }
+            }
+        }
+        #endregion
+
+        #region Load Queue
         private async Task LoadQueueAsync()
         {
             var data = await _repository.GetPatientsQueueAsync();
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 PatientQueue.Clear();
+
                 foreach (var item in data)
                 {
                     int age = DateTime.Now.Year - item.DOB.Year;
-                    string initials = item.PatientName.Split(' ').LastOrDefault()?.Substring(0, 1).ToUpper() ?? "U";
+                    if (DateTime.Now.DayOfYear < item.DOB.DayOfYear)
+                        age--;
 
-                    PatientQueue.Add(new PatientQueueItem
+                    string initials = item.PatientName
+                        .Split(' ')
+                        .LastOrDefault()?
+                        .Substring(0, 1)
+                        .ToUpper() ?? "U";
+
+                    var patient = new PatientQueueItem
                     {
                         PatientId = item.PatientId,
                         AppointmentId = item.AppointmentId,
+                        DoctorId = item.DoctorId,
+
                         Name = item.PatientName,
                         Initials = initials,
                         InfoString = $"{item.Gender} • {age} tuổi",
@@ -113,48 +303,170 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                         Reason = item.Reason,
                         BloodType = item.BloodType,
                         Time = item.AppointmentTime.ToString(@"hh\:mm"),
-                        Status = item.Status,
+                        Status = string.IsNullOrEmpty(item.Status)
+                            ? "Đang chờ"
+                            : item.Status,
                         IsActive = false
-                    });
+                    };
+
+                    patient.StatusChanged = async (p, newStatus) =>
+                    {
+                        await UpdatePatientStatusAsync(p, newStatus);
+                        OnPropertyChanged(nameof(WaitingCount));
+                    };
+
+                    PatientQueue.Add(patient);
                 }
 
-                // Mặc định chọn người đầu tiên
                 if (PatientQueue.Count > 0)
-                {
                     SelectedPatient = PatientQueue[0];
+
+                OnPropertyChanged(nameof(WaitingCount));
+            });
+        }
+        #endregion
+
+        #region LOAD DISEASES
+        private async Task LoadDiseasesAsync()
+        {
+            var data = await _repository.GetDiseasesAsync();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                DiseaseList.Clear();
+
+                foreach (var d in data)
+                {
+                    DiseaseList.Add(d);
                 }
             });
         }
+        #endregion
 
+
+        #region Update Status
+        private async Task UpdatePatientStatusAsync(
+            PatientQueueItem patient,
+            string newStatus)
+        {
+            bool success = await _repository.UpdatePatientStatusAsync(
+                patient.AppointmentId,
+                newStatus
+            );
+
+            if (!success)
+            {
+                MessageBox.Show(
+                    $"Không thể cập nhật trạng thái cho {patient.Name}",
+                    "Lỗi",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+
+            OnPropertyChanged(nameof(WaitingCount));
+        }
+        #endregion
+
+        #region Save Medical Record
         private async void ExecuteSaveRecord(object obj)
         {
             if (SelectedPatient == null)
             {
-                MessageBox.Show("Vui lòng chọn một bệnh nhân để khám!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Vui lòng chọn bệnh nhân!",
+                    "Cảnh báo",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(DiagnosisText))
+            if (string.IsNullOrWhiteSpace(DiagnosisDescription))
             {
-                MessageBox.Show("Vui lòng nhập chuẩn đoán trước khi lưu!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Vui lòng nhập chuẩn đoán!",
+                    "Cảnh báo",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
                 return;
             }
 
-            // Tạm thời hardcode DoctorID. Sau này bạn thay bằng ID của bác sĩ đang đăng nhập
-            string currentDoctorId = "C1D2E3F4...";
+            string currentDoctorId = SelectedPatient.DoctorId;
 
-            bool isSuccess = await _repository.SaveMedicalRecordAsync(SelectedPatient.PatientId, currentDoctorId, DiagnosisText, NotesText);
+            if (string.IsNullOrWhiteSpace(currentDoctorId))
+            {
+                MessageBox.Show(
+                    "Không tìm thấy bác sĩ trong lịch hẹn!",
+                    "Lỗi hệ thống",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+                return;
+            }
+
+            bool isSuccess = await _repository.SaveMedicalRecordAsync(
+                SelectedPatient.PatientId,
+                SelectedPatient.AppointmentId,
+                currentDoctorId,
+                DiseaseCode,
+                DiagnosisDescription,
+                TreatmentPlan,
+                NotesText,
+                Pulse,
+                BloodPressure,
+                Temperature,
+                SPO2,
+                LabTestName,
+                LabResult
+            );
 
             if (isSuccess)
             {
-                MessageBox.Show($"Đã lưu bệnh án cho bệnh nhân {SelectedPatient.Name} thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-                DiagnosisText = "";
-                NotesText = "";
+                SelectedPatient.Status = "Hoàn thành";
+
+                MessageBox.Show(
+                    $"Đã lưu bệnh án cho bệnh nhân {SelectedPatient.Name} thành công!",
+                    "Thành công",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+
+                ClearMedicalForm();
+
+                OnPropertyChanged(nameof(WaitingCount));
             }
             else
             {
-                MessageBox.Show("Có lỗi xảy ra khi lưu vào Database.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Có lỗi xảy ra khi lưu bệnh án!",
+                    "Lỗi",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
+        #endregion
+
+        #region Helpers
+        private void ClearMedicalForm()
+        {
+            Pulse = "";
+            BloodPressure = "";
+            Temperature = "";
+            SPO2 = "";
+
+            LabTestName = "";
+            LabResult = "";
+
+            DiseaseCode = "";
+            DiseaseName = "";
+            DiagnosisDescription = "";
+
+            TreatmentPlan = "";
+            NotesText = "";
+        }
+        #endregion
     }
 }

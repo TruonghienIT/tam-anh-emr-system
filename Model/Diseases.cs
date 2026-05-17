@@ -10,6 +10,7 @@ namespace TamAnh_EMR_System.Model
     {
         public string IcdCode { get; set; }
         public string DiseaseName { get; set; }
+        public string Description { get; set; }
 
         public ICollection<MedicalRecords> MedicalRecords { get; set; }
     }

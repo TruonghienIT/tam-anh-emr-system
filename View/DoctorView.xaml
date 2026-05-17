@@ -75,11 +75,11 @@
                         </StackPanel>
                     </RadioButton>
 
-                    <RadioButton x:Name="MenuQuanLyBenhNhan" GroupName="MainMenu" Style="{StaticResource MenuButton}">
+                    <RadioButton x:Name="MenuQuanLyKhamBenh" GroupName="MainMenu" Style="{StaticResource MenuButton}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Users" Width="18" Height="18" Margin="0,0,16,0"
                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"/>
-                            <TextBlock Text="Quản lý bệnh nhân" FontSize="15"/>
+                            <TextBlock Text="Quản lý khám bệnh" FontSize="15"/>
                         </StackPanel>
                     </RadioButton>
 
@@ -163,7 +163,7 @@
                                        Visibility="{Binding IsChecked, ElementName=MenuTrangChu, Converter={StaticResource BoolToVis}}"/>
 
             <local:DoctorPatientManagementView Grid.Row="1" 
-                                               Visibility="{Binding IsChecked, ElementName=MenuQuanLyBenhNhan, Converter={StaticResource BoolToVis}}"/>
+                                               Visibility="{Binding IsChecked, ElementName=MenuQuanLyKhamBenh, Converter={StaticResource BoolToVis}}"/>
             <local:PrescriptionView Grid.Row="1" 
                         Visibility="{Binding IsChecked, ElementName=MenuDonThuoc, Converter={StaticResource BoolToVis}}"/>
         </Grid>

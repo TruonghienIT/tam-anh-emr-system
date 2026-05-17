@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using TamAnh_EMR_System.ViewModel.Doctor; // Nhớ using đúng Namespace
+using TamAnh_EMR_System.ViewModel.Doctor;
 
 namespace TamAnh_EMR_System.View.Doctor
 {

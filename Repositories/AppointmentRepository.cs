@@ -374,13 +374,13 @@ namespace TamAnh_EMR_System.Repositories
                 await conn.OpenAsync();
 
                 string query = @"
-        SELECT 
-            FORMAT(appointment_time, 'hh\:mm') AS HourLabel,
-            COUNT(*) AS Total
-        FROM appointments
-        WHERE appointment_date = CAST(GETDATE() AS DATE)
-        GROUP BY appointment_time
-        ORDER BY appointment_time";
+                SELECT 
+                    FORMAT(appointment_time, 'hh\:mm') AS HourLabel,
+                    COUNT(*) AS Total
+                FROM appointments
+                WHERE appointment_date = CAST(GETDATE() AS DATE)
+                GROUP BY appointment_time
+                ORDER BY appointment_time";
 
                 using (var cmd = new SqlCommand(query, conn))
                 using (var reader = await cmd.ExecuteReaderAsync())

@@ -586,6 +586,33 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 // ===== SAVE APPOINTMENT =====
                 await _appointmentRepo.AddAsync(appointment);
 
+                //try
+                //{
+                //    string phone = patient.Phone?.Trim();
+
+                //    if (!string.IsNullOrWhiteSpace(phone) &&
+                //        phone.StartsWith("0"))
+                //    {
+                //        phone = "+84" + phone.Substring(1);
+                //    }
+
+                //    SmsService.SendSms(
+                //        phone,
+                //        patient.Name,
+                //        appointment.AppointmentDate,
+                //        appointment.AppointmentTime
+                //    );
+                //}
+                //catch (Exception smsEx)
+                //{
+                //    MessageBox.Show(
+                //        smsEx.ToString(),
+                //        "SMS ERROR",
+                //        MessageBoxButton.OK,
+                //        MessageBoxImage.Error
+                //    );
+                //}
+
                 System.Diagnostics.Debug.WriteLine(
                     $"Saved appointment: {appointment.Id}");
 
