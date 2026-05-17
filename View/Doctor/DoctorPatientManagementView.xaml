@@ -692,6 +692,62 @@
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
+
+                            <!-- MEDICAL HISTORY -->
+                            <StackPanel Margin="0,24,0,8">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <fa:IconImage Icon="History" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Lịch sử bệnh án" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
+                                </StackPanel>
+
+                                <ItemsControl ItemsSource="{Binding MedicalHistory}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="White" CornerRadius="6" Padding="10" Margin="0,0,0,8" BorderBrush="#E5E7EB" BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" FontSize="11" Foreground="#6B7280"/>
+                                                    <TextBlock Text="{Binding Diagnosis}" FontWeight="Bold" FontSize="13" Margin="0,4,0,2"/>
+                                                    <TextBlock Text="{Binding Treatment}" FontSize="12" Foreground="#374151" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding Notes}" FontSize="12" Foreground="#6B7280" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <!-- APPOINTMENT HISTORY -->
+                            <StackPanel Margin="0,8,0,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <fa:IconImage Icon="Calendar" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Lịch hẹn" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
+                                </StackPanel>
+
+                                <ItemsControl ItemsSource="{Binding PatientAppointments}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="White" CornerRadius="6" Padding="10" Margin="0,0,0,8" BorderBrush="#E5E7EB" BorderThickness="1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Width="72">
+                                                        <TextBlock Text="{Binding AppointmentDate, StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="12" Foreground="#6B7280"/>
+                                                        <TextBlock Text="{Binding AppointmentTime}" FontSize="14" FontWeight="Bold"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1">
+                                                        <TextBlock Text="{Binding Doctor.FullName}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Reason}" FontSize="12" Foreground="#6B7280"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="2" Text="{Binding Status}" FontSize="12" VerticalAlignment="Center" Foreground="#2563EB" FontWeight="Bold"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
