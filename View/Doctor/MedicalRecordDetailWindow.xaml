@@ -1,0 +1,143 @@
+﻿<Window x:Class="TamAnh_EMR_System.View.Doctor.MedicalRecordDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Chi Tiết Bệnh Án" Height="650" Width="800" 
+        WindowStartupLocation="CenterScreen" Background="#F8F9FC" FontFamily="Segoe UI"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="HỒ SƠ BỆNH ÁN CHI TIẾT" FontSize="22" FontWeight="Bold" Foreground="#111827"/>
+            <TextBlock Text="{Binding CreatedAt, StringFormat='Ngày khám: {0:dd/MM/yyyy HH:mm}'}" Foreground="#6B7280" FontSize="14"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E5E7EB" BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Bệnh nhân" FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding Patient.Name}" IsReadOnly="True" Background="#F3F4F6"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Bác sĩ phụ trách" FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding Doctor.FullName}" IsReadOnly="True" Background="#F3F4F6"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="CHỈ SỐ SINH TỒN" FontWeight="Bold" Foreground="#2563EB" Margin="0,0,0,10"/>
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Nhịp tim"/>
+                            <TextBox x:Name="TxtPulse" Text="{Binding Pulse}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Huyết áp"/>
+                            <TextBox x:Name="TxtBloodPressure" Text="{Binding BloodPressure}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="Nhiệt độ (°C)"/>
+                            <TextBox x:Name="TxtTemperature" Text="{Binding Temperature}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="6">
+                            <TextBlock Text="SpO2 (%)"/>
+                            <TextBox x:Name="TxtSPO2" Text="{Binding SPO2}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Separator Margin="0,10,0,20" Background="#E5E7EB"/>
+                    <TextBlock Text="THÔNG TIN LÂM SÀNG" FontWeight="Bold" Foreground="#2563EB" Margin="0,0,0,10"/>
+
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Mã ICD"/>
+                            <TextBox x:Name="TxtIcdCode" Text="{Binding IcdCode}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Nội dung chẩn đoán"/>
+                            <TextBox x:Name="TxtDiagnosis" Text="{Binding Diagnosis}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Text="Phương pháp điều trị"/>
+                        <TextBox x:Name="TxtTreatment" Text="{Binding Treatment}" Height="80" TextWrapping="Wrap" VerticalContentAlignment="Top"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Text="Ghi chú / Lời dặn"/>
+                        <TextBox x:Name="TxtNotes" Text="{Binding Notes}" Height="60" TextWrapping="Wrap" VerticalContentAlignment="Top"/>
+                    </StackPanel>
+
+                   
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Đóng" Width="100" Padding="8,10" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" Margin="0,0,12,0" Cursor="Hand" Click="BtnClose_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="BtnSave" Content="Lưu Thay Đổi" Width="140" Padding="8,10" Background="#2563EB" Foreground="White" BorderThickness="0" Cursor="Hand" Click="BtnSave_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>
