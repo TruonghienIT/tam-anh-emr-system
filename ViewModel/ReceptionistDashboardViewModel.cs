@@ -1,27 +1,28 @@
+using Microsoft.Win32;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using MediaColor = System.Windows.Media.Color;
 using System.Windows.Threading;
-using Microsoft.Win32;
-using System.IO;
-using System.Text;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestColor = QuestPDF.Helpers.Colors;
-using QuestPDF.Infrastructure;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
 using TamAnh_EMR_System.View;
 using TamAnh_EMR_System.View.Components;
 using TamAnh_EMR_System.View.Receptionist;
+using TamAnh_EMR_System.ViewModel.Receptionist;
+using MediaColor = System.Windows.Media.Color;
+using QuestColor = QuestPDF.Helpers.Colors;
 
 
 namespace TamAnh_EMR_System.ViewModel
@@ -787,12 +788,16 @@ namespace TamAnh_EMR_System.ViewModel
                     CurrentView = new CreateAppointmentWindow();
                     break;
                 // Future: uncomment when views are ready
-                // case "Tìm kiếm bệnh nhân":
-                //     CurrentView = new SearchPatientView();
-                //     break;
-                // case "Lịch hẹn":
-                //     CurrentView = new CreateAppointmentView();
-                //     break;
+                case "Tìm kiếm bệnh nhân":
+                    CurrentView = new SearchPatientView();
+                    break;
+                case "Lịch hẹn":
+                    CurrentView = new AppointmentManagementView
+                    {
+                        DataContext =
+                            new AppointmentManagementViewModel()
+                    };
+                    break;
 
                 default:
                     // Unknown menu — stay on current view
@@ -1049,7 +1054,7 @@ namespace TamAnh_EMR_System.ViewModel
         {
             _refreshTimer = new DispatcherTimer();
 
-            _refreshTimer.Interval = TimeSpan.FromSeconds(30);
+            _refreshTimer.Interval = TimeSpan.FromSeconds(5);
 
             _refreshTimer.Tick += RefreshTimer_Tick;
 
@@ -1151,10 +1156,25 @@ namespace TamAnh_EMR_System.ViewModel
                 }
             });
         }
+
+        private bool _isRefreshing;
         private async void RefreshTimer_Tick(object sender, EventArgs e)
         {
-            await LoadDashboardFromDatabaseAsync();
-            await LoadChartAsync();
+            if (_isRefreshing)
+                return;
+
+            try
+            {
+                _isRefreshing = true;
+
+                await LoadDashboardFromDatabaseAsync();
+
+                await LoadChartAsync();
+            }
+            finally
+            {
+                _isRefreshing = false;
+            }
         }
     }
 }

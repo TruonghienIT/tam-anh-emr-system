@@ -508,5 +508,10 @@ namespace TamAnh_EMR_System.ViewModel
             }
         }
         public ObservableCollection<string> BloodTypeOptions { get; set; }
+        public virtual ICommand SubmitCommand =>
+    SavePatientCommand;
+
+        public virtual string SubmitButtonText =>
+            "Lưu bệnh nhân";
     }
 }

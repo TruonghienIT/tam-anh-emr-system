@@ -12,7 +12,11 @@ namespace TamAnh_EMR_System.View
         public RegisterPatientView()
         {
             InitializeComponent();
-            DataContext = new RegisterPatientViewModel();
+
+            if (DataContext == null)
+            {
+                DataContext = new RegisterPatientViewModel();
+            }
         }
     }
 }

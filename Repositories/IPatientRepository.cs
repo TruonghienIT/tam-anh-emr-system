@@ -56,5 +56,15 @@ namespace TamAnh_EMR_System.Repositories
         /// </summary>
         Task<string> GenerateNextIdAsync(SqlConnection conn, SqlTransaction txn);
         Task<string> GenerateNextIdAsync();
+
+        Task<List<Patients>> SearchWithFilterAsync(
+            string keyword,
+            string gender,
+            string bloodType
+        );
+
+        Task UpdateAsync(Patients patient);
+
+        Task DeleteAsync(string patientId);
     }
 }

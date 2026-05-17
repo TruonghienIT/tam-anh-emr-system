@@ -2,119 +2,177 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-             >
+             Background="Transparent" FontFamily="Segoe UI">
 
-    <!-- ================================================================
-         APPOINTMENT TABLE CONTROL
-         The main data table showing today's appointment list.
-         Contains:
-         - Title row with filter dropdowns + export button
-         - Column headers
-         - Data rows via ItemsControl bound to Appointments collection
-         - Pagination bar
-         
-         Status badges use converters for dynamic color coding.
-         No data is hardcoded — everything comes from ViewModel bindings.
-         ================================================================ -->
+    <UserControl.Resources>
+        <ControlTemplate x:Key="ModernComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+            <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                <Path Data="M0,0 L3,3 L6,0 Z" Fill="#6B7280" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0" />
+            </Border>
+        </ControlTemplate>
 
+        <Style x:Key="ModernFilterComboBox" TargetType="{x:Type ComboBox}">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Padding" Value="12,0,0,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <Border x:Name="MainBorder" Background="#F9FAFB" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="6">
+                                <Grid>
+                                    <ContentPresenter Content="{TemplateBinding SelectionBoxItem}" HorizontalAlignment="Left" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}" IsHitTestVisible="false"/>
+                                    <ToggleButton Template="{StaticResource ModernComboBoxToggleButton}" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Focusable="false"/>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="PART_Popup" AllowsTransparency="true" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" Margin="0,4,0,0">
+                                <Border MinWidth="{Binding ActualWidth, ElementName=MainBorder}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6">
+                                    <ScrollViewer>
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#9CA3AF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
+        <Style x:Key="ModernOutlineButton" TargetType="Button">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#F3F4F6"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#9CA3AF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-    <Border Style="{StaticResource DashCardStyle}" Margin="0,16,0,0">
+        <Style x:Key="ModernPaginationButton" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#F8FAFC"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#CBD5E1"/>
+                                <Setter Property="Foreground" Value="#2563EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernIconButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#F1F5F9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="White" CornerRadius="12" Padding="24" Margin="0,16,0,0" BorderBrush="#E5E7EB" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="1" BlurRadius="4" Opacity="0.05"/>
+        </Border.Effect>
+
         <StackPanel>
-
-            <!-- ===== Table Header: Title + Filters + Export ===== -->
-            <Grid Margin="0,0,0,16">
+            <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Table title -->
-                <TextBlock Grid.Column="0"
-                           Text="Danh sách khám hôm nay"
-                           FontFamily="{StaticResource DashFontFamily}"
-                           FontSize="16" FontWeight="SemiBold"
-                           Foreground="{StaticResource DashTextPrimary}"
-                           VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="0" Text="Danh sách khám hôm nay" FontSize="18" FontWeight="Bold" Foreground="#111827" VerticalAlignment="Center"/>
 
-                <!-- Filters and Export button -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
 
-                    <!-- Status filter dropdown -->
-                    <ComboBox Style="{StaticResource DashFilterComboBox}"
-                              ItemsSource="{Binding StatusOptions}"
-                              SelectedItem="{Binding SelectedStatus}"
-                              Margin="0,0,8,0"/>
+                    <ComboBox Style="{StaticResource ModernFilterComboBox}" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus}" Margin="0,0,12,0"/>
 
-                    <!-- Doctor filter dropdown -->
-                    <ComboBox Style="{StaticResource DashFilterComboBox}"
-                              ItemsSource="{Binding DoctorOptions}"
-                              SelectedItem="{Binding SelectedDoctor}"
-                              Margin="0,0,12,0"/>
+                    <ComboBox Style="{StaticResource ModernFilterComboBox}" ItemsSource="{Binding DoctorOptions}" SelectedItem="{Binding SelectedDoctor}" Margin="0,0,16,0"/>
 
-                    <Button Style="{StaticResource DashOutlineButton}"
-                            Margin="0,0,8,0"
-                            Command="{Binding ResetFiltersCommand}">    
-
-                        <TextBlock Text="Reset filter"/>
-
+                    <Button Style="{StaticResource ModernOutlineButton}" Margin="0,0,12,0" Command="{Binding ResetFiltersCommand}">
+                        <TextBlock Text="Đặt lại bộ lọc" FontSize="13"/>
                     </Button>
 
-                    <!-- Export report button -->
-                    <Button Style="{StaticResource DashOutlineButton}"
-                            Command="{Binding ExportReportCommand}">
+                    <Button Style="{StaticResource ModernOutlineButton}" Command="{Binding ExportReportCommand}">
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconImage Icon="Download" Width="14" Height="14"
-                                          Foreground="{StaticResource DashTextSecondary}"
-                                          Margin="0,0,6,0"/>
-                            <TextBlock Text="Xuất báo cáo"
-                                       FontFamily="{StaticResource DashFontFamily}"/>
+                            <fa:IconImage Icon="Download" Width="14" Height="14" Foreground="#4B5563" Margin="0,0,8,0"/>
+                            <TextBlock Text="Xuất báo cáo" FontSize="13"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
 
-            <!-- ===== Column Headers ===== -->
-            <Border BorderBrush="{StaticResource DashDividerColor}"
-                    BorderThickness="0,0,0,1" Padding="0,8,0,12">
+            <Border Background="#F9FAFB" CornerRadius="8" Padding="16,12" Margin="0,0,0,8">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="110"/>
-                        <!-- THỜI GIAN -->
                         <ColumnDefinition Width="*"/>
-                        <!-- BỆNH NHÂN -->
-                        <ColumnDefinition Width="140"/>
-                        <!-- BÁC SĨ -->
-                        <ColumnDefinition Width="120"/>
-                        <!-- DỊCH VỤ -->
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="130"/>
                         <ColumnDefinition Width="110"/>
-                        <!-- TRẠNG THÁI -->
-                        <ColumnDefinition Width="80"/>
-                        <!-- THAO TÁC -->
+                        <ColumnDefinition Width="60"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="THỜI GIAN"
-                               Style="{StaticResource DashTableHeaderText}"/>
-                    <TextBlock Grid.Column="1" Text="BỆNH NHÂN"
-                               Style="{StaticResource DashTableHeaderText}"/>
-                    <TextBlock Grid.Column="2" Text="BÁC SĨ"
-                               Style="{StaticResource DashTableHeaderText}"/>
-                    <TextBlock Grid.Column="3" Text="DỊCH VỤ"
-                               Style="{StaticResource DashTableHeaderText}"/>
-                    <TextBlock Grid.Column="4" Text="TRẠNG THÁI"
-                               Style="{StaticResource DashTableHeaderText}"
-                               HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="5" Text="THAO TÁC"
-                               Style="{StaticResource DashTableHeaderText}"
-                               HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="0" Text="THỜI GIAN" FontSize="12" FontWeight="SemiBold" Foreground="#6B7280"/>
+                    <TextBlock Grid.Column="1" Text="BỆNH NHÂN" FontSize="12" FontWeight="SemiBold" Foreground="#6B7280"/>
+                    <TextBlock Grid.Column="2" Text="BÁC SĨ" FontSize="12" FontWeight="SemiBold" Foreground="#6B7280"/>
+                    <TextBlock Grid.Column="3" Text="DỊCH VỤ" FontSize="12" FontWeight="SemiBold" Foreground="#6B7280"/>
+                    <TextBlock Grid.Column="4" Text="TRẠNG THÁI" FontSize="12" FontWeight="SemiBold" Foreground="#6B7280" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="5" Text="THAO TÁC" FontSize="12" FontWeight="SemiBold" Foreground="#6B7280" HorizontalAlignment="Center"/>
                 </Grid>
             </Border>
-            <Grid Margin="0,24,0,24">
 
+            <Grid Margin="0,32,0,32">
                 <Grid.Style>
                     <Style TargetType="Grid">
                         <Setter Property="Visibility" Value="Collapsed"/>
-
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding PagedAppointments.Count}" Value="0">
                                 <Setter Property="Visibility" Value="Visible"/>
@@ -124,154 +182,71 @@
                 </Grid.Style>
 
                 <StackPanel HorizontalAlignment="Center">
-
-                    <TextBlock Text="📅"
-                   FontSize="42"
-                   HorizontalAlignment="Center"/>
-
-                    <TextBlock Text="Không có lịch hẹn"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Margin="0,12,0,0"
-                   HorizontalAlignment="Center"/>
-
-                    <TextBlock Text="Không tìm thấy dữ liệu phù hợp bộ lọc"
-                   Foreground="#94A3B8"
-                   Margin="0,4,0,0"
-                   HorizontalAlignment="Center"/>
-
+                    <TextBlock Text="📅" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                    <TextBlock Text="Không có lịch hẹn" FontSize="18" FontWeight="Bold" Foreground="#374151" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Không tìm thấy dữ liệu phù hợp với bộ lọc hiện tại." FontSize="14" Foreground="#9CA3AF" Margin="0,8,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
-
             </Grid>
-            <!-- ===== Appointment Data Rows ===== -->
-            <!-- ItemsControl renders one row per DashboardAppointment in the collection -->
+
             <ItemsControl ItemsSource="{Binding PagedAppointments}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="{StaticResource DashDividerColor}"
-        BorderThickness="0,0,0,1"
-        Padding="0,12"
-        Background="Transparent">
-
+                        <Border BorderBrush="#F1F5F9" BorderThickness="0,0,0,1" Padding="16,14" Background="Transparent" CornerRadius="6">
                             <Border.Style>
                                 <Style TargetType="Border">
-
                                     <Setter Property="Background" Value="Transparent"/>
-
                                     <Style.Triggers>
-
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="#F8FAFC"/>
                                         </Trigger>
-
                                     </Style.Triggers>
-
                                 </Style>
                             </Border.Style>
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="110"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="140"/>
-                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="160"/>
+                                    <ColumnDefinition Width="130"/>
                                     <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="60"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- TIME column -->
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Time}"
-                                               FontFamily="{StaticResource DashFontFamily}"
-                                               FontSize="15" FontWeight="Bold"
-                                               Foreground="{StaticResource DashTextPrimary}"/>
-                                    <TextBlock Text="{Binding Date}"
-                                               FontFamily="{StaticResource DashFontFamily}"
-                                               FontSize="11"
-                                               Foreground="{StaticResource DashTextMuted}"
-                                               Margin="0,2,0,0"/>
+                                    <TextBlock Text="{Binding Time}" FontSize="15" FontWeight="Bold" Foreground="#111827"/>
+                                    <TextBlock Text="{Binding Date}" FontSize="12" Foreground="#9CA3AF" Margin="0,2,0,0"/>
                                 </StackPanel>
 
-                                <!-- PATIENT column (avatar + name + gender/age) -->
-                                <StackPanel Grid.Column="1" Orientation="Horizontal"
-                                            VerticalAlignment="Center">
-                                    <!-- Patient initials avatar circle -->
-                                    <Border CornerRadius="18" Width="36" Height="36"
-                                            Margin="0,0,10,0">
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border CornerRadius="20" Width="40" Height="40" Margin="0,0,12,0">
                                         <Border.Background>
                                             <SolidColorBrush Color="{Binding AvatarColor}"/>
                                         </Border.Background>
-                                        <TextBlock Text="{Binding PatientInitials}"
-                                                   FontFamily="{StaticResource DashFontFamily}"
-                                                   FontSize="12" FontWeight="SemiBold"
-                                                   Foreground="White"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding PatientInitials}" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
-
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding PatientName}"
-                                                   FontFamily="{StaticResource DashFontFamily}"
-                                                   FontSize="14" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource DashTextPrimary}"/>
-                                        <TextBlock Text="{Binding GenderAge}"
-                                                   FontFamily="{StaticResource DashFontFamily}"
-                                                   FontSize="12"
-                                                   Foreground="{StaticResource DashTextMuted}"
-                                                   Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding PatientName}" FontSize="14" FontWeight="SemiBold" Foreground="#111827"/>
+                                        <TextBlock Text="{Binding GenderAge}" FontSize="12" Foreground="#6B7280" Margin="0,2,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
 
-                                <!-- DOCTOR column -->
                                 <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding DoctorName}"
-                                               FontFamily="{StaticResource DashFontFamily}"
-                                               FontSize="13"
-                                               Foreground="{StaticResource DashTextPrimary}"
-                                               TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding Department}"
-                                               FontFamily="{StaticResource DashFontFamily}"
-                                               FontSize="11"
-                                               Foreground="{StaticResource DashTextMuted}"
-                                               FontStyle="Italic"
-                                               Margin="0,2,0,0"/>
+                                    <TextBlock Text="{Binding DoctorName}" FontSize="14" FontWeight="SemiBold" Foreground="#111827" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding Department}" FontSize="12" Foreground="#6B7280" FontStyle="Italic" Margin="0,2,0,0"/>
                                 </StackPanel>
 
-                                <!-- SERVICE column -->
-                                <TextBlock Grid.Column="3"
-                                           Text="{Binding Service}"
-                                           FontFamily="{StaticResource DashFontFamily}"
-                                           FontSize="13"
-                                           Foreground="{StaticResource DashTextSecondary}"
-                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Text="{Binding Service}" FontSize="13" Foreground="#4B5563" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0"/>
 
-                                <!-- STATUS column (color-coded badge using converters) -->
-                                <Border Grid.Column="4"
-                                        Background="{Binding Status, Converter={StaticResource StatusToBackgroundConverter}}"
-                                        CornerRadius="12"
-                                        Padding="10,4"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center">
+                                <Border Grid.Column="4" Background="{Binding Status, Converter={StaticResource StatusToBackgroundConverter}}" CornerRadius="12" Padding="10,6" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal">
-                                        <!-- Status dot indicator -->
-                                        <Ellipse Width="7" Height="7"
-                                                 Fill="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
-                                                 Margin="0,0,6,0"
-                                                 VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Status}"
-                                                   FontFamily="{StaticResource DashFontFamily}"
-                                                   FontSize="12" FontWeight="SemiBold"
-                                                   Foreground="{Binding Status, Converter={StaticResource StatusToColorConverter}}"/>
+                                        <Ellipse Width="6" Height="6" Fill="{Binding Status, Converter={StaticResource StatusToColorConverter}}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Status}" FontSize="12" FontWeight="Bold" Foreground="{Binding Status, Converter={StaticResource StatusToColorConverter}}"/>
                                     </StackPanel>
                                 </Border>
 
-                                <!-- ACTIONS column (three-dot menu) -->
-                                <Button Grid.Column="5"
-                                        Style="{StaticResource DashIconButton}"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Width="32" Height="32">
-                                    <fa:IconImage Icon="EllipsisVertical" Width="14" Height="14"
-                                                  Foreground="{StaticResource DashTextMuted}"/>
+                                <Button Grid.Column="5" Style="{StaticResource ModernIconButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="36" Height="36">
+                                    <fa:IconImage Icon="EllipsisVertical" Width="16" Height="16" Foreground="#9CA3AF"/>
                                 </Button>
                             </Grid>
                         </Border>
@@ -279,31 +254,18 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <!-- ===== Pagination Bar ===== -->
-            <Grid Margin="0,16,0,0">
+            <Grid Margin="0,24,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Pagination info text -->
-                <TextBlock Grid.Column="0"
-                           Text="{Binding PaginationText}"
-                           FontFamily="{StaticResource DashFontFamily}"
-                           FontSize="13"
-                           Foreground="{StaticResource DashTextMuted}"
-                           VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="0" Text="{Binding PaginationText}" FontSize="13" Foreground="#6B7280" VerticalAlignment="Center"/>
 
-                <!-- Page number buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
 
-                    <!-- Previous page arrow -->
-                    <Button Style="{StaticResource DashPaginationButton}"
-                            Command="{Binding NavigatePageCommand}"
-                            CommandParameter="{Binding CurrentPage, Converter={StaticResource PrevPageConverter}}"
-                            >
-                        <fa:IconImage Icon="ChevronLeft" Width="10" Height="10"
-                                      Foreground="{StaticResource DashTextMuted}"/>
+                    <Button Style="{StaticResource ModernPaginationButton}" Command="{Binding NavigatePageCommand}" CommandParameter="{Binding CurrentPage, Converter={StaticResource PrevPageConverter}}">
+                        <fa:IconImage Icon="ChevronLeft" Width="12" Height="12" Foreground="#6B7280"/>
                     </Button>
 
                     <ItemsControl ItemsSource="{Binding PageNumbers}">
@@ -312,28 +274,17 @@
                                 <StackPanel Orientation="Horizontal"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
-
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button
-                Content="{Binding}"
-                Width="32"
-                Height="32"
-                Margin="4,0"
-                Command="{Binding DataContext.NavigatePageCommand,
-                          RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                CommandParameter="{Binding}">
-                                </Button>
+                                <Button Content="{Binding}" Style="{StaticResource ModernPaginationButton}"
+                                        Command="{Binding DataContext.NavigatePageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <!-- Next page arrow -->
-                    <Button Style="{StaticResource DashPaginationButton}"
-                            CommandParameter="{Binding CurrentPage, Converter={StaticResource NextPageConverter}}"
-                            >
-                        <fa:IconImage Icon="ChevronRight" Width="10" Height="10"
-                                      Foreground="{StaticResource DashTextMuted}"/>
+                    <Button Style="{StaticResource ModernPaginationButton}" CommandParameter="{Binding CurrentPage, Converter={StaticResource NextPageConverter}}">
+                        <fa:IconImage Icon="ChevronRight" Width="12" Height="12" Foreground="#6B7280"/>
                     </Button>
                 </StackPanel>
             </Grid>

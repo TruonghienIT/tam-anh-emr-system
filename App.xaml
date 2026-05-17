@@ -4,22 +4,54 @@
              xmlns:local="clr-namespace:TamAnh_EMR_System"
              xmlns:converters="clr-namespace:TamAnh_EMR_System.Converters"
              xmlns:conv="clr-namespace:TamAnh_EMR_System.Converters">
+
     <Application.Resources>
+
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
+
                 <ResourceDictionary Source="/Resource/Style/UIColor.xaml"/>
+
                 <ResourceDictionary Source="/Resource/Style/ButtonStyles.xaml"/>
+
                 <ResourceDictionary Source="/Resource/Style/DashboardStyles.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
 
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-            <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
-            <converters:StatusToBackgroundConverter x:Key="StatusToBackgroundConverter"/>
-            <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
-            <converters:VietnameseDayConverter x:Key="VietnameseDayConverter"/>
-            <conv:PrevPageConverter x:Key="PrevPageConverter"/>
-            <conv:NextPageConverter x:Key="NextPageConverter"/>
+            <BooleanToVisibilityConverter
+                x:Key="BooleanToVisibilityConverter"/>
+
+            <converters:BoolToVisibilityConverter
+                x:Key="BoolToVisibilityConverter"/>
+
+            <converters:StatusToColorConverter
+                x:Key="StatusToColorConverter"/>
+
+            <converters:StatusToBackgroundConverter
+                x:Key="StatusToBackgroundConverter"/>
+
+            <converters:InverseBooleanToVisibilityConverter
+                x:Key="InverseBooleanToVisibilityConverter"/>
+
+            <converters:VietnameseDayConverter
+                x:Key="VietnameseDayConverter"/>
+
+            <conv:PrevPageConverter
+                x:Key="PrevPageConverter"/>
+
+            <conv:NextPageConverter
+                x:Key="NextPageConverter"/>
+
+            <!-- APPOINTMENT STATUS -->
+            <conv:AppointmentStatusBrushConverter
+                x:Key="AppointmentStatusBrushConverter"/>
+
+            <conv:AppointmentStatusForegroundConverter
+                x:Key="AppointmentStatusForegroundConverter"/>
+
         </ResourceDictionary>
+
     </Application.Resources>
+
 </Application>

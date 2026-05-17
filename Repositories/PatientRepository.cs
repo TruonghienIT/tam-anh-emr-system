@@ -255,6 +255,7 @@ namespace TamAnh_EMR_System.Repositories
 
                 cmd.CommandText = @"
 <<<<<<< HEAD
+<<<<<<< HEAD
                 SELECT 
                     'P' + RIGHT('000' + CAST(
                         ISNULL(
@@ -272,6 +273,23 @@ namespace TamAnh_EMR_System.Repositories
 
 >>>>>>> 356b176 (fix: update patient id generation)
                 int nextNum = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+=======
+                        SELECT 
+                            ISNULL(
+                                MAX(
+                                    TRY_CAST(
+                                        SUBSTRING(id, 2, LEN(id) - 1) AS INT
+                                    )
+                                ),
+                            0
+                        ) + 1
+                        FROM patients
+                        WHERE id LIKE 'P%'";
+
+                int nextNum = Convert.ToInt32(
+                    await cmd.ExecuteScalarAsync()
+                );
+>>>>>>> e1cfb2c (feat: complete receptionist workflow, patient management and appointment PDF export)
 
                 return $"P{nextNum:D3}";
             }
@@ -296,6 +314,156 @@ namespace TamAnh_EMR_System.Repositories
                 EmergencyContactName = reader["emergency_contact_name"]?.ToString(),
                 EmergencyContactPhone = reader["emergency_contact_phone"]?.ToString()
             };
+        }
+        // ================= SEARCH WITH FILTER =================
+        public async Task<List<Patients>> SearchWithFilterAsync(
+            string keyword,
+            string gender,
+            string bloodType)
+        {
+            var list = new List<Patients>();
+
+            using (var conn = GetConnection())
+            using (var cmd = new SqlCommand())
+            {
+                await conn.OpenAsync();
+
+                cmd.Connection = conn;
+
+                cmd.CommandText = @"
+                        SELECT *
+                        FROM patients
+                        WHERE
+                        (
+                            @keyword IS NULL
+                            OR name LIKE '%' + @keyword + '%'
+                            OR phone LIKE '%' + @keyword + '%'
+                            OR id LIKE '%' + @keyword + '%'
+                            OR id_card LIKE '%' + @keyword + '%'
+                        )
+                        AND
+                        (
+                            @gender IS NULL
+                            OR gender = @gender
+                        )
+                        AND
+                        (
+                            @blood IS NULL
+                            OR blood_type = @blood
+                        )
+                        ORDER BY created_at DESC";
+
+                cmd.Parameters.AddWithValue(
+                    "@keyword",
+                    string.IsNullOrWhiteSpace(keyword)
+                        ? DBNull.Value
+                        : keyword
+                );
+
+                cmd.Parameters.AddWithValue(
+                    "@gender",
+                    gender == "Tất cả"
+                        ? DBNull.Value
+                        : gender
+                );
+
+                cmd.Parameters.AddWithValue(
+                    "@blood",
+                    bloodType == "Tất cả"
+                        ? DBNull.Value
+                        : bloodType
+                );
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        list.Add(MapPatient(reader));
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        // ================= UPDATE =================
+        public async Task UpdateAsync(Patients patient)
+        {
+            using (var conn = GetConnection())
+            using (var cmd = new SqlCommand())
+            {
+                await conn.OpenAsync();
+
+                cmd.Connection = conn;
+
+                cmd.CommandText = @"
+                    UPDATE patients
+                    SET
+                        name = @name,
+                        gender = @gender,
+                        dob = @dob,
+                        phone = @phone,
+                        email = @email,
+                        id_card = @id_card,
+                        blood_type = @blood,
+                        allergies = @allergies,
+                        emergency_contact_name = @emergency_name,
+                        emergency_contact_phone = @emergency_phone,
+                        address = @address
+                    WHERE id = @id";
+
+                cmd.Parameters.AddWithValue("@id", patient.Id);
+
+                cmd.Parameters.AddWithValue("@name", patient.Name);
+
+                cmd.Parameters.AddWithValue("@gender", patient.Gender);
+
+                cmd.Parameters.AddWithValue("@dob", patient.Dob);
+
+                cmd.Parameters.AddWithValue("@phone", patient.Phone);
+
+                cmd.Parameters.AddWithValue("@email",
+                    (object?)patient.Email ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@id_card",
+                    (object?)patient.IdCard ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@blood",
+                    (object?)patient.BloodType ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@allergies",
+                    (object?)patient.Allergies ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@emergency_name",
+                    (object?)patient.EmergencyContactName ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@emergency_phone",
+                    (object?)patient.EmergencyContactPhone ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@address",
+                    (object?)patient.Address ?? DBNull.Value);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        // ================= DELETE =================
+        public async Task DeleteAsync(string patientId)
+        {
+            using (var conn = GetConnection())
+            using (var cmd = new SqlCommand())
+            {
+                await conn.OpenAsync();
+
+                cmd.Connection = conn;
+
+                cmd.CommandText =
+                    "DELETE FROM patients WHERE id = @id";
+
+                cmd.Parameters.AddWithValue("@id", patientId);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
         }
     }
 }

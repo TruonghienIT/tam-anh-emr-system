@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Windows;
 using TamAnh_EMR_System.View;
+using QuestPDF.Infrastructure;
 
 namespace TamAnh_EMR_System
 {
@@ -19,6 +20,11 @@ namespace TamAnh_EMR_System
 
             var loginView = new LoginView();
             loginView.Show();
+        }
+        public App()
+        {
+            QuestPDF.Settings.License =
+                LicenseType.Community;
         }
     }
 

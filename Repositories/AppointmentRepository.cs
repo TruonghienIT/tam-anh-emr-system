@@ -177,7 +177,17 @@ namespace TamAnh_EMR_System.Repositories
 
                 cmd.Parameters.Add("@doctor_id", SqlDbType.VarChar, 10).Value = doctorId;
                 cmd.Parameters.Add("@date", SqlDbType.Date).Value = date;
-                cmd.Parameters.Add("@time_slot", SqlDbType.VarChar, 20).Value = timeSlot;
+                TimeSpan parsedTime;
+
+                if (!TimeSpan.TryParse(
+                        timeSlot.Split('-')[0].Trim(),
+                        out parsedTime))
+                {
+                    parsedTime = new TimeSpan(8, 0, 0);
+                }
+
+                cmd.Parameters.Add("@time_slot", SqlDbType.Time)
+                    .Value = parsedTime;
 
                 var count = (int)await cmd.ExecuteScalarAsync();
                 return count > 0;
@@ -359,6 +369,31 @@ WHERE id LIKE 'A%'";
                 }
             }
         }
+        public async Task UpdateStatusAsync(
+            string id,
+            string status)
+        {
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+
+                string query = @"
+                    UPDATE appointments
+                    SET status = @status
+                    WHERE id = @id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10)
+                        .Value = id;
+
+                    cmd.Parameters.Add("@status", SqlDbType.NVarChar, 30)
+                        .Value = status;
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
 
         // ================= HELPER: Generate Initials =================
         private string GenerateInitials(string name)
@@ -392,6 +427,7 @@ WHERE id LIKE 'A%'";
                 await conn.OpenAsync();
 
                 string query = @"
+<<<<<<< HEAD
                 SELECT 
                     FORMAT(appointment_time, 'hh\:mm') AS HourLabel,
                     COUNT(*) AS Total
@@ -399,6 +435,15 @@ WHERE id LIKE 'A%'";
                 WHERE appointment_date = CAST(GETDATE() AS DATE)
                 GROUP BY appointment_time
                 ORDER BY appointment_time";
+=======
+                     SELECT 
+                    CONVERT(VARCHAR(5), appointment_time, 108) AS HourLabel,
+                    COUNT(*) AS Total
+                    FROM appointments
+                    WHERE appointment_date = CAST(GETDATE() AS DATE)
+                    GROUP BY appointment_time
+                    ORDER BY appointment_time";
+>>>>>>> e1cfb2c (feat: complete receptionist workflow, patient management and appointment PDF export)
 
                 using (var cmd = new SqlCommand(query, conn))
                 using (var reader = await cmd.ExecuteReaderAsync())
@@ -416,5 +461,90 @@ WHERE id LIKE 'A%'";
 
             return result;
         }
+        public async Task<List<AppointmentDisplay>> GetAllDisplayAsync()
+        {
+            var list = new List<AppointmentDisplay>();
+
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+
+                string query = @"
+            SELECT
+                a.id,
+                a.patient_id,
+                a.doctor_id,
+                p.name AS patient_name,
+                d.full_name AS doctor_name,
+                d.specialization,
+                a.appointment_date,
+                a.appointment_time,
+                a.status,
+                a.reason
+            FROM appointments a
+            INNER JOIN patients p ON p.id = a.patient_id
+            INNER JOIN doctors d ON d.id = a.doctor_id
+
+            ORDER BY 
+                a.appointment_date ASC,
+                a.appointment_time ASC";
+
+                using (var cmd = new SqlCommand(query, conn))
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var time =
+                            reader["appointment_time"] is TimeSpan ts
+                            ? ts.ToString(@"hh\:mm")
+                            : reader["appointment_time"]?.ToString() ?? "";
+
+                        list.Add(new AppointmentDisplay
+                        {
+                            Id = reader["id"]?.ToString() ?? "",
+
+                            PatientId =
+                                reader["patient_id"]?.ToString() ?? "",
+
+                            DoctorId =
+                                reader["doctor_id"]?.ToString() ?? "",
+
+                            PatientName =
+                                reader["patient_name"]?.ToString() ?? "",
+
+                            DoctorName =
+                                reader["doctor_name"]?.ToString() ?? "",
+
+                            Department =
+                                reader["specialization"]?.ToString() ?? "",
+
+                            AppointmentDate =
+                                reader["appointment_date"] == DBNull.Value
+                                ? DateTime.Today
+                                : Convert.ToDateTime(
+                                    reader["appointment_date"]),
+
+                            AppointmentTime = time,
+
+                            Status =
+                                reader["status"]?.ToString()
+                                ?? "Đang chờ",
+
+                            Reason =
+                                reader["reason"]?.ToString()
+                                ?? ""
+                        });
+                    }
+                }
+            }
+
+            return list;
+        }
+        public async Task DeleteAsync(string id)
+        {
+            await UpdateStatusAsync(id, "Đã hủy");
+        }
+
     }
+
 }

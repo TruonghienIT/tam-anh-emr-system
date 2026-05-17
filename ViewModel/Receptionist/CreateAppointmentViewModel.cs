@@ -17,6 +17,7 @@ using TamAnh_EMR_System.Model.Receptionist;
 using TamAnh_EMR_System.Repositories;
 using TamAnh_EMR_System.Services;
 using TamAnh_EMR_System.View.Receptionist;
+using TamAnh_EMR_System.Services.Pdf;
 
 namespace TamAnh_EMR_System.ViewModel.Receptionist
 {
@@ -587,6 +588,7 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 // ===== SAVE APPOINTMENT =====
                 await _appointmentRepo.AddAsync(appointment);
 
+<<<<<<< HEAD
                 //try
                 //{
                 //    string phone = patient.Phone?.Trim();
@@ -613,6 +615,32 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 //        MessageBoxImage.Error
                 //    );
                 //}
+=======
+                // ===== AUTO EXPORT PDF =====
+
+                var appointmentDisplay = new AppointmentDisplay
+                {
+                    Id = appointment.Id,
+
+                    PatientName = patient.Name,
+
+                    DoctorName = Appointment.Doctor,
+
+                    Department = Appointment.Department,
+
+                    AppointmentDate = appointment.AppointmentDate,
+
+                    AppointmentTime = appointment.AppointmentTime,
+
+                    Status = appointment.Status,
+
+                    Reason = Appointment.Note
+                };
+
+                var pdfService = new AppointmentPdfService();
+
+                pdfService.Export(appointmentDisplay);
+>>>>>>> e1cfb2c (feat: complete receptionist workflow, patient management and appointment PDF export)
 
                 System.Diagnostics.Debug.WriteLine(
                     $"Saved appointment: {appointment.Id}");

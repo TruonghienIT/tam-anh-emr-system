@@ -39,5 +39,10 @@ namespace TamAnh_EMR_System.Repositories
         /// Gets count of appointments by status for today (for statistic cards).
         /// </summary>
         Task<Dictionary<string, int>> GetTodayStatisticsAsync();
+        Task<List<AppointmentDisplay>> GetAllDisplayAsync();
+
+        Task UpdateStatusAsync(string id, string status);
+
+        Task DeleteAsync(string id);
     }
 }

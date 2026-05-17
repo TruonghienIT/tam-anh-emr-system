@@ -7,15 +7,44 @@ namespace TamAnh_EMR_System.Converters
 {
     public class InverseBooleanToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture)
         {
-            bool val = (bool)value;
-            return val ? Visibility.Collapsed : Visibility.Visible;
+            // =====================================================
+            // BOOLEAN
+            // =====================================================
+
+            if (value is bool boolValue)
+            {
+                return boolValue
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            }
+
+            // =====================================================
+            // INTEGER (Patients.Count)
+            // =====================================================
+
+            if (value is int intValue)
+            {
+                return intValue == 0
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture)
         {
-            return (Visibility)value != Visibility.Visible;
+            return Visibility.Visible;
         }
     }
 }
