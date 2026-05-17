@@ -191,7 +191,7 @@ namespace TamAnh_EMR_System.Services.Pdf
                             .Column(qr =>
                             {
                                 qr.Item()
-                                    .Text("QR XÁC NHẬN LỊCH HẸN")
+                                    .Text("QR THÔNG TIN LỊCH HẸN")
                                     .Bold()
                                     .FontSize(14);
 

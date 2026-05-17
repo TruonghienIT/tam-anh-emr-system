@@ -11,7 +11,7 @@
     <Grid>
 
         <view:RegisterPatientView DataContext="{Binding}" />
-        
+
 
     </Grid>
 

@@ -666,14 +666,14 @@
                             <TextBlock Grid.Column="1" Text="{Binding SummaryTime}" FontSize="14" FontWeight="Bold" Foreground="#3B82F6" HorizontalAlignment="Right"/>
                         </Grid>
 
-                        <Grid>
+                        <!--<Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="90"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Địa điểm:" FontSize="14" Foreground="#6B7280"/>
                             <TextBlock Grid.Column="1" Text="{Binding Appointment.Location}" FontSize="14" FontWeight="Bold" Foreground="#111827" HorizontalAlignment="Right" TextWrapping="Wrap" TextAlignment="Right"/>
-                        </Grid>
+                        </Grid>-->
                     </StackPanel>
                 </Border>
 

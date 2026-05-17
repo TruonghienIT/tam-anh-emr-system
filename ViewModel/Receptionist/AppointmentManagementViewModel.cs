@@ -133,7 +133,6 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 {
                     "Tất cả",
                     "Đang chờ",
-                    "Đã xác nhận",
                     "Đang khám",
                     "Hoàn thành",
                     "Đã hủy"

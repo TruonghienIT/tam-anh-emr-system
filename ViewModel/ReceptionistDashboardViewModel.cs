@@ -378,6 +378,8 @@ namespace TamAnh_EMR_System.ViewModel
             MenuNavigateCommand = new RelayCommand(ExecuteMenuNavigate);
             ViewAllNotificationsCommand = new RelayCommand(ExecuteViewAllNotifications);
 
+            LogoutCommand = new ViewModelCommand(ExecuteLogoutCommand);
+
             // Load static UI data
             LoadStaticData();
 
@@ -395,6 +397,23 @@ namespace TamAnh_EMR_System.ViewModel
             ResetFiltersCommand = new RelayCommand(_ => ResetFilters());
             StartRealtimeRefresh();
 
+        }
+
+        private void ExecuteLogoutCommand(object obj)
+        {
+            var result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                LoginView loginView = new LoginView();
+                loginView.Show();
+                Application.Current.Windows
+                    .OfType<Window>()
+                    .SingleOrDefault(w => w is ReceptionistView)
+                    ?.Close();
+            }
         }
 
         // =====================================================================
@@ -727,9 +746,9 @@ namespace TamAnh_EMR_System.ViewModel
                 });
 
                 string fileType =
-    Path.GetExtension(dialog.FileName)
-        .Replace(".", "")
-        .ToUpper();
+                Path.GetExtension(dialog.FileName)
+                    .Replace(".", "")
+                    .ToUpper();
 
                 ShowSuccessToast(
                     "Xuất báo cáo thành công",
@@ -1063,6 +1082,8 @@ namespace TamAnh_EMR_System.ViewModel
             }
         }
         public ICommand ResetFiltersCommand { get; }
+
+        public ICommand LogoutCommand { get; }
 
         private void ResetFilters()
         {

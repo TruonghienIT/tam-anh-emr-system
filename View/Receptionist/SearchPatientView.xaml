@@ -270,15 +270,26 @@
                         </Border>
 
                         <!-- DataGrid -->
-                        <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" ClipToBounds="True">
-                            <StackPanel>
+                        <Border BorderBrush="#E5E7EB"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                ClipToBounds="True"
+                                Background="White">
+
+                            <Grid>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
                                 <DataGrid ItemsSource="{Binding PagedPatients}"
                                           AutoGenerateColumns="False"
                                           HeadersVisibility="Column"
                                           CanUserAddRows="False"
                                           IsReadOnly="True"
                                           BorderThickness="0"
-                                          Background="Transparent"
+                                          Background="White"
                                           GridLinesVisibility="None"
                                           RowHeight="56"
                                           ColumnHeaderHeight="48"
@@ -294,7 +305,9 @@
                                             <Setter Property="FontSize" Value="13"/>
                                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
                                             <Setter Property="BorderBrush" Value="#E5E7EB"/>
-                                            <Setter Property="Padding" Value="20,0"/>
+                                            <Setter Property="Padding" Value="16,0"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
                                         </Style>
                                     </DataGrid.ColumnHeaderStyle>
 
@@ -302,10 +315,11 @@
                                         <Style TargetType="DataGridRow">
                                             <Setter Property="Background" Value="White"/>
                                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                            <Setter Property="BorderBrush" Value="#F8FAFC"/>
+                                            <Setter Property="BorderBrush" Value="#F3F4F6"/>
+
                                             <Style.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#F8FAFC"/>
+                                                    <Setter Property="Background" Value="#F9FAFB"/>
                                                 </Trigger>
                                                 <Trigger Property="IsSelected" Value="True">
                                                     <Setter Property="Background" Value="#EFF6FF"/>
@@ -317,7 +331,7 @@
                                     <DataGrid.CellStyle>
                                         <Style TargetType="DataGridCell">
                                             <Setter Property="BorderThickness" Value="0"/>
-                                            <Setter Property="Padding" Value="20,0"/>
+                                            <Setter Property="Padding" Value="16,0"/>
                                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                                             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                             <Setter Property="Foreground" Value="#111827"/>
@@ -325,277 +339,207 @@
                                     </DataGrid.CellStyle>
 
                                     <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Mã BN" Binding="{Binding Id}" Width="90">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="TextAlignment" Value="Center"/>
+                                                    <Setter Property="Foreground" Value="#111827"/>
+                                                    <Setter Property="FontSize" Value="14"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                        <!-- Mã BN -->
-                                        <DataGridTemplateColumn Header="Mã BN" Width="90">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid Height="56">
-                                                        <TextBlock Text="{Binding Id}"
-                               VerticalAlignment="Center"
-                               Foreground="#111827"
-                               FontSize="14"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="2*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="TextAlignment" Value="Center"/>
+                                                    <Setter Property="Foreground" Value="#111827"/>
+                                                    <Setter Property="FontSize" Value="14"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                        <!-- Họ tên -->
-                                        <DataGridTemplateColumn Header="Họ tên" Width="260">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid Height="56">
-                                                        <TextBlock Text="{Binding Name}"
-                               VerticalAlignment="Center"
-                               FontWeight="SemiBold"
-                               Foreground="#111827"
-                               FontSize="14"
-                               TextTrimming="CharacterEllipsis"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Giới tính" Binding="{Binding Gender}" Width="110">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="TextAlignment" Value="Center"/>
+                                                    <Setter Property="TextAlignment" Value="Center"/>
+                                                    <Setter Property="Foreground" Value="#111827"/>
+                                                    <Setter Property="FontSize" Value="14"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                        <!-- Giới tính -->
-                                        <DataGridTemplateColumn Header="Giới tính" Width="110">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid Height="56">
-                                                        <TextBlock Text="{Binding Gender}"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               TextAlignment="Center"
-                               Foreground="#111827"
-                               FontSize="14"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Ngày sinh" Binding="{Binding Dob, StringFormat=dd/MM/yyyy}" Width="140">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="TextAlignment" Value="Center"/>
+                                                    <Setter Property="Foreground" Value="#111827"/>
+                                                    <Setter Property="FontSize" Value="14"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                        <!-- Ngày sinh -->
-                                        <DataGridTemplateColumn Header="Ngày sinh" Width="140">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid Height="56">
-                                                        <TextBlock Text="{Binding Dob, StringFormat=dd/MM/yyyy}"
-                               VerticalAlignment="Center"
-                               Foreground="#111827"
-                               FontSize="14"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="SĐT" Binding="{Binding Phone}" Width="150">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="TextAlignment" Value="Center"/>
+                                                    <Setter Property="Foreground" Value="#111827"/>
+                                                    <Setter Property="FontSize" Value="14"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                        <!-- SĐT -->
-                                        <DataGridTemplateColumn Header="SĐT" Width="150">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid Height="56">
-                                                        <TextBlock Text="{Binding Phone}"
-                               VerticalAlignment="Center"
-                               Foreground="#111827"
-                               FontSize="14"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Nhóm máu" Binding="{Binding BloodType}" Width="120">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="TextAlignment" Value="Center"/>
+                                                    <Setter Property="Foreground" Value="#DC2626"/>
+                                                    <Setter Property="FontSize" Value="14"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                        <!-- Nhóm máu -->
-                                        <DataGridTemplateColumn Header="Nhóm máu" Width="120">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid Height="56">
-                                                        <TextBlock Text="{Binding BloodType}"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               TextAlignment="Center"
-                               FontWeight="SemiBold"
-                               Foreground="#DC2626"
-                               FontSize="14"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-
-                                        <!-- Thao tác -->
-                                        <DataGridTemplateColumn Header="Thao tác" Width="220">
-
+                                        <DataGridTemplateColumn Header="Thao tác" Width="200">
                                             <DataGridTemplateColumn.HeaderStyle>
                                                 <Style TargetType="DataGridColumnHeader">
-                                                    <Setter Property="HorizontalContentAlignment"
-                        Value="Center"/>
+                                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                                 </Style>
                                             </DataGridTemplateColumn.HeaderStyle>
-
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
 
-                                                    <Grid Height="56">
-
-                                                        <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-
-                                                            <!-- Edit -->
-                                                            <Button Width="72"
-                                Height="32"
-                                Margin="0,0,8,0"
-                                Cursor="Hand"
-                                Command="{Binding DataContext.EditPatientCommand,
-                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                CommandParameter="{Binding}">
-
-                                                                <Button.Template>
-                                                                    <ControlTemplate TargetType="Button">
-
-                                                                        <Border x:Name="Bg"
-                                            Background="#EFF6FF"
-                                            CornerRadius="6">
-
-                                                                            <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center">
-
-                                                                                <fa:IconImage Icon="PenToSquare"
-                                                          Width="12"
-                                                          Height="12"
-                                                          Foreground="#2563EB"
-                                                          Margin="0,0,6,0"/>
-
-                                                                                <TextBlock Text="Sửa"
-                                                       Foreground="#2563EB"
-                                                       FontWeight="SemiBold"
-                                                       FontSize="13"/>
-
-                                                                            </StackPanel>
-
-                                                                        </Border>
-
-                                                                        <ControlTemplate.Triggers>
-                                                                            <Trigger Property="IsMouseOver"
-                                                 Value="True">
-
-                                                                                <Setter TargetName="Bg"
-                                                    Property="Background"
-                                                    Value="#DBEAFE"/>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-
-                                                            </Button>
-
-                                                            <!-- Delete -->
-                                                            <Button Width="72"
-                                Height="32"
-                                Cursor="Hand"
-                                Command="{Binding DataContext.DeletePatientCommand,
-                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                CommandParameter="{Binding}">
-
-                                                                <Button.Template>
-                                                                    <ControlTemplate TargetType="Button">
-
-                                                                        <Border x:Name="Bg"
-                                            Background="#FEF2F2"
-                                            CornerRadius="6">
-
-                                                                            <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center">
-
-                                                                                <fa:IconImage Icon="TrashCan"
-                                                          Width="12"
-                                                          Height="12"
-                                                          Foreground="#DC2626"
-                                                          Margin="0,0,6,0"/>
-
-                                                                                <TextBlock Text="Xóa"
-                                                       Foreground="#DC2626"
-                                                       FontWeight="SemiBold"
-                                                       FontSize="13"/>
-
-                                                                            </StackPanel>
-
-                                                                        </Border>
-
-                                                                        <ControlTemplate.Triggers>
-                                                                            <Trigger Property="IsMouseOver"
-                                                 Value="True">
-
-                                                                                <Setter TargetName="Bg"
-                                                    Property="Background"
-                                                    Value="#FEE2E2"/>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-
-                                                                    </ControlTemplate>
-                                                                </Button.Template>
-
-                                                            </Button>
-
-                                                        </StackPanel>
-
-                                                    </Grid>
-
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-
-                                        </DataGridTemplateColumn>
-
-                                    </DataGrid.Columns>
-                                </DataGrid>
-
-                                <!-- Pagination Footer -->
-                                <Border BorderBrush="#E5E7EB" BorderThickness="0,1,0,0" Padding="20,16" Background="White">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Text="{Binding PaginationText}" FontSize="14" Foreground="#6B7280" VerticalAlignment="Center" />
-
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                            <ItemsControl ItemsSource="{Binding PageNumbers}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Horizontal"/>
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Button Width="36" Height="36" Margin="4,0" Cursor="Hand" Content="{Binding}"
-                                                                Command="{Binding DataContext.NavigatePageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                                CommandParameter="{Binding}">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <Button Width="70"
+                                                        Height="30"
+                                                        Margin="0,0,8,0"
+                                                        Cursor="Hand"
+                                                        Command="{Binding DataContext.EditPatientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                        CommandParameter="{Binding}">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
-                                                                    <Border x:Name="PageBtnBg" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6">
-                                                                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#111827" FontSize="14" FontWeight="SemiBold"/>
+                                                                    <Border x:Name="Bg" Background="#EFF6FF" CornerRadius="6">
+                                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                            <fa:IconImage Icon="PenToSquare" Width="12" Height="12" Foreground="#2563EB" Margin="0,0,6,0"/>
+                                                                            <TextBlock Text="Sửa" Foreground="#2563EB" FontWeight="SemiBold" FontSize="12"/>
+                                                                        </StackPanel>
                                                                     </Border>
                                                                     <ControlTemplate.Triggers>
                                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter TargetName="PageBtnBg" Property="Background" Value="#F8FAFC"/>
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#DBEAFE"/>
                                                                         </Trigger>
                                                                     </ControlTemplate.Triggers>
                                                                 </ControlTemplate>
                                                             </Button.Template>
                                                         </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
+
+                                                        <Button Width="70"
+                                                                Height="30"
+                                                                Cursor="Hand"
+                                                                Command="{Binding DataContext.DeletePatientCommand,
+                                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                CommandParameter="{Binding}">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border x:Name="Bg" Background="#FEF2F2" CornerRadius="6">
+                                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                            <fa:IconImage Icon="TrashCan" Width="12" Height="12" Foreground="#DC2626" Margin="0,0,6,0"/>
+                                                                            <TextBlock Text="Xóa" Foreground="#DC2626" FontWeight="SemiBold" FontSize="12"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="Bg" Property="Background" Value="#FEE2E2"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <!-- PAGINATION -->
+                                <Border Grid.Row="1"
+                                        BorderBrush="#E5E7EB"
+                                        BorderThickness="0,1,0,0"
+                                        Padding="16"
+                                        Background="White">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding PaginationText}" FontSize="13" Foreground="#6B7280" VerticalAlignment="Center"/>
+                                        <ItemsControl Grid.Column="1" ItemsSource="{Binding PageNumbers}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Width="34"
+                                                            Height="34"
+                                                            Margin="3,0"
+                                                            Content="{Binding}"
+                                                            Cursor="Hand"
+                                                            Command="{Binding DataContext.NavigatePageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding}">
+
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Bg"
+                                                                        Background="White"
+                                                                        BorderBrush="#E5E7EB"
+                                                                        BorderThickness="1"
+                                                                        CornerRadius="6">
+
+                                                                    <TextBlock Text="{Binding}"
+                                                                               HorizontalAlignment="Center"
+                                                                               VerticalAlignment="Center"
+                                                                               FontWeight="SemiBold"
+                                                                               Foreground="#111827"/>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="Bg" Property="Background" Value="#F8FAFC"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </Grid>
                                 </Border>
-                            </StackPanel>
+                            </Grid>
                         </Border>
                     </StackPanel>
                 </Border>
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Toasts Notification Area -->
         <Grid>
             <ItemsControl ItemsSource="{Binding Toasts}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,24,24,0" Panel.ZIndex="999">
                 <ItemsControl.ItemsPanel>
