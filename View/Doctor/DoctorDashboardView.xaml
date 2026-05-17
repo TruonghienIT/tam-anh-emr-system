@@ -26,7 +26,7 @@
                 <Grid Margin="0,0,0,24">
                     <StackPanel>
                         <TextBlock Text="Trang chủ" FontSize="28" FontWeight="Bold" Foreground="#111827"/>
-                        <TextBlock Text="Đây là tổng quan cho ngày hôm nay, ngày 24 tháng 10." FontSize="14" Foreground="#6B7280" Margin="0,6,0,0"/>
+                        <TextBlock Text="Đây là tổng quan cho ngày hôm nay, ngày 18 tháng 05." FontSize="14" Foreground="#6B7280" Margin="0,6,0,0"/>
                     </StackPanel>
                     <Button Style="{StaticResource B}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" Padding="16,8" HorizontalAlignment="Right" VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal">

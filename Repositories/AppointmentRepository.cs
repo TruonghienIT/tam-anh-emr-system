@@ -49,17 +49,7 @@ namespace TamAnh_EMR_System.Repositories
                 {
                     appointmentTime = new TimeSpan(8, 0, 0);
                 }
-                cmd.Parameters.Add("@appointment_time", SqlDbType.Time)
-                    .Value = appointmentTime;
 
-                cmd.Parameters.Add("@status", SqlDbType.NVarChar, 30)
-                    .Value = "Đang chờ";
-
-                cmd.Parameters.Add("@reason", SqlDbType.NVarChar, 500)
-                    .Value = (object?)appointment.Reason ?? DBNull.Value;
-
-                cmd.Parameters.Add("@created_by", SqlDbType.VarChar, 10)
-                    .Value = (object?)appointment.CreatedBy ?? DBNull.Value;
                 cmd.Parameters.Add("@appointment_time", SqlDbType.Time)
                     .Value = appointmentTime;
 
@@ -469,8 +459,6 @@ ORDER BY appointment_time";
             {
                 await conn.OpenAsync();
 
-                // Use LEFT JOINs to include appointments even if patient/doctor missing
-                // NO date filter - show all appointments
                 string query = @"
             SELECT
                 a.id,
@@ -484,12 +472,12 @@ ORDER BY appointment_time";
                 a.status,
                 a.reason
             FROM appointments a
-            LEFT JOIN patients p ON p.id = a.patient_id
-            LEFT JOIN doctors d ON d.id = a.doctor_id
+            INNER JOIN patients p ON p.id = a.patient_id
+            INNER JOIN doctors d ON d.id = a.doctor_id
 
             ORDER BY 
-                a.appointment_date DESC,
-                a.appointment_time DESC";
+                a.appointment_date ASC,
+                a.appointment_time ASC";
 
                 using (var cmd = new SqlCommand(query, conn))
                 using (var reader = await cmd.ExecuteReaderAsync())
@@ -547,6 +535,7 @@ ORDER BY appointment_time";
             await UpdateStatusAsync(id, "Đã hủy");
         }
 
+
         public async Task UpdateAppointmentDateTimeAsync(string id, DateTime newDate, string newTime)
         {
             using (var conn = GetConnection())
@@ -573,7 +562,6 @@ ORDER BY appointment_time";
                 }
             }
         }
-
     }
 
 }

@@ -68,10 +68,6 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
         public ObservableCollection<PatientQueueItem> PatientQueue { get; set; }
 
-        // Medical history and appointments for selected patient
-        public ObservableCollection<MedicalRecords> MedicalHistory { get; set; } = new ObservableCollection<MedicalRecords>();
-        public ObservableCollection<Appointment> PatientAppointments { get; set; } = new ObservableCollection<Appointment>();
-
         public int WaitingCount => PatientQueue.Count(p => p.Status == "Đang chờ");
 
         #region Selected Patient
@@ -235,8 +231,6 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         {
             _repository = new DoctorPatientManagementRepository();
             PatientQueue = new ObservableCollection<PatientQueueItem>();
-            MedicalHistory = new ObservableCollection<MedicalRecords>();
-            PatientAppointments = new ObservableCollection<Appointment>();
 
             ScanQrCommand = new RelayCommand(_ =>
                 MessageBox.Show(
@@ -275,33 +269,6 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         }
         #endregion
 
-        private async Task LoadPatientRecordsAndAppointmentsAsync(string patientId)
-        {
-            MedicalHistory.Clear();
-            PatientAppointments.Clear();
-
-            if (string.IsNullOrWhiteSpace(patientId)) return;
-
-            try
-            {
-                var records = await _repository.GetMedicalRecordsByPatientAsync(patientId);
-                var appts = await _repository.GetAppointmentsByPatientAsync(patientId);
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    foreach (var r in records)
-                        MedicalHistory.Add(r);
-
-                    foreach (var a in appts)
-                        PatientAppointments.Add(a);
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải dữ liệu bệnh án / lịch hẹn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         #region Load Queue
         private async Task LoadQueueAsync()
         {
@@ -311,18 +278,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             {
                 PatientQueue.Clear();
 
-                if (data.Count == 0)
-                {
-                    MessageBox.Show("Không tìm thấy bệnh nhân nào. Kiểm tra kết nối cơ sở dữ liệu.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-
                 foreach (var item in data)
                 {
-                    string currentStatus = string.IsNullOrEmpty(item.Status) ? "Đang chờ" : item.Status;
-                    if (currentStatus == "Hoàn thành" || currentStatus == "Đã hủy")
-                    {
-                        continue;
-                    }
                     int age = DateTime.Now.Year - item.DOB.Year;
                     if (DateTime.Now.DayOfYear < item.DOB.DayOfYear)
                         age--;

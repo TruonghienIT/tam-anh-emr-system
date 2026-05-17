@@ -113,9 +113,10 @@
 				<TextBlock Text="Trạng thái" Foreground="{StaticResource TextMutedBrush}" FontSize="13" Margin="0,0,0,4"/>
 				<ComboBox SelectedItem="{Binding StatusFilter}" Height="36" Padding="8,6">
 					<ComboBoxItem Content="Tất cả"/>
-					<ComboBoxItem Content="Confirmed"/>
-					<ComboBoxItem Content="Pending"/>
-					<ComboBoxItem Content="Cancelled"/>
+					<ComboBoxItem Content="Đang chờ"/>
+					<ComboBoxItem Content="Đang khám"/>
+					<ComboBoxItem Content="Hoàn thành"/>
+					<ComboBoxItem Content="Đã hủy"/>
 				</ComboBox>
 				<Separator Margin="0,16" Background="#E5E7EB"/>
 				<Button Content="Tải lại dữ liệu" Command="{Binding RefreshCommand}" Background="#F3F4F6" BorderBrush="#E5E7EB" BorderThickness="1" Padding="0,10" Foreground="#374151" FontWeight="SemiBold"/>
