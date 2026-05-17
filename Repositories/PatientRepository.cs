@@ -254,6 +254,7 @@ namespace TamAnh_EMR_System.Repositories
                 cmd.Transaction = txn;
 
                 cmd.CommandText = @"
+<<<<<<< HEAD
                 SELECT 
                     'P' + RIGHT('000' + CAST(
                         ISNULL(
@@ -262,9 +263,17 @@ namespace TamAnh_EMR_System.Repositories
                         ) + 1 AS VARCHAR(10)
                     ), 3)
                 ";
+=======
+                    SELECT ISNULL(MAX(
+                        CAST(SUBSTRING(id,3,LEN(id)-2) AS INT)
+                    ), 0) + 1
+                    FROM patients
+                    WHERE id LIKE 'P%'";
+
+>>>>>>> 356b176 (fix: update patient id generation)
                 int nextNum = Convert.ToInt32(await cmd.ExecuteScalarAsync());
 
-                return $"BN{nextNum:D6}";
+                return $"P{nextNum:D3}";
             }
         }
 

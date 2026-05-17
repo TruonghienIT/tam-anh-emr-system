@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
+using TamAnh_EMR_System.Helper;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Model.Doctor;
 using TamAnh_EMR_System.Model.Receptionist;
@@ -580,7 +581,7 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                                 ? ""
                                 : " - " + Appointment.Note),
 
-                    CreatedBy = null
+                    CreatedBy = UserSession.CurrentUser?.ReceptionistId
                 };
 
                 // ===== SAVE APPOINTMENT =====

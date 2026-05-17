@@ -44,8 +44,14 @@ namespace TamAnh_EMR_System.Repositories
                 command.Connection = connection;
 
                 command.CommandText = @"
-                    SELECT * FROM [Users]
-                    WHERE username=@username AND [password]=@password";
+SELECT 
+    u.*,
+    r.id AS receptionist_id
+FROM users u
+LEFT JOIN receptionists r
+    ON u.id = r.user_id
+WHERE username = @username
+AND password = @password";
 
                 command.Parameters.Add("@username", SqlDbType.VarChar).Value = credential.UserName;
                 command.Parameters.Add("@password", SqlDbType.VarChar).Value = credential.Password;
@@ -190,7 +196,10 @@ namespace TamAnh_EMR_System.Repositories
                 Username = reader["username"].ToString(),
                 Password = reader["password"].ToString(),
                 Role = reader["role"].ToString(),
-
+                ReceptionistId =
+    reader["receptionist_id"] == DBNull.Value
+        ? null
+        : reader["receptionist_id"].ToString(),
                 CreatedDate = reader["created_at"] == DBNull.Value
                     ? (DateTime?)null
                     : Convert.ToDateTime(reader["created_at"]),

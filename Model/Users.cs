@@ -17,5 +17,6 @@ namespace TamAnh_EMR_System.Model
         public Patients Patient { get; set; }
         public Doctors Doctor { get; set; }
         public Receptionists Receptionist { get; set; }
+        public string ReceptionistId { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace TamAnh_EMR_System.Repositories
     /// ADO.NET implementation of IAppointmentRepository.
     /// Inherits RepositoryBase for connection string management.
     /// 
-    /// Appointment ID format: LH000001, LH000002, ...
+    /// Appointment ID format: A000, A001 ...
     /// Dashboard query JOINs appointments + patients + doctors for display-ready data.
     /// </summary>
     public class AppointmentRepository : RepositoryBase, IAppointmentRepository
@@ -185,7 +185,9 @@ namespace TamAnh_EMR_System.Repositories
         }
 
         // ================= GENERATE NEXT ID =================
-        public async Task<string> GenerateNextIdAsync(SqlConnection conn, SqlTransaction txn)
+        public async Task<string> GenerateNextIdAsync(
+    SqlConnection conn,
+    SqlTransaction txn)
         {
             using (var cmd = new SqlCommand())
             {
@@ -193,15 +195,23 @@ namespace TamAnh_EMR_System.Repositories
                 cmd.Transaction = txn;
 
                 cmd.CommandText = @"
-    SELECT 
-        'A' + RIGHT('000' + CAST(
-            ISNULL((
-                SELECT MAX(CAST(SUBSTRING(id,2,LEN(id)) AS INT))
-                FROM patients
-            ),0) + 1 AS VARCHAR
-        ),3)";
+SELECT 
+    ISNULL(
+        MAX(
+            TRY_CAST(
+                SUBSTRING(id, 2, LEN(id) - 1)
+            AS INT)
+        ),
+    0
+) + 1
+FROM appointments
+WHERE id LIKE 'A%'";
 
-                return (await cmd.ExecuteScalarAsync()).ToString();
+                var result = await cmd.ExecuteScalarAsync();
+
+                int nextNum = Convert.ToInt32(result);
+
+                return $"A{nextNum:D3}";
             }
         }
 
@@ -257,17 +267,25 @@ namespace TamAnh_EMR_System.Repositories
                 await conn.OpenAsync();
 
                 string query = @"
-                    SELECT 
-                        'A' + RIGHT('000' + CAST(
-                            ISNULL((
-                                SELECT MAX(CAST(SUBSTRING(id,2,LEN(id)) AS INT))
-                                FROM appointments
-                            ),0) + 1 AS VARCHAR
-                        ),3)";
+SELECT 
+    ISNULL(
+        MAX(
+            TRY_CAST(
+                SUBSTRING(id, 2, LEN(id) - 1)
+            AS INT)
+        ),
+    0
+) + 1
+FROM appointments
+WHERE id LIKE 'A%'";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    return (await cmd.ExecuteScalarAsync()).ToString();
+                    var result = await cmd.ExecuteScalarAsync();
+
+                    int nextNum = Convert.ToInt32(result);
+
+                    return $"A{nextNum:D3}";
                 }
             }
         }
@@ -335,7 +353,7 @@ namespace TamAnh_EMR_System.Repositories
                         .Value = (object?)appointment.Reason ?? DBNull.Value;
 
                     cmd.Parameters.Add("@created_by", SqlDbType.VarChar, 10)
-                        .Value = DBNull.Value;
+                        .Value = (object?)appointment.CreatedBy ?? DBNull.Value;
 
                     await cmd.ExecuteNonQueryAsync();
                 }
