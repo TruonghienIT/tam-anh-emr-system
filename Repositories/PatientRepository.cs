@@ -1,8 +1,10 @@
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
+using System.Windows.Forms;
 using TamAnh_EMR_System.Model;
 
 namespace TamAnh_EMR_System.Repositories
@@ -254,42 +256,12 @@ namespace TamAnh_EMR_System.Repositories
                 cmd.Transaction = txn;
 
                 cmd.CommandText = @"
-<<<<<<< HEAD
-<<<<<<< HEAD
-                SELECT 
-                    'P' + RIGHT('000' + CAST(
-                        ISNULL(
-                            (SELECT MAX(CAST(SUBSTRING(id, 2, LEN(id)) AS INT)) FROM patients),
-                            0
-                        ) + 1 AS VARCHAR(10)
-                    ), 3)
-                ";
-=======
-                    SELECT ISNULL(MAX(
-                        CAST(SUBSTRING(id,3,LEN(id)-2) AS INT)
-                    ), 0) + 1
-                    FROM patients
-                    WHERE id LIKE 'P%'";
-
->>>>>>> 356b176 (fix: update patient id generation)
+    SELECT ISNULL(MAX(
+        CAST(SUBSTRING(id,2,LEN(id)-1) AS INT)
+    ), 0) + 1
+    FROM patients
+    WHERE id LIKE 'P%'";
                 int nextNum = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-=======
-                        SELECT 
-                            ISNULL(
-                                MAX(
-                                    TRY_CAST(
-                                        SUBSTRING(id, 2, LEN(id) - 1) AS INT
-                                    )
-                                ),
-                            0
-                        ) + 1
-                        FROM patients
-                        WHERE id LIKE 'P%'";
-
-                int nextNum = Convert.ToInt32(
-                    await cmd.ExecuteScalarAsync()
-                );
->>>>>>> e1cfb2c (feat: complete receptionist workflow, patient management and appointment PDF export)
 
                 return $"P{nextNum:D3}";
             }
@@ -315,155 +287,136 @@ namespace TamAnh_EMR_System.Repositories
                 EmergencyContactPhone = reader["emergency_contact_phone"]?.ToString()
             };
         }
-        // ================= SEARCH WITH FILTER =================
-        public async Task<List<Patients>> SearchWithFilterAsync(
-            string keyword,
-            string gender,
-            string bloodType)
+        public async Task DeleteAsync(string id)
         {
-            var list = new List<Patients>();
+            using var conn = GetConnection();
 
-            using (var conn = GetConnection())
-            using (var cmd = new SqlCommand())
-            {
-                await conn.OpenAsync();
+            await conn.OpenAsync();
 
-                cmd.Connection = conn;
+            string query =
+                "DELETE FROM patients WHERE id = @id";
 
-                cmd.CommandText = @"
-                        SELECT *
-                        FROM patients
-                        WHERE
-                        (
-                            @keyword IS NULL
-                            OR name LIKE '%' + @keyword + '%'
-                            OR phone LIKE '%' + @keyword + '%'
-                            OR id LIKE '%' + @keyword + '%'
-                            OR id_card LIKE '%' + @keyword + '%'
-                        )
-                        AND
-                        (
-                            @gender IS NULL
-                            OR gender = @gender
-                        )
-                        AND
-                        (
-                            @blood IS NULL
-                            OR blood_type = @blood
-                        )
-                        ORDER BY created_at DESC";
+            using var cmd =
+                new SqlCommand(query, conn);
 
-                cmd.Parameters.AddWithValue(
-                    "@keyword",
-                    string.IsNullOrWhiteSpace(keyword)
-                        ? DBNull.Value
-                        : keyword
-                );
+            cmd.Parameters.AddWithValue("@id", id);
 
-                cmd.Parameters.AddWithValue(
-                    "@gender",
-                    gender == "Tất cả"
-                        ? DBNull.Value
-                        : gender
-                );
-
-                cmd.Parameters.AddWithValue(
-                    "@blood",
-                    bloodType == "Tất cả"
-                        ? DBNull.Value
-                        : bloodType
-                );
-
-                using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        list.Add(MapPatient(reader));
-                    }
-                }
-            }
-
-            return list;
+            await cmd.ExecuteNonQueryAsync();
         }
 
-        // ================= UPDATE =================
-        public async Task UpdateAsync(Patients patient)
+        public async Task<List<Patients>>
+            SearchWithFilterAsync(
+                string keyword,
+                string gender,
+                string bloodType)
         {
-            using (var conn = GetConnection())
-            using (var cmd = new SqlCommand())
+            var patients =
+                await GetAllAsync();
+
+            var query = patients.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
-                await conn.OpenAsync();
-
-                cmd.Connection = conn;
-
-                cmd.CommandText = @"
-                    UPDATE patients
-                    SET
-                        name = @name,
-                        gender = @gender,
-                        dob = @dob,
-                        phone = @phone,
-                        email = @email,
-                        id_card = @id_card,
-                        blood_type = @blood,
-                        allergies = @allergies,
-                        emergency_contact_name = @emergency_name,
-                        emergency_contact_phone = @emergency_phone,
-                        address = @address
-                    WHERE id = @id";
-
-                cmd.Parameters.AddWithValue("@id", patient.Id);
-
-                cmd.Parameters.AddWithValue("@name", patient.Name);
-
-                cmd.Parameters.AddWithValue("@gender", patient.Gender);
-
-                cmd.Parameters.AddWithValue("@dob", patient.Dob);
-
-                cmd.Parameters.AddWithValue("@phone", patient.Phone);
-
-                cmd.Parameters.AddWithValue("@email",
-                    (object?)patient.Email ?? DBNull.Value);
-
-                cmd.Parameters.AddWithValue("@id_card",
-                    (object?)patient.IdCard ?? DBNull.Value);
-
-                cmd.Parameters.AddWithValue("@blood",
-                    (object?)patient.BloodType ?? DBNull.Value);
-
-                cmd.Parameters.AddWithValue("@allergies",
-                    (object?)patient.Allergies ?? DBNull.Value);
-
-                cmd.Parameters.AddWithValue("@emergency_name",
-                    (object?)patient.EmergencyContactName ?? DBNull.Value);
-
-                cmd.Parameters.AddWithValue("@emergency_phone",
-                    (object?)patient.EmergencyContactPhone ?? DBNull.Value);
-
-                cmd.Parameters.AddWithValue("@address",
-                    (object?)patient.Address ?? DBNull.Value);
-
-                await cmd.ExecuteNonQueryAsync();
+                query = query.Where(x =>
+                    x.Name.Contains(keyword)
+                    || x.Phone.Contains(keyword)
+                    || x.Id.Contains(keyword));
             }
+
+            if (!string.IsNullOrWhiteSpace(gender)
+                && gender != "Tất cả")
+            {
+                query = query.Where(x =>
+                    x.Gender == gender);
+            }
+
+            if (!string.IsNullOrWhiteSpace(bloodType)
+                && bloodType != "Tất cả")
+            {
+                query = query.Where(x =>
+                    x.BloodType == bloodType);
+            }
+
+            return query.ToList();
         }
 
-        // ================= DELETE =================
-        public async Task DeleteAsync(string patientId)
+        public async Task UpdateAsync(
+            Patients patient)
         {
-            using (var conn = GetConnection())
-            using (var cmd = new SqlCommand())
-            {
-                await conn.OpenAsync();
+            using var conn = GetConnection();
 
-                cmd.Connection = conn;
+            await conn.OpenAsync();
 
-                cmd.CommandText =
-                    "DELETE FROM patients WHERE id = @id";
+            string query = @"
+        UPDATE patients
+        SET
+            name = @name,
+            dob = @dob,
+            gender = @gender,
+            address = @address,
+            phone = @phone,
+            email = @email,
+            id_card = @idCard,
+            blood_type = @bloodType,
+            allergies = @allergies,
+            emergency_contact_name =
+                @emergencyName,
+            emergency_contact_phone =
+                @emergencyPhone
+        WHERE id = @id";
 
-                cmd.Parameters.AddWithValue("@id", patientId);
+            using var cmd =
+                new SqlCommand(query, conn);
 
-                await cmd.ExecuteNonQueryAsync();
-            }
+            cmd.Parameters.AddWithValue(
+                "@id",
+                patient.Id);
+
+            cmd.Parameters.AddWithValue(
+                "@name",
+                patient.Name);
+
+            cmd.Parameters.AddWithValue(
+                "@dob",
+                patient.Dob);
+
+            cmd.Parameters.AddWithValue(
+                "@gender",
+                patient.Gender);
+
+            cmd.Parameters.AddWithValue(
+                "@address",
+                patient.Address);
+
+            cmd.Parameters.AddWithValue(
+                "@phone",
+                patient.Phone);
+
+            cmd.Parameters.AddWithValue(
+                "@email",
+                patient.Email);
+
+            cmd.Parameters.AddWithValue(
+                "@idCard",
+                patient.IdCard);
+
+            cmd.Parameters.AddWithValue(
+                "@bloodType",
+                patient.BloodType);
+
+            cmd.Parameters.AddWithValue(
+                "@allergies",
+                patient.Allergies);
+
+            cmd.Parameters.AddWithValue(
+                "@emergencyName",
+                patient.EmergencyContactName);
+
+            cmd.Parameters.AddWithValue(
+                "@emergencyPhone",
+                patient.EmergencyContactPhone);
+
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

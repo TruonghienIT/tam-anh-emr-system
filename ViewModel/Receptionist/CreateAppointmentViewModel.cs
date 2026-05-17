@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
@@ -588,34 +587,7 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 // ===== SAVE APPOINTMENT =====
                 await _appointmentRepo.AddAsync(appointment);
 
-<<<<<<< HEAD
-                //try
-                //{
-                //    string phone = patient.Phone?.Trim();
 
-                //    if (!string.IsNullOrWhiteSpace(phone) &&
-                //        phone.StartsWith("0"))
-                //    {
-                //        phone = "+84" + phone.Substring(1);
-                //    }
-
-                //    SmsService.SendSms(
-                //        phone,
-                //        patient.Name,
-                //        appointment.AppointmentDate,
-                //        appointment.AppointmentTime
-                //    );
-                //}
-                //catch (Exception smsEx)
-                //{
-                //    MessageBox.Show(
-                //        smsEx.ToString(),
-                //        "SMS ERROR",
-                //        MessageBoxButton.OK,
-                //        MessageBoxImage.Error
-                //    );
-                //}
-=======
                 // ===== AUTO EXPORT PDF =====
 
                 var appointmentDisplay = new AppointmentDisplay
@@ -640,8 +612,6 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 var pdfService = new AppointmentPdfService();
 
                 pdfService.Export(appointmentDisplay);
->>>>>>> e1cfb2c (feat: complete receptionist workflow, patient management and appointment PDF export)
-
                 System.Diagnostics.Debug.WriteLine(
                     $"Saved appointment: {appointment.Id}");
 

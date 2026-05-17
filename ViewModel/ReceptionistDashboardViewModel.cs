@@ -426,7 +426,22 @@ namespace TamAnh_EMR_System.ViewModel
                         (int)Math.Ceiling((double)TotalAppointments / PageSize)
                     );
 
-                    CurrentPage = 1;
+                    if (!_isAutoRefreshing)
+                    {
+                        CurrentPage = 1;
+                    }
+                    else
+                    {
+                        if (CurrentPage > TotalPages)
+                        {
+                            CurrentPage = TotalPages;
+                        }
+
+                        if (CurrentPage < 1)
+                        {
+                            CurrentPage = 1;
+                        }
+                    }
 
                     GeneratePagination();
 
@@ -994,7 +1009,17 @@ namespace TamAnh_EMR_System.ViewModel
                 (int)Math.Ceiling((double)TotalAppointments / PageSize)
             );
 
-            CurrentPage = 1;
+            if (!_isAutoRefreshing)
+            {
+                CurrentPage = 1;
+            }
+            else
+            {
+                if (CurrentPage > TotalPages)
+                {
+                    CurrentPage = TotalPages;
+                }
+            }
 
             GeneratePagination();
 
@@ -1167,14 +1192,19 @@ namespace TamAnh_EMR_System.ViewModel
             {
                 _isRefreshing = true;
 
+                _isAutoRefreshing = true;
+
                 await LoadDashboardFromDatabaseAsync();
 
                 await LoadChartAsync();
+
+                _isAutoRefreshing = false;
             }
             finally
             {
                 _isRefreshing = false;
             }
         }
+        private bool _isAutoRefreshing;
     }
 }

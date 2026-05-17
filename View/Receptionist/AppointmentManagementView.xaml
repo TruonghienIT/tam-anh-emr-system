@@ -32,6 +32,33 @@
             </Setter>
         </Style>
 
+        <Style x:Key="PaginationBtn" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#F8FAFC"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#CBD5E1"/>
+                                <Setter Property="Foreground" Value="#2563EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
             <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
                 <Path Data="M0,0 L4,4 L8,0 Z" Fill="#6B7280" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0" />
@@ -136,7 +163,7 @@
                         </Border>
 
                         <Border BorderBrush="#E5E7EB" BorderThickness="0,1,0,0">
-                            <DataGrid ItemsSource="{Binding FilteredAppointments}" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" 
+                            <DataGrid ItemsSource="{Binding PagedAppointments}" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" 
                                       GridLinesVisibility="None" RowHeight="56" ColumnWidth="*" BorderThickness="0" Background="Transparent" 
                                       HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" SelectionMode="Single" SelectionUnit="FullRow">
 
@@ -277,6 +304,37 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Border>
+
+                        <Border BorderBrush="#E5E7EB" BorderThickness="0,1,0,0" Padding="24">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding PaginationText}" FontSize="14" Foreground="#6B7280" VerticalAlignment="Center"/>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ItemsControl ItemsSource="{Binding PageNumbers}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{StaticResource PaginationBtn}"
+                                                        Content="{Binding}"
+                                                        Command="{Binding DataContext.NavigatePageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
                     </StackPanel>
                 </Border>
             </StackPanel>

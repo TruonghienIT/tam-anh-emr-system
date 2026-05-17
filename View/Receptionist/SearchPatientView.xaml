@@ -5,35 +5,7 @@
              Background="#F8F9FC" FontFamily="Segoe UI">
 
     <UserControl.Resources>
-        <Style x:Key="SI" TargetType="TextBox">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="40,12,14,12"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="B" Background="White" CornerRadius="8" BorderBrush="#D1D5DB" BorderThickness="1" Padding="{TemplateBinding Padding}">
-                            <Grid>
-                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="P" Text="{TemplateBinding Tag}" Foreground="#9CA3AF" FontSize="14" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Text" Value="">
-                                <Setter TargetName="P" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-                            <Trigger Property="Text" Value="{x:Null}">
-                                <Setter TargetName="P" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="B" Property="BorderBrush" Value="#3B82F6"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
+        <!-- Tái sử dụng Style chung cho Button cơ bản -->
         <Style x:Key="Btn" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -44,7 +16,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Opacity" Value="0.9"/>
+                                <Setter TargetName="B" Property="Opacity" Value="0.8"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -52,34 +24,40 @@
             </Setter>
         </Style>
 
+        <!-- Toggle Button Template cho ComboBox -->
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
             <Border x:Name="templateRoot" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" SnapsToDevicePixels="true">
-                <Path x:Name="arrow" Data="M0,0 L3,3 L6,0 Z" Fill="#FF555555" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0" />
+                <fa:IconImage x:Name="arrow" Icon="ChevronDown" Width="10" Height="10" Foreground="#6B7280" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0" />
             </Border>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="arrow" Property="Fill" Value="#FF000000"/>
+                    <Setter TargetName="arrow" Property="Foreground" Value="#111827"/>
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
+        <!-- Style ComboBox Xanh nhạt -->
         <Style x:Key="BlueComboBoxStyle" TargetType="{x:Type ComboBox}">
-            <Setter Property="Height" Value="44"/>
+            <Setter Property="Height" Value="42"/>
             <Setter Property="Padding" Value="14,0,0,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#111827"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ComboBox}">
                         <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
-                            <Border x:Name="MainBorder" Background="#E6F2FF" BorderBrush="#A3CFFF" BorderThickness="1" CornerRadius="8">
+                            <Border x:Name="MainBorder" Background="#EFF6FF" BorderBrush="#DBEAFE" BorderThickness="1" CornerRadius="8">
                                 <Grid>
                                     <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" HorizontalAlignment="Left" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}" IsHitTestVisible="false"/>
                                     <ToggleButton x:Name="toggleButton" Template="{StaticResource ComboBoxToggleButton}" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Focusable="false"/>
                                 </Grid>
                             </Border>
-                            <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
-                                <Border x:Name="dropDownBorder" CornerRadius="4" Margin="0,4,0,0" MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=templateRoot}" Background="White" BorderBrush="#A3CFFF" BorderThickness="1">
-                                    <ScrollViewer x:Name="DropDownScrollViewer">
+                            <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PopupAnimation="Slide">
+                                <Border x:Name="dropDownBorder" CornerRadius="8" Margin="0,4,0,0" MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=templateRoot}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" ShadowDepth="4" Opacity="0.05"/>
+                                    </Border.Effect>
+                                    <ScrollViewer x:Name="DropDownScrollViewer" Margin="0,4">
                                         <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
                                             <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0"/>
                                             <ItemsPresenter x:Name="itemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -90,7 +68,7 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#73B2FF"/>
+                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#2563EB"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -98,20 +76,24 @@
             </Setter>
         </Style>
 
+        <!-- Style ComboBox Xám nhạt -->
         <Style x:Key="GreyComboBoxStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource BlueComboBoxStyle}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ComboBox}">
                         <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
-                            <Border x:Name="MainBorder" Background="#F3F4F6" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="8">
+                            <Border x:Name="MainBorder" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
                                 <Grid>
                                     <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" HorizontalAlignment="Left" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}" IsHitTestVisible="false"/>
                                     <ToggleButton x:Name="toggleButton" Template="{StaticResource ComboBoxToggleButton}" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Focusable="false"/>
                                 </Grid>
                             </Border>
-                            <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
-                                <Border x:Name="dropDownBorder" CornerRadius="4" Margin="0,4,0,0" MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=templateRoot}" Background="White" BorderBrush="#D1D5DB" BorderThickness="1">
-                                    <ScrollViewer x:Name="DropDownScrollViewer">
+                            <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PopupAnimation="Slide">
+                                <Border x:Name="dropDownBorder" CornerRadius="8" Margin="0,4,0,0" MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=templateRoot}" Background="White" BorderBrush="#E5E7EB" BorderThickness="1">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" ShadowDepth="4" Opacity="0.05"/>
+                                    </Border.Effect>
+                                    <ScrollViewer x:Name="DropDownScrollViewer" Margin="0,4">
                                         <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
                                             <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0"/>
                                             <ItemsPresenter x:Name="itemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -122,7 +104,7 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#9CA3AF"/>
+                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#D1D5DB"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -130,341 +112,511 @@
             </Setter>
         </Style>
     </UserControl.Resources>
+
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="40,32,40,40">
 
-            <TextBlock Text="Tiếp nhận bệnh nhân" FontSize="28" FontWeight="Bold" Foreground="#111827" HorizontalAlignment="Center" Margin="0,16,0,12"/>
-            <TextBlock Text="Tìm kiếm cơ sở dữ liệu lâm sàng cho bệnh nhân hiện có hoặc bắt đầu đăng ký mới cho khách hàng vừa đến."
-                       FontSize="14" Foreground="#6B7280" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="550" Margin="0,0,0,28"/>
+                <!-- Header Section -->
+                <TextBlock Text="Tiếp nhận bệnh nhân" FontSize="32" FontWeight="Bold" Foreground="#111827" HorizontalAlignment="Center" Margin="0,16,0,8"/>
+                <TextBlock Text="Tìm kiếm cơ sở dữ liệu lâm sàng cho bệnh nhân hiện có hoặc bắt đầu đăng ký mới cho khách hàng vừa đến."
+                           FontSize="15" Foreground="#6B7280" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="600" Margin="0,0,0,36"/>
 
-            <Grid Margin="0,0,0,32">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                <!-- Top Action Cards -->
+                <Grid Margin="0,0,0,32">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="24,20" BorderBrush="#E5E7EB" BorderThickness="1">
-                    <Border.Effect>
-                        <DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/>
-                    </Border.Effect>
-                    <StackPanel>
-                        <Border Width="40" Height="40" CornerRadius="10" Background="#EFF6FF" Margin="0,0,0,16" HorizontalAlignment="Left">
-                            <fa:IconImage Icon="UserPlus" Width="18" Height="18" Foreground="#3B82F6"/>
-                        </Border>
-                        <TextBlock Text="Đăng ký bệnh nhân mới" FontSize="17" FontWeight="Bold" Foreground="#111827" Margin="0,0,0,8" TextWrapping="Wrap"/>
-                        <TextBlock Text="Tiếp nhận khách hàng mới. Thu thập thông tin nhân khẩu học, bảo hiểm và chấp thuận lịch sử y tế."
-                                   FontSize="13" Foreground="#6B7280" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,16"/>
-                        <Button Style="{StaticResource Btn}" Background="Transparent" Padding="0" BorderThickness="0" HorizontalAlignment="Left" Command="{Binding StartRegistrationCommand}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Bắt đầu đăng ký" FontSize="13" Foreground="#3B82F6" FontWeight="SemiBold"/>
-                                <TextBlock Text="  →" FontSize="13" Foreground="#3B82F6"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Border>
-
-                <Border Grid.Column="2" Background="White" CornerRadius="12" Padding="24,20" BorderBrush="#E5E7EB" BorderThickness="1">
-                    <Border.Effect>
-                        <DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.06"/>
-                    </Border.Effect>
-                    <StackPanel>
-                        <Border Width="40" Height="40" CornerRadius="10" Background="#ECFDF5" Margin="0,0,0,16" HorizontalAlignment="Left">
-                            <fa:IconImage Icon="CircleCheck" Width="18" Height="18" Foreground="#10B981"/>
-                        </Border>
-                        <TextBlock Text="Xác nhận lịch hẹn" FontSize="17" FontWeight="Bold" Foreground="#111827" Margin="0,0,0,8"/>
-                        <TextBlock Text="Xác nhận sự hiện diện cho các cuộc hẹn đã lên lịch. Xác minh danh tính và cập nhật trạng thái 'Đang chờ'."
-                                   FontSize="13" Foreground="#6B7280" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,16"/>
-                        <Button Style="{StaticResource Btn}" Background="Transparent" Padding="0" BorderThickness="0" HorizontalAlignment="Left" Command="{Binding ConfirmAppointmentCommand}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Xử lý đến nơi" FontSize="13" Foreground="#3B82F6" FontWeight="SemiBold"/>
-                                <TextBlock Text=" →" FontSize="13" Foreground="#3B82F6"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Border>
-
-                <Border Grid.Column="4" CornerRadius="12" Padding="24,20">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#3B82F6" Offset="0"/>
-                            <GradientStop Color="#2563EB" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.Effect>
-                        <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.15" Color="#3B82F6"/>
-                    </Border.Effect>
-                    <StackPanel>
-                        <TextBlock Text="TỔNG QUAN LỄ TÂN TRONG NGÀY" FontSize="10" Foreground="#93C5FD" FontWeight="SemiBold" Margin="0,0,0,6" />
-                        <TextBlock Text="Lượng bệnh nhân" FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,16"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="{Binding CheckedInToday}" FontSize="32" FontWeight="Bold" Foreground="White"/>
-                                <TextBlock Text="Đã check-in hôm nay" FontSize="11" Foreground="#BFDBFE" Margin="0,2,0,0"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="{Binding WaitingCount}" FontSize="32" FontWeight="Bold" Foreground="White"/>
-                                <TextBlock Text="Trong phòng chờ" FontSize="11" Foreground="#BFDBFE" Margin="0,2,0,0"/>
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-            </Grid>
-
-            <Border Background="White" CornerRadius="16" Padding="24" BorderBrush="#E5E7EB" BorderThickness="1">
-                <StackPanel>
-
-                    <Border Padding="0,0,0,24">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="260"/>
-                                <ColumnDefinition Width="16"/>
-                                <ColumnDefinition Width="180"/>
-                                <ColumnDefinition Width="16"/>
-                                <ColumnDefinition Width="180"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="8" Height="44">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="40"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="🔍" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Foreground="#9CA3AF"/>
-                                    <TextBox Grid.Column="1" BorderThickness="0" Background="Transparent" Foreground="#111827" CaretBrush="#111827" 
-                                             FontSize="14" VerticalContentAlignment="Center" 
-                                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-                                </Grid>
+                    <!-- Card 1: Đăng ký -->
+                    <Border Grid.Column="0" Background="White" CornerRadius="16" Padding="28,24" BorderBrush="#E5E7EB" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="12" Opacity="0.04" Color="#000000"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <Border Width="48" Height="48" CornerRadius="12" Background="#EFF6FF" Margin="0,0,0,20" HorizontalAlignment="Left">
+                                <fa:IconImage Icon="UserPlus" Width="20" Height="20" Foreground="#2563EB"/>
                             </Border>
-
-                            <ComboBox Grid.Column="2" Style="{StaticResource BlueComboBoxStyle}" ItemsSource="{Binding GenderOptions}" SelectedItem="{Binding SelectedGender}" />
-                            <ComboBox Grid.Column="4" Style="{StaticResource GreyComboBoxStyle}" ItemsSource="{Binding BloodOptions}" SelectedItem="{Binding SelectedBlood}" />
-                        </Grid>
-                    </Border>
-
-                    <StackPanel Margin="0,0,0,20"
-                        Visibility="{Binding IsLoading,
-                        Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                    <Border Height="16"
-                        Background="#E5E7EB"
-                        CornerRadius="6"
-                        Margin="0,0,0,10"/>
-
-                                    <Border Height="16"
-                        Background="#E5E7EB"
-                        CornerRadius="6"
-                        Margin="0,0,0,10"/>
-
-                                    <Border Height="16"
-                        Background="#E5E7EB"
-                        CornerRadius="6"
-                        Margin="0,0,0,10"/>
-
-                    </StackPanel>
-                    <Border Margin="0,40"
-        Visibility="{Binding Patients.Count,
-        Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-
-                        <StackPanel HorizontalAlignment="Center">
-
-                            <TextBlock Text="🩺"
-                                   FontSize="48"
-                                   HorizontalAlignment="Center"/>
-
-                                            <TextBlock Text="Không tìm thấy bệnh nhân"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"
-                                   Foreground="#6B7280"
-                                   Margin="0,12,0,4"
-                                   HorizontalAlignment="Center"/>
-
-                                            <TextBlock Text="Hãy thử thay đổi từ khóa tìm kiếm hoặc bộ lọc"
-                                   FontSize="13"
-                                   Foreground="#9CA3AF"
-                                   HorizontalAlignment="Center"/>
-
+                            <TextBlock Text="Đăng ký bệnh nhân mới" FontSize="18" FontWeight="Bold" Foreground="#111827" Margin="0,0,0,10" TextWrapping="Wrap"/>
+                            <TextBlock Text="Tiếp nhận khách hàng mới. Thu thập thông tin nhân khẩu học, bảo hiểm và chấp thuận y tế."
+                                       FontSize="14" Foreground="#6B7280" TextWrapping="Wrap" LineHeight="22" Margin="0,0,0,20"/>
+                            <Button Style="{StaticResource Btn}" Background="Transparent" Padding="0" BorderThickness="0" HorizontalAlignment="Left" Command="{Binding StartRegistrationCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Bắt đầu đăng ký" FontSize="14" Foreground="#2563EB" FontWeight="SemiBold"/>
+                                    <fa:IconImage Icon="ArrowRight" Width="12" Height="12" Foreground="#2563EB" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Border>
 
-                    <Border CornerRadius="8" BorderBrush="#E2E8F0" BorderThickness="1" ClipToBounds="True">
-                        <DataGrid ItemsSource="{Binding Patients}" 
-                                  AutoGenerateColumns="False" 
-                                  HeadersVisibility="Column" 
-                                  CanUserAddRows="False" 
-                                  IsReadOnly="True" 
-                                  BorderThickness="0" 
-                                  Background="White" 
-                                  GridLinesVisibility="None" 
-                                  RowHeight="56" 
-                                  ColumnHeaderHeight="48" 
-                                  FontSize="14" 
-                                  SelectionMode="Single" 
-                                  SelectionUnit="FullRow">
-
-                            <DataGrid.ColumnHeaderStyle>
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="#F8FAFC"/>
-                                    <Setter Property="Foreground" Value="#64748B"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="FontSize" Value="13"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    <Setter Property="BorderBrush" Value="#E2E8F0"/>
-                                    <Setter Property="Padding" Value="16,0"/>
-                                </Style>
-                            </DataGrid.ColumnHeaderStyle>
-
-                            <DataGrid.RowStyle>
-                                <Style TargetType="DataGridRow">
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    <Setter Property="BorderBrush" Value="#F1F5F9"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#F8FAFC"/>
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="#EFF6FF"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGrid.RowStyle>
-
-                            <DataGrid.CellStyle>
-                                <Style TargetType="DataGridCell">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="Padding" Value="16,0"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                    <Setter Property="Foreground" Value="#1E293B"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="DataGridCell">
-                                                <Border Background="Transparent" BorderThickness="0" Padding="{TemplateBinding Padding}">
-                                                    <ContentPresenter VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </DataGrid.CellStyle>
-
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Mã BN" Binding="{Binding Id}" Width="100"/>
-                                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="220">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Giới tính" Binding="{Binding Gender}" Width="100"/>
-                                <DataGridTextColumn Header="Ngày sinh" Binding="{Binding Dob, StringFormat=dd/MM/yyyy}" Width="130"/>
-                                <DataGridTextColumn Header="SĐT" Binding="{Binding Phone}" Width="140"/>
-                                <DataGridTextColumn Header="Nhóm máu" Binding="{Binding BloodType}" Width="100"/>
-
-                                <DataGridTemplateColumn Header="Thao tác" Width="180">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button Width="64" Height="32" Margin="0,0,8,0" Cursor="Hand"
-                                                        Command="{Binding DataContext.EditPatientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                        CommandParameter="{Binding}">
-                                                    <Button.Template>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border x:Name="Bg" Background="#EFF6FF" CornerRadius="6">
-                                                                <TextBlock Text="Sửa" Foreground="#2563EB" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                            </Border>
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="Bg" Property="Background" Value="#DBEAFE"/>
-                                                                </Trigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-
-                                                <Button Width="64" Height="32" Cursor="Hand"
-                                                        Command="{Binding DataContext.DeletePatientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                        CommandParameter="{Binding}">
-                                                    <Button.Template>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border x:Name="Bg" Background="#FEF2F2" CornerRadius="6">
-                                                                <TextBlock Text="Xóa" Foreground="#DC2626" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                            </Border>
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="Bg" Property="Background" Value="#FEE2E2"/>
-                                                                </Trigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-
-                        </DataGrid>
+                    <!-- Card 2: Xác nhận lịch hẹn -->
+                    <Border Grid.Column="2" Background="White" CornerRadius="16" Padding="28,24" BorderBrush="#E5E7EB" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="12" Opacity="0.04" Color="#000000"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <Border Width="48" Height="48" CornerRadius="12" Background="#ECFDF5" Margin="0,0,0,20" HorizontalAlignment="Left">
+                                <fa:IconImage Icon="CircleCheck" Width="22" Height="22" Foreground="#10B981"/>
+                            </Border>
+                            <TextBlock Text="Xác nhận lịch hẹn" FontSize="18" FontWeight="Bold" Foreground="#111827" Margin="0,0,0,10"/>
+                            <TextBlock Text="Xác nhận sự hiện diện cho các cuộc hẹn đã lên lịch. Xác minh danh tính và cập nhật trạng thái."
+                                       FontSize="14" Foreground="#6B7280" TextWrapping="Wrap" LineHeight="22" Margin="0,0,0,20"/>
+                            <Button Style="{StaticResource Btn}" Background="Transparent" Padding="0" BorderThickness="0" HorizontalAlignment="Left" Command="{Binding ConfirmAppointmentCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Xử lý đến nơi" FontSize="14" Foreground="#2563EB" FontWeight="SemiBold"/>
+                                    <fa:IconImage Icon="ArrowRight" Width="12" Height="12" Foreground="#2563EB" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
                     </Border>
-                </StackPanel>
-            </Border>
-        </StackPanel>
+
+                    <!-- Card 3: Thống kê nhanh -->
+                    <Border Grid.Column="4" CornerRadius="16" Padding="28,24">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#2563EB" Offset="0"/>
+                                <GradientStop Color="#1D4ED8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="4" BlurRadius="16" Opacity="0.2" Color="#1D4ED8"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="TỔNG QUAN LỄ TÂN" FontSize="11" Foreground="#DBEAFE" FontWeight="Bold" Margin="0,0,0,6" />
+                            <TextBlock Text="Lượng bệnh nhân" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,0,0,20"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding CheckedInToday}" FontSize="36" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="Đã check-in" FontSize="13" Foreground="#DBEAFE" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding WaitingCount}" FontSize="36" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="Đang chờ" FontSize="13" Foreground="#DBEAFE" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Main Data Section -->
+                <Border Background="White" CornerRadius="16" Padding="28" BorderThickness="1" BorderBrush="#E5E7EB">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2" BlurRadius="12" Opacity="0.02" Color="#000000"/>
+                    </Border.Effect>
+                    <StackPanel>
+
+                        <!-- Search and Filters -->
+                        <Border Padding="0,0,0,24">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="300"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Search Box -->
+                                <Border Grid.Column="0" Background="White" BorderBrush="#D1D5DB" BorderThickness="1" CornerRadius="8" Height="42">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <fa:IconImage Icon="Search" Width="14" Height="14" Foreground="#6B7280" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Column="1" BorderThickness="0" Background="Transparent" Foreground="#111827" CaretBrush="#111827" 
+                                                 FontSize="14" VerticalContentAlignment="Center" Padding="0,0,16,0"
+                                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Grid>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#2563EB"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+
+                                <ComboBox Grid.Column="2" Style="{StaticResource BlueComboBoxStyle}" ItemsSource="{Binding GenderOptions}" SelectedItem="{Binding SelectedGender}" />
+                                <ComboBox Grid.Column="4" Style="{StaticResource GreyComboBoxStyle}" ItemsSource="{Binding BloodOptions}" SelectedItem="{Binding SelectedBlood}" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Loading State -->
+                        <StackPanel Margin="0,0,0,20" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border Height="18" Background="#F8FAFC" CornerRadius="4" Margin="0,0,0,12"/>
+                            <Border Height="18" Background="#F8FAFC" CornerRadius="4" Margin="0,0,0,12"/>
+                            <Border Height="18" Background="#F8FAFC" CornerRadius="4" Margin="0,0,0,12"/>
+                        </StackPanel>
+
+                        <!-- Empty State -->
+                        <Border Margin="0,80" Visibility="{Binding PagedPatients.Count, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center">
+                                <fa:IconImage Icon="FolderOpen" Width="64" Height="64" Foreground="#D1D5DB" Margin="0,0,0,16" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Không tìm thấy dữ liệu" FontSize="16" FontWeight="SemiBold" Foreground="#111827" Margin="0,0,0,6" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Hãy thử thay đổi từ khóa hoặc thiết lập lại bộ lọc" FontSize="14" Foreground="#6B7280" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- DataGrid -->
+                        <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" ClipToBounds="True">
+                            <StackPanel>
+                                <DataGrid ItemsSource="{Binding PagedPatients}"
+                                          AutoGenerateColumns="False"
+                                          HeadersVisibility="Column"
+                                          CanUserAddRows="False"
+                                          IsReadOnly="True"
+                                          BorderThickness="0"
+                                          Background="Transparent"
+                                          GridLinesVisibility="None"
+                                          RowHeight="56"
+                                          ColumnHeaderHeight="48"
+                                          FontSize="14"
+                                          SelectionMode="Single"
+                                          SelectionUnit="FullRow">
+
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                            <Setter Property="Foreground" Value="#6B7280"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="FontSize" Value="13"/>
+                                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                            <Setter Property="Padding" Value="20,0"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
+
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="Background" Value="White"/>
+                                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                            <Setter Property="BorderBrush" Value="#F8FAFC"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#F8FAFC"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="#EFF6FF"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGrid.RowStyle>
+
+                                    <DataGrid.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="Padding" Value="20,0"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                            <Setter Property="Foreground" Value="#111827"/>
+                                        </Style>
+                                    </DataGrid.CellStyle>
+
+                                    <DataGrid.Columns>
+
+                                        <!-- Mã BN -->
+                                        <DataGridTemplateColumn Header="Mã BN" Width="90">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid Height="56">
+                                                        <TextBlock Text="{Binding Id}"
+                               VerticalAlignment="Center"
+                               Foreground="#111827"
+                               FontSize="14"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <!-- Họ tên -->
+                                        <DataGridTemplateColumn Header="Họ tên" Width="260">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid Height="56">
+                                                        <TextBlock Text="{Binding Name}"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Foreground="#111827"
+                               FontSize="14"
+                               TextTrimming="CharacterEllipsis"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <!-- Giới tính -->
+                                        <DataGridTemplateColumn Header="Giới tính" Width="110">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid Height="56">
+                                                        <TextBlock Text="{Binding Gender}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               Foreground="#111827"
+                               FontSize="14"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <!-- Ngày sinh -->
+                                        <DataGridTemplateColumn Header="Ngày sinh" Width="140">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid Height="56">
+                                                        <TextBlock Text="{Binding Dob, StringFormat=dd/MM/yyyy}"
+                               VerticalAlignment="Center"
+                               Foreground="#111827"
+                               FontSize="14"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <!-- SĐT -->
+                                        <DataGridTemplateColumn Header="SĐT" Width="150">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid Height="56">
+                                                        <TextBlock Text="{Binding Phone}"
+                               VerticalAlignment="Center"
+                               Foreground="#111827"
+                               FontSize="14"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <!-- Nhóm máu -->
+                                        <DataGridTemplateColumn Header="Nhóm máu" Width="120">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid Height="56">
+                                                        <TextBlock Text="{Binding BloodType}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               FontWeight="SemiBold"
+                               Foreground="#DC2626"
+                               FontSize="14"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <!-- Thao tác -->
+                                        <DataGridTemplateColumn Header="Thao tác" Width="220">
+
+                                            <DataGridTemplateColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="HorizontalContentAlignment"
+                        Value="Center"/>
+                                                </Style>
+                                            </DataGridTemplateColumn.HeaderStyle>
+
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+
+                                                    <Grid Height="56">
+
+                                                        <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                                                            <!-- Edit -->
+                                                            <Button Width="72"
+                                Height="32"
+                                Margin="0,0,8,0"
+                                Cursor="Hand"
+                                Command="{Binding DataContext.EditPatientCommand,
+                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding}">
+
+                                                                <Button.Template>
+                                                                    <ControlTemplate TargetType="Button">
+
+                                                                        <Border x:Name="Bg"
+                                            Background="#EFF6FF"
+                                            CornerRadius="6">
+
+                                                                            <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+
+                                                                                <fa:IconImage Icon="PenToSquare"
+                                                          Width="12"
+                                                          Height="12"
+                                                          Foreground="#2563EB"
+                                                          Margin="0,0,6,0"/>
+
+                                                                                <TextBlock Text="Sửa"
+                                                       Foreground="#2563EB"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="13"/>
+
+                                                                            </StackPanel>
+
+                                                                        </Border>
+
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver"
+                                                 Value="True">
+
+                                                                                <Setter TargetName="Bg"
+                                                    Property="Background"
+                                                    Value="#DBEAFE"/>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+
+                                                            </Button>
+
+                                                            <!-- Delete -->
+                                                            <Button Width="72"
+                                Height="32"
+                                Cursor="Hand"
+                                Command="{Binding DataContext.DeletePatientCommand,
+                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding}">
+
+                                                                <Button.Template>
+                                                                    <ControlTemplate TargetType="Button">
+
+                                                                        <Border x:Name="Bg"
+                                            Background="#FEF2F2"
+                                            CornerRadius="6">
+
+                                                                            <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+
+                                                                                <fa:IconImage Icon="TrashCan"
+                                                          Width="12"
+                                                          Height="12"
+                                                          Foreground="#DC2626"
+                                                          Margin="0,0,6,0"/>
+
+                                                                                <TextBlock Text="Xóa"
+                                                       Foreground="#DC2626"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="13"/>
+
+                                                                            </StackPanel>
+
+                                                                        </Border>
+
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver"
+                                                 Value="True">
+
+                                                                                <Setter TargetName="Bg"
+                                                    Property="Background"
+                                                    Value="#FEE2E2"/>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+
+                                                                    </ControlTemplate>
+                                                                </Button.Template>
+
+                                                            </Button>
+
+                                                        </StackPanel>
+
+                                                    </Grid>
+
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+
+                                        </DataGridTemplateColumn>
+
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <!-- Pagination Footer -->
+                                <Border BorderBrush="#E5E7EB" BorderThickness="0,1,0,0" Padding="20,16" Background="White">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="{Binding PaginationText}" FontSize="14" Foreground="#6B7280" VerticalAlignment="Center" />
+
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <ItemsControl ItemsSource="{Binding PageNumbers}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Width="36" Height="36" Margin="4,0" Cursor="Hand" Content="{Binding}"
+                                                                Command="{Binding DataContext.NavigatePageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                CommandParameter="{Binding}">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border x:Name="PageBtnBg" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6">
+                                                                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#111827" FontSize="14" FontWeight="SemiBold"/>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="PageBtnBg" Property="Background" Value="#F8FAFC"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
         </ScrollViewer>
+
+        <!-- Toasts Notification Area -->
         <Grid>
-
-            <ItemsControl ItemsSource="{Binding Toasts}"
-                  HorizontalAlignment="Right"
-                  VerticalAlignment="Top"
-                  Margin="0,20,20,0"
-                  Panel.ZIndex="999">
-
+            <ItemsControl ItemsSource="{Binding Toasts}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,24,24,0" Panel.ZIndex="999">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-
-                        <Border Width="300"
-                        Margin="0,0,0,10"
-                        Padding="16"
-                        CornerRadius="10"
-                        Background="{Binding Background}"
-                        BorderBrush="{Binding BorderBrush}"
-                        BorderThickness="2">
-
+                        <Border Width="320" Margin="0,0,0,12" Padding="20,16" CornerRadius="8" Background="{Binding Background}" BorderBrush="{Binding BorderBrush}" BorderThickness="1">
+                            <Border.Effect>
+                                <DropShadowEffect ShadowDepth="2" BlurRadius="12" Opacity="0.1" Color="#000000"/>
+                            </Border.Effect>
                             <StackPanel>
-
-                                <TextBlock Text="{Binding Title}"
-                                   FontWeight="Bold"
-                                   FontSize="14"
-                                   Foreground="White"/>
-
-                                <TextBlock Text="{Binding Message}"
-                                   Margin="0,6,0,0"
-                                   Foreground="White"
-                                   TextWrapping="Wrap"/>
-
+                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14" Foreground="White" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding Message}" Foreground="#F8FAFC" TextWrapping="Wrap" FontSize="13" LineHeight="20"/>
                             </StackPanel>
-
                         </Border>
-
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
         </Grid>
     </Grid>
 </UserControl>
