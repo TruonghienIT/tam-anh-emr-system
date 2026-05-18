@@ -3,10 +3,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Win32;
+using System.Text.Json;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
+using TamAnh_EMR_System.Services;
+using PdfiumViewer;
+using System.Drawing;
+using ZXing;
+using ZXing.Windows.Compatibility;
 
 namespace TamAnh_EMR_System.ViewModel.Doctor
 {
@@ -15,8 +22,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         public string PatientId { get; set; }
         public string AppointmentId { get; set; }
         public string DoctorId { get; set; }
-
         public string Name { get; set; }
+        public string PhoneNumber { get; set; }
         public string Initials { get; set; }
         public string InfoString { get; set; }
         public string Reason { get; set; }
@@ -65,6 +72,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
     public class DoctorPatientManagementViewModel : ViewModelBase
     {
         private readonly DoctorPatientManagementRepository _repository;
+
+        private readonly QrDecoderService _qrService;
 
         public ObservableCollection<PatientQueueItem> PatientQueue { get; set; }
 
@@ -226,10 +235,13 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
         public ICommand ScanQrCommand { get; }
         public ICommand SaveRecordCommand { get; }
+        public ICommand ImportQrImageCommand { get; }
 
         public DoctorPatientManagementViewModel()
         {
             _repository = new DoctorPatientManagementRepository();
+            _qrService = new QrDecoderService();
+
             PatientQueue = new ObservableCollection<PatientQueueItem>();
 
             ScanQrCommand = new RelayCommand(_ =>
@@ -240,6 +252,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                     MessageBoxImage.Information));
 
             SaveRecordCommand = new RelayCommand(ExecuteSaveRecord);
+
+            ImportQrImageCommand = new RelayCommand(ExecuteImportQrImage);
 
             _ = LoadQueueAsync();
 
@@ -306,6 +320,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                         Status = string.IsNullOrEmpty(item.Status)
                             ? "Đang chờ"
                             : item.Status,
+                        PhoneNumber = item.PhoneNumber,
                         IsActive = false
                     };
 
@@ -468,5 +483,95 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             NotesText = "";
         }
         #endregion
+
+        private void ExecuteImportQrImage(object obj)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "PDF files (*.pdf)|*.pdf|Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                string qrText = null;
+
+                if (dialog.FileName.EndsWith(".pdf"))
+                {
+                    qrText = DecodeQrFromPdf(dialog.FileName);
+                }
+                else
+                {
+                    qrText = _qrService.DecodeFromImage(dialog.FileName);
+                }
+
+                if (string.IsNullOrWhiteSpace(qrText))
+                {
+                    MessageBox.Show(
+                        "Không tìm thấy mã QR!",
+                        "QR Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
+                HandleQrResult(qrText);
+            }
+        }
+
+        private void HandleQrResult(string qr)
+        {
+            try
+            {
+                var data = JsonSerializer.Deserialize<AppointmentQrDto>(qr);
+
+                if (data == null)
+                {
+                    MessageBox.Show("QR không hợp lệ!");
+                    return;
+                }
+
+                var patient = PatientQueue
+                    .FirstOrDefault(x => x.AppointmentId == data.appointmentId);
+
+                if (patient != null)
+                {
+                    SelectedPatient = patient;
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Không tìm thấy lịch hẹn: {data.appointmentId}",
+                        "Không hợp lệ",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                }
+            }
+            catch
+            {
+                MessageBox.Show(
+                    "QR không đúng định dạng JSON!",
+                    "QR Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+        private string DecodeQrFromPdf(string pdfPath)
+        {
+            using var pdf = PdfDocument.Load(pdfPath);
+
+            using var image = pdf.Render(0, 300, 300, true);
+
+            using var bitmap = new Bitmap(image);
+
+            var barcodeReader = new BarcodeReader
+            {
+                AutoRotate = true,
+                TryInverted = true
+            };
+
+            var result = barcodeReader.Decode(bitmap);
+
+            return result?.Text;
+        }
     }
 }

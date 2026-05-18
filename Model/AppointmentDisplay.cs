@@ -14,6 +14,8 @@ namespace TamAnh_EMR_System.Model
 
         public string DoctorName { get; set; }
 
+        public string PhoneNumber { get; set; }
+
         public string Department { get; set; }
 
         public DateTime AppointmentDate { get; set; }

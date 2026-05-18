@@ -79,10 +79,15 @@
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Style="{StaticResource InputTextBox}" Background="#F3F4F6" BorderThickness="0"
                                  Text="Nhập / quét mã vạch..." Foreground="#9CA3AF" FontSize="14"/>
-                        <Button Grid.Column="2" Style="{StaticResource BaseButton}" Background="#2563EB" Foreground="White" Padding="24,10" Command="{Binding ScanQrCommand}">
+                        <Button Grid.Column="2"
+                                Style="{StaticResource BaseButton}"
+                                Background="#2563EB"
+                                Foreground="White"
+                                Padding="24,10"
+                                Command="{Binding ImportQrImageCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <fa:IconImage Icon="MagnifyingGlass" Width="14" Height="14" Foreground="White" Margin="0,0,8,0"/>
-                                <TextBlock Text="Quét mã" FontWeight="SemiBold"/>
+                                <fa:IconImage Icon="Upload" Width="14" Height="14" Foreground="White" Margin="0,0,8,0"/>
+                                <TextBlock Text="Import QR" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Button>
                     </Grid>
@@ -442,14 +447,17 @@
                                     <TextBlock Text="{Binding SelectedPatient.DOBString, FallbackValue='N/A'}" FontSize="13" Foreground="#4B5563" Margin="0,0,16,0"/>
 
                                     <fa:IconImage Icon="Droplet" Width="12" Height="12" Foreground="#6B7280" Margin="0,0,6,0"/>
-                                    <TextBlock Text="{Binding SelectedPatient.BloodType, FallbackValue='N/A'}" FontSize="13" Foreground="#4B5563"/>
+                                    <TextBlock Text="{Binding SelectedPatient.BloodType, FallbackValue='N/A'}" FontSize="13" Foreground="#4B5563" Margin="0,0,16,0"/>
+
+                                    <fa:IconImage Icon="NotesMedical" Width="12" Height="12" Foreground="#6B7280" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding SelectedPatient.Reason, FallbackValue='N/A'}" FontSize="13" Foreground="#4B5563"/>
                                 </StackPanel>
                             </StackPanel>
 
                             <Border Grid.Column="2" Background="#DBEAFE" CornerRadius="16" Padding="12,6" VerticalAlignment="Top">
                                 <StackPanel Orientation="Horizontal">
-                                    <fa:IconImage Icon="ShieldHeart" Width="14" Height="14" Foreground="#1E3A8A" Margin="0,0,6,0"/>
-                                    <TextBlock Text="BHYT Hợp lệ" FontSize="12" FontWeight="Bold" Foreground="#1E3A8A"/>
+                                    <fa:IconImage Icon="Phone" Width="14" Height="14" Foreground="#1E3A8A" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding SelectedPatient.PhoneNumber, StringFormat='SĐT: {0}', FallbackValue='N/A'}" FontSize="12" FontWeight="Bold" Foreground="#1E3A8A"/>
                                 </StackPanel>
                             </Border>
                         </Grid>

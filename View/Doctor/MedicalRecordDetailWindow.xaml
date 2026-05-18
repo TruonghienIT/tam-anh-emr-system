@@ -42,7 +42,7 @@
         </StackPanel>
 
         <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E5E7EB" BorderThickness="1">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>

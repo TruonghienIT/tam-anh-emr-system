@@ -8,30 +8,50 @@
 		<SolidColorBrush x:Key="TextMainBrush" Color="#111827"/>
 		<SolidColorBrush x:Key="TextMutedBrush" Color="#6B7280"/>
 
-		<Style x:Key="ModernSearchBox" TargetType="TextBox">
-			<Setter Property="Height" Value="40"/>
-			<Setter Property="Padding" Value="12,0"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-			<Setter Property="Background" Value="White"/>
-			<Setter Property="BorderBrush" Value="#D1D5DB"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="Foreground" Value="#111827"/>
-			<Setter Property="FontSize" Value="14"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="TextBox">
-						<Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="8">
-							<ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+        <Style x:Key="ModernSearchBox" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="FontSize" Value="14"/>
 
-		<Style x:Key="ModernFlatButton" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="Border"
+									Background="{TemplateBinding Background}"
+									BorderBrush="{TemplateBinding BorderBrush}"
+									BorderThickness="{TemplateBinding BorderThickness}"
+									CornerRadius="8">
+                                <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                            </Border>
+                            <TextBlock x:Name="Placeholder"
+									   Text="{TemplateBinding Tag}"
+									   Margin="12,0,0,0"
+									   VerticalAlignment="Center"
+									   Foreground="#9CA3AF"
+									   FontSize="14"
+									   IsHitTestVisible="False"
+									   Visibility="Collapsed"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#3B82F6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernFlatButton" TargetType="Button">
 			<Setter Property="Background" Value="White"/>
 			<Setter Property="BorderBrush" Value="#D1D5DB"/>
 			<Setter Property="BorderThickness" Value="1"/>
@@ -152,10 +172,8 @@
 			</StackPanel>
 
 			<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBox Width="320" Margin="0,0,12,0"
-                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ModernSearchBox}"/>
-				<Button Width="100" Content="Làm mới"
+                <TextBox Width="320" Margin="0,0,12,0" Tag="Nhập Tên bệnh nhân, mã ICD, Chuẩn đoán" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernSearchBox}"/>
+                <Button Width="100" Content="Làm mới"
                         Command="{Binding RefreshCommand}"
                         Style="{StaticResource ModernFlatButton}"/>
 			</StackPanel>

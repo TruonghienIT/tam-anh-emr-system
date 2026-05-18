@@ -427,13 +427,13 @@ WHERE id LIKE 'A%'";
                 await conn.OpenAsync();
 
                 string query = @"
-SELECT 
-    CONVERT(VARCHAR(5), appointment_time, 108) AS HourLabel,
-    COUNT(*) AS Total
-FROM appointments
-WHERE appointment_date = CAST(GETDATE() AS DATE)
-GROUP BY appointment_time
-ORDER BY appointment_time";
+                SELECT 
+                    CONVERT(VARCHAR(5), appointment_time, 108) AS HourLabel,
+                    COUNT(*) AS Total
+                FROM appointments
+                WHERE appointment_date = CAST(GETDATE() AS DATE)
+                GROUP BY appointment_time
+                ORDER BY appointment_time";
 
                 using (var cmd = new SqlCommand(query, conn))
                 using (var reader = await cmd.ExecuteReaderAsync())
@@ -460,22 +460,23 @@ ORDER BY appointment_time";
                 await conn.OpenAsync();
 
                 string query = @"
-            SELECT
-                a.id,
-                a.patient_id,
-                a.doctor_id,
-                p.name AS patient_name,
-                d.full_name AS doctor_name,
-                d.specialization,
-                a.appointment_date,
-                a.appointment_time,
-                a.status,
-                a.reason
-            FROM appointments a
-            INNER JOIN patients p ON p.id = a.patient_id
-            INNER JOIN doctors d ON d.id = a.doctor_id
+                SELECT
+                    a.id,
+                    a.patient_id,
+                    a.doctor_id,
+                    p.name AS patient_name,
+                    p.phone AS phone_number,
+                    d.full_name AS doctor_name,
+                    d.specialization,
+                    a.appointment_date,
+                    a.appointment_time,
+                    a.status,
+                    a.reason
+                FROM appointments a
+                INNER JOIN patients p ON p.id = a.patient_id
+                INNER JOIN doctors d ON d.id = a.doctor_id
 
-            ORDER BY 
+                ORDER BY 
                 a.appointment_date ASC,
                 a.appointment_time ASC";
 
@@ -492,44 +493,22 @@ ORDER BY appointment_time";
                         list.Add(new AppointmentDisplay
                         {
                             Id = reader["id"]?.ToString() ?? "",
-
-                            PatientId =
-                                reader["patient_id"]?.ToString() ?? "",
-
-                            DoctorId =
-                                reader["doctor_id"]?.ToString() ?? "",
-
-                            PatientName =
-                                reader["patient_name"]?.ToString() ?? "",
-
-                            DoctorName =
-                                reader["doctor_name"]?.ToString() ?? "",
-
-                            Department =
-                                reader["specialization"]?.ToString() ?? "",
-
-                            AppointmentDate =
-                                reader["appointment_date"] == DBNull.Value
-                                ? DateTime.Today
-                                : Convert.ToDateTime(
-                                    reader["appointment_date"]),
-
-                            AppointmentTime = time,
-
-                            Status =
-                                reader["status"]?.ToString()
-                                ?? "Đang chờ",
-
-                            Reason =
-                                reader["reason"]?.ToString()
-                                ?? ""
+                            PatientId = reader["patient_id"]?.ToString() ?? "",
+                            DoctorId = reader["doctor_id"]?.ToString() ?? "",
+                            PatientName = reader["patient_name"]?.ToString() ?? "",
+                            PhoneNumber = reader["phone_number"]?.ToString() ?? "",
+                            DoctorName = reader["doctor_name"]?.ToString() ?? "",
+                            Department = reader["specialization"]?.ToString() ?? "",
+                            AppointmentDate = reader["appointment_date"] == DBNull.Value ? DateTime.Today : Convert.ToDateTime( reader["appointment_date"]),
+                            AppointmentTime = time, Status = reader["status"]?.ToString() ?? "Đang chờ",
+                            Reason = reader["reason"]?.ToString() ?? ""
                         });
                     }
                 }
             }
-
             return list;
         }
+
         public async Task DeleteAsync(string id)
         {
             await UpdateStatusAsync(id, "Đã hủy");

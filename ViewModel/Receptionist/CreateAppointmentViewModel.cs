@@ -499,10 +499,6 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
             }
         }
 
-        // =====================================================================
-        // COMMAND IMPLEMENTATIONS
-        // =====================================================================
-
         private async Task ExecuteSubmit(object p)
         {
             ErrorMessage = "";
@@ -595,6 +591,8 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                     Id = appointment.Id,
 
                     PatientName = patient.Name,
+
+                    PhoneNumber = patient.Phone,
 
                     DoctorName = Appointment.Doctor,
 

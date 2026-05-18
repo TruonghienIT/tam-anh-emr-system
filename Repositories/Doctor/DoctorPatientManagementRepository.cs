@@ -14,6 +14,7 @@ namespace TamAnh_EMR_System.Repositories
 
         public string DoctorId { get; set; }
         public string PatientName { get; set; }
+        public string PhoneNumber { get; set; } 
         public string Gender { get; set; }
         public DateTime DOB { get; set; }
         public TimeSpan AppointmentTime { get; set; }
@@ -69,6 +70,7 @@ namespace TamAnh_EMR_System.Repositories
                         a.doctor_id AS DoctorId,
                         p.id AS PatientId,
                         p.name AS PatientName,
+                        p.phone AS PhoneNumber,
                         p.gender,
                         p.dob,
                         p.blood_type,
@@ -91,6 +93,7 @@ namespace TamAnh_EMR_System.Repositories
                             DoctorId = reader["DoctorId"]?.ToString(),
                             PatientId = reader["PatientId"]?.ToString(),
                             PatientName = reader["PatientName"]?.ToString() ?? "N/A",
+                            PhoneNumber = reader["PhoneNumber"]?.ToString() ?? "",
                             Gender = reader["gender"]?.ToString() ?? "N/A",
                             DOB = reader["dob"] != DBNull.Value
                                 ? (DateTime)reader["dob"]
@@ -424,11 +427,11 @@ namespace TamAnh_EMR_System.Repositories
             {
                 await conn.OpenAsync();
                 string query = @"
-            UPDATE medical_records 
-            SET icd_code = @icd, diagnosis = @diagnosis, treatment = @treatment, 
-                notes = @notes, pulse = @pulse, blood_pressure = @bp, 
-                temperature = @temp, spo2 = @spo2
-            WHERE id = @id";
+                UPDATE medical_records 
+                SET icd_code = @icd, diagnosis = @diagnosis, treatment = @treatment, 
+                    notes = @notes, pulse = @pulse, blood_pressure = @bp, 
+                    temperature = @temp, spo2 = @spo2
+                WHERE id = @id";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {

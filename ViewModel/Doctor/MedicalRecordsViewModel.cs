@@ -181,7 +181,6 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                         var search = SearchText.ToLower();
                         filtered = filtered.Where(r =>
                             (r.Patient?.Name?.ToLower().Contains(search) ?? false) ||
-                            (r.Doctor?.FullName?.ToLower().Contains(search) ?? false) ||
                             (r.Diagnosis?.ToLower().Contains(search) ?? false) ||
                             (r.IcdCode?.ToLower().Contains(search) ?? false));
                     }

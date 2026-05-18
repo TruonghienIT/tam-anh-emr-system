@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using System.Text.Json;
 using QuestPDF.Infrastructure;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Helpers;
@@ -11,16 +12,20 @@ namespace TamAnh_EMR_System.Services.Pdf
     {
         public void Export(AppointmentDisplay appointment)
         {
-            string qrText = $@"
-                Mã lịch hẹn: {appointment.Id}
-                Bệnh nhân: {appointment.PatientName}
-                Bác sĩ: {appointment.DoctorName}
-                Khoa: {appointment.Department}
-                Ngày khám: {appointment.AppointmentDate:dd/MM/yyyy}
-                Giờ khám: {appointment.AppointmentTime}
-                Trạng thái: {appointment.Status}
-                Triệu chứng: {appointment.Reason}
-                ";
+            var qrData = new
+            {
+                appointmentId = appointment.Id,
+                patientName = appointment.PatientName,
+                phoneNumber = appointment.PhoneNumber,
+                doctorName = appointment.DoctorName,
+                department = appointment.Department,
+                appointmentDate = appointment.AppointmentDate.ToString("dd/MM/yyyy"),
+                appointmentTime = appointment.AppointmentTime.ToString(),
+                status = appointment.Status,
+                reason = appointment.Reason
+            };
+
+            string qrText = JsonSerializer.Serialize(qrData);
 
             byte[] qrBytes =
                 QrCodeHelper.Generate(qrText);
@@ -31,7 +36,7 @@ namespace TamAnh_EMR_System.Services.Pdf
                 {
                     page.Size(PageSizes.A4);
 
-                    page.Margin(32);
+                    page.Margin(20);
 
                     page.PageColor("#F8FAFC");
 
@@ -118,6 +123,10 @@ namespace TamAnh_EMR_System.Services.Pdf
                                         appointment.PatientName);
 
                                     AddRow(
+                                        "Số điện thoại",
+                                        appointment.PhoneNumber);
+
+                                    AddRow(
                                         "Bác sĩ",
                                         appointment.DoctorName);
 
@@ -167,20 +176,18 @@ namespace TamAnh_EMR_System.Services.Pdf
                             });
 
                         // STATUS BADGE
+                        col.Item().PaddingTop(20).Row(row =>
+                        {
+                            row.ConstantItem(100)
+                                .Text("Trạng thái:")
+                                .Bold()
+                                .FontColor("#6B7280");
 
-                        col.Item().PaddingTop(20);
-
-                        col.Item()
-                            .AlignLeft()
-                            .Background(GetStatusBg(
-                                appointment.Status))
-                            .CornerRadius(999)
-                            .PaddingHorizontal(16)
-                            .PaddingVertical(8)
-                            .Text(appointment.Status)
-                            .Bold()
-                            .FontColor(GetStatusText(
-                                appointment.Status));
+                            row.RelativeItem()
+                                .Text(appointment.Status)
+                                .Bold()
+                                .FontColor(GetStatusText(appointment.Status));
+                        });
 
                         // QR
 
