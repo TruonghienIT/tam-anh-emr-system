@@ -39,6 +39,10 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         public ICommand PrintCommand { get; }
         public ICommand AddPatientCommand { get; }
 
+        public ICommand RemovePatientCommand { get; }
+
+        public ICommand SelectPrescriptionCommand { get; }
+
         public PrescriptionViewModel()
         {
             _repository = new PrescriptionRepository();
@@ -48,7 +52,15 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             PrintCommand = new RelayCommand(_ => MessageBox.Show("Đang kết nối máy in...", "In Đơn Thuốc"));
             AddPatientCommand = new RelayCommand(_ => MessageBox.Show("Mở form thêm hồ sơ mới", "Tra Cứu"));
 
-            // Tải danh sách đơn thuốc khi mở trang
+            // THÊM DÒNG NÀY ĐỂ XỬ LÝ KHI CLICK CHỌN TOA THUỐC
+            SelectPrescriptionCommand = new RelayCommand(p =>
+            {
+                if (p is Prescription selected)
+                {
+                    SelectedPrescription = selected;
+                }
+            });
+
             _ = LoadPrescriptionsAsync();
         }
 

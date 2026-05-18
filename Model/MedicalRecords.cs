@@ -16,6 +16,10 @@ namespace TamAnh_EMR_System.Model
         public string Treatment { get; set; }
         public string Notes { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string Pulse { get; set; }
+        public string BloodPressure { get; set; }
+        public string Temperature { get; set; }
+        public string SPO2 { get; set; }
 
         public Patients Patient { get; set; }
         public Doctors Doctor { get; set; }

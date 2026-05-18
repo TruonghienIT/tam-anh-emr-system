@@ -318,6 +318,71 @@ namespace TamAnh_EMR_System.Repositories
                 return false;
             }
         }
+
+        // =========================================================
+        // LẤY TẤT CẢ HỒ SƠ BỆNH ÁN (MEDICAL RECORDS)
+        // =========================================================
+        public async Task<List<MedicalRecords>> GetAllMedicalRecordsAsync()
+        {
+            var list = new List<MedicalRecords>();
+
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+
+                string query = @"
+                    SELECT
+                        mr.id,
+                        mr.patient_id,
+                        mr.doctor_id,
+                        mr.icd_code,
+                        mr.diagnosis,
+                        mr.treatment,
+                        mr.notes,
+                        mr.created_at,
+                        mr.pulse,
+                        mr.blood_pressure,
+                        mr.temperature,
+                        mr.spo2,
+                        p.name AS patient_name,
+                        d.full_name AS doctor_name,
+                        ds.disease_name
+                    FROM medical_records mr
+                    LEFT JOIN patients p ON mr.patient_id = p.id
+                    LEFT JOIN doctors d ON mr.doctor_id = d.id
+                    LEFT JOIN diseases ds ON mr.icd_code = ds.icd_code
+                    ORDER BY mr.created_at DESC";
+
+                using (var cmd = new SqlCommand(query, conn))
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        list.Add(new MedicalRecords
+                        {
+                            Id = reader["id"]?.ToString() ?? "",
+                            PatientId = reader["patient_id"]?.ToString() ?? "",
+                            DoctorId = reader["doctor_id"]?.ToString() ?? "",
+                            IcdCode = reader["icd_code"]?.ToString() ?? "",
+                            Diagnosis = reader["diagnosis"]?.ToString() ?? "",
+                            Treatment = reader["treatment"]?.ToString() ?? "",
+                            Notes = reader["notes"]?.ToString() ?? "",
+                            Pulse = reader["pulse"]?.ToString() ?? "",
+                            BloodPressure = reader["blood_pressure"]?.ToString() ?? "",
+                            Temperature = reader["temperature"]?.ToString() ?? "",
+                            SPO2 = reader["spo2"]?.ToString() ?? "",
+                            CreatedAt = reader["created_at"] != DBNull.Value ? (DateTime)reader["created_at"] : DateTime.MinValue,
+                            Patient = new Patients { Name = reader["patient_name"]?.ToString() ?? "N/A" },
+                            Doctor = new Doctors { FullName = reader["doctor_name"]?.ToString() ?? "N/A" },
+                            Disease = new Diseases { DiseaseName = reader["disease_name"]?.ToString() ?? "N/A" }
+                        });
+                    }
+                }
+            }
+
+            return list;
+        }
+
         private async Task<string> GenerateIdAsync(SqlConnection connection, SqlTransaction transaction, string table, string prefix)
         {
             string query = $@"
@@ -333,6 +398,53 @@ namespace TamAnh_EMR_System.Repositories
                 int next = max + 1;
 
                 return prefix + next.ToString("D3");
+            }
+        }
+
+        // Hàm Xóa bệnh án
+        public async Task<bool> DeleteMedicalRecordAsync(string recordId)
+        {
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+                string query = "DELETE FROM medical_records WHERE id = @id";
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", recordId);
+                    int rows = await cmd.ExecuteNonQueryAsync();
+                    return rows > 0;
+                }
+            }
+        }
+
+        // Hàm Cập nhật bệnh án
+        public async Task<bool> UpdateMedicalRecordAsync(MedicalRecords record)
+        {
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+                string query = @"
+            UPDATE medical_records 
+            SET icd_code = @icd, diagnosis = @diagnosis, treatment = @treatment, 
+                notes = @notes, pulse = @pulse, blood_pressure = @bp, 
+                temperature = @temp, spo2 = @spo2
+            WHERE id = @id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", record.Id);
+                    cmd.Parameters.AddWithValue("@icd", record.IcdCode ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@diagnosis", record.Diagnosis ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@treatment", record.Treatment ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@notes", record.Notes ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@pulse", record.Pulse ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@bp", record.BloodPressure ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@temp", record.Temperature ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@spo2", record.SPO2 ?? (object)DBNull.Value);
+
+                    int rows = await cmd.ExecuteNonQueryAsync();
+                    return rows > 0;
+                }
             }
         }
     }

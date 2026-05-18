@@ -58,15 +58,16 @@ namespace TamAnh_EMR_System.Repositories
                 await connection.OpenAsync();
 
                 // JOIN prescription_details và medicines
+                // JOIN prescription_details và medicines
                 string query = @"
-                    SELECT 
-                        med.name AS MedicineName,
-                        pd.dosage,
-                        pd.instruction,
-                        pd.quantity
-                    FROM prescription_details pd
-                    JOIN medicines med ON pd.medicine_id = med.id
-                    WHERE pd.record_id = @recordId";
+    SELECT 
+        med.name AS MedicineName,
+        pd.dosage,
+        med.instruction,  -- Sửa pd.instruction thành med.instruction
+        pd.quantity
+    FROM prescription_details pd
+    JOIN medicines med ON pd.medicine_id = med.id
+    WHERE pd.record_id = @recordId";
 
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -75,11 +76,12 @@ namespace TamAnh_EMR_System.Repositories
                     {
                         while (await reader.ReadAsync())
                         {
+                            // ... code while
                             list.Add(new MedicineItem
                             {
                                 Name = reader["MedicineName"].ToString(),
                                 Dosage = reader["dosage"]?.ToString(),
-                                Instruction = reader["instruction"]?.ToString(),
+                                Instruction = reader["instruction"]?.ToString(), // Lấy đúng tên cột instruction
                                 Quantity = Convert.ToInt32(reader["quantity"])
                             });
                         }
