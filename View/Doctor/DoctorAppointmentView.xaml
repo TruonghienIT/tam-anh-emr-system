@@ -211,15 +211,15 @@
 								</GridViewColumn.CellTemplate>
 							</GridViewColumn>
 
-							<GridViewColumn Header="TRẠNG THÁI" Width="140">
-								<GridViewColumn.CellTemplate>
-									<DataTemplate>
-										<Border x:Name="StatusBg" Background="#EFF6FF" CornerRadius="12" Padding="8,4" HorizontalAlignment="Left" Margin="12,0,0,0">
-											<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-												<Ellipse x:Name="StatusDot" Width="6" Height="6" Fill="#3B82F6" Margin="0,0,6,0"/>
-												<TextBlock x:Name="StatusTxt" Text="{Binding Status, Converter={StaticResource StatusToVietnameseConverter}}" FontWeight="Medium" FontSize="12" Foreground="#1D4ED8"/>
-											</StackPanel>
-										</Border>
+                            <GridViewColumn Header="TRẠNG THÁI" Width="140">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="StatusBg" Background="#EFF6FF" CornerRadius="12" Padding="8,4" HorizontalAlignment="Left" Margin="12,0,0,0">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Ellipse x:Name="StatusDot" Width="6" Height="6" Fill="#3B82F6" Margin="0,0,6,0"/>
+                                                <TextBlock x:Name="StatusTxt" Text="{Binding Status, Converter={StaticResource StatusToVietnameseConverter}}" FontWeight="Medium" FontSize="12" Foreground="#1D4ED8"/>
+                                            </StackPanel>
+                                        </Border>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding Status}" Value="Đang chờ">
                                                 <Setter TargetName="StatusBg" Property="Background" Value="#FEF3C7"/>
@@ -243,21 +243,9 @@
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
                                     </DataTemplate>
-								</GridViewColumn.CellTemplate>
-							</GridViewColumn>
-
-							<GridViewColumn Header="THAO TÁC" Width="200">
-								<GridViewColumn.CellTemplate>
-									<DataTemplate>
-										<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="12,0,0,0">
-											<Button Content="Sửa" Command="{Binding DataContext.ChangeStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource FlatButton}" Margin="0,0,8,0"/>
-											<Button Content="Hồ sơ" Command="{Binding DataContext.OpenRecordCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource FlatButton}"/>
-										</StackPanel>
-									</DataTemplate>
-								</GridViewColumn.CellTemplate>
-							</GridViewColumn>
-
-						</GridView>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
 					</ListView.View>
 				</ListView>
 			</Grid>

@@ -20,7 +20,7 @@
             <ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="280"/>
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
         <StackPanel>
 
                 <Grid Margin="0,0,0,24">

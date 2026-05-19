@@ -196,10 +196,6 @@ AND password = @password";
                 Username = reader["username"].ToString(),
                 Password = reader["password"].ToString(),
                 Role = reader["role"].ToString(),
-                ReceptionistId =
-    reader["receptionist_id"] == DBNull.Value
-        ? null
-        : reader["receptionist_id"].ToString(),
                 CreatedDate = reader["created_at"] == DBNull.Value
                     ? (DateTime?)null
                     : Convert.ToDateTime(reader["created_at"]),

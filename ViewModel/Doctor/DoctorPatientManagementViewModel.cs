@@ -488,7 +488,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "PDF files (*.pdf)|*.pdf|Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg"
+                Filter = "PDF files (*.pdf)|*.pdf|Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg"  
             };
 
             if (dialog.ShowDialog() == true)
@@ -518,7 +518,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             }
         }
 
-        private void HandleQrResult(string qr)
+        private async void HandleQrResult(string qr)
         {
             try
             {
@@ -526,30 +526,78 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
                 if (data == null)
                 {
-                    MessageBox.Show("QR không hợp lệ!");
+                    MessageBox.Show(
+                        "QR không hợp lệ!",
+                        "QR Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
                     return;
                 }
 
                 var patient = PatientQueue
                     .FirstOrDefault(x => x.AppointmentId == data.appointmentId);
 
-                if (patient != null)
-                {
-                    SelectedPatient = patient;
-                }
-                else
+                if (patient == null)
                 {
                     MessageBox.Show(
                         $"Không tìm thấy lịch hẹn: {data.appointmentId}",
                         "Không hợp lệ",
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning);
+
+                    return;
                 }
+
+                SelectedPatient = patient;
+
+                var record = await _repository
+                    .GetMedicalRecordByAppointmentAsync(
+                        patient.AppointmentId);
+
+                if (record == null)
+                {
+                    MessageBox.Show(
+                        "Bệnh nhân chưa có bệnh án!",
+                        "Thông báo",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    return;
+                }
+
+                DiseaseCode = record.IcdCode;
+
+                DiseaseName = record.Disease?.DiseaseName ?? "";
+
+                SelectedDisease = DiseaseList.FirstOrDefault(x => x.IcdCode == record.IcdCode);
+
+                DiagnosisDescription = record.Diagnosis;
+
+                TreatmentPlan = record.Treatment;
+
+                NotesText = record.Notes;
+
+
+                Pulse = record.Pulse;
+
+                BloodPressure = record.BloodPressure;
+
+                Temperature = record.Temperature;
+
+                SPO2 = record.SPO2;
+
+                var lab = record.LabResults?
+                    .FirstOrDefault();
+
+                LabTestName = lab?.TestName ?? "";
+
+                LabResult = lab?.Result ?? "";
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "QR không đúng định dạng JSON!",
+                    $"QR không đúng định dạng!\n{ex.Message}",
                     "QR Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);

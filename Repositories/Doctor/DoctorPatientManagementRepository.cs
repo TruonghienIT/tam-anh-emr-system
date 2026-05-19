@@ -450,5 +450,83 @@ namespace TamAnh_EMR_System.Repositories
                 }
             }
         }
+
+        public async Task<MedicalRecords> GetMedicalRecordByAppointmentAsync(string appointmentId)
+        {
+            using var conn = GetConnection();
+
+            await conn.OpenAsync();
+
+            string query = @"
+        SELECT TOP 1
+            mr.*,
+            ds.disease_name,
+            lr.test_name,
+            lr.result
+        FROM medical_records mr
+
+        JOIN appointments a
+            ON mr.patient_id = a.patient_id
+
+        LEFT JOIN diseases ds
+            ON mr.icd_code = ds.icd_code
+
+        LEFT JOIN lab_results lr
+            ON lr.record_id = mr.id
+
+        WHERE a.id = @appointmentId
+
+        ORDER BY mr.created_at DESC";
+
+            using var cmd = new SqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue(
+                "@appointmentId",
+                appointmentId);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new MedicalRecords
+                {
+                    Id = reader["id"]?.ToString(),
+
+                    IcdCode = reader["icd_code"]?.ToString(),
+
+                    Diagnosis = reader["diagnosis"]?.ToString(),
+
+                    Treatment = reader["treatment"]?.ToString(),
+
+                    Notes = reader["notes"]?.ToString(),
+
+                    Pulse = reader["pulse"]?.ToString(),
+
+                    BloodPressure = reader["blood_pressure"]?.ToString(),
+
+                    Temperature = reader["temperature"]?.ToString(),
+
+                    SPO2 = reader["spo2"]?.ToString(),
+
+
+                    Disease = new Diseases
+                    {
+                        DiseaseName = reader["disease_name"]?.ToString()
+                    },
+
+                    LabResults = new List<LabResults>
+            {
+                new LabResults
+                {
+                    TestName = reader["test_name"]?.ToString(),
+
+                    Result = reader["result"]?.ToString()
+                }
+            }
+                };
+            }
+
+            return null;
+        }
     }
 }

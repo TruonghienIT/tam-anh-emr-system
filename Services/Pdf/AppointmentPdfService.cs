@@ -14,15 +14,7 @@ namespace TamAnh_EMR_System.Services.Pdf
         {
             var qrData = new
             {
-                appointmentId = appointment.Id,
-                patientName = appointment.PatientName,
-                phoneNumber = appointment.PhoneNumber,
-                doctorName = appointment.DoctorName,
-                department = appointment.Department,
-                appointmentDate = appointment.AppointmentDate.ToString("dd/MM/yyyy"),
-                appointmentTime = appointment.AppointmentTime.ToString(),
-                status = appointment.Status,
-                reason = appointment.Reason
+                appointmentId = appointment.Id
             };
 
             string qrText = JsonSerializer.Serialize(qrData);
