@@ -166,18 +166,46 @@
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
 
-			<StackPanel VerticalAlignment="Center">
-				<TextBlock Text="Hồ Sơ Bệnh Án" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextMainBrush}"/>
-				<TextBlock Text="Quản lý lịch sử khám và thông tin sinh tồn" FontSize="13" Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
-			</StackPanel>
+            <StackPanel Margin="0,0,0,20">
 
-			<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBox Width="320" Margin="0,0,12,0" Tag="Nhập Tên bệnh nhân, mã ICD, Chuẩn đoán" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernSearchBox}"/>
-                <Button Width="100" Content="Làm mới"
-                        Command="{Binding RefreshCommand}"
-                        Style="{StaticResource ModernFlatButton}"/>
-			</StackPanel>
-		</Grid>
+                <StackPanel Margin="0,0,0,12">
+                    <TextBlock Text="Hồ Sơ Bệnh Án" FontSize="24" FontWeight="Bold" Foreground="#111827"/>
+                    <TextBlock Text="Quản lý lịch sử khám và thông tin sinh tồn" FontSize="14" Foreground="#6B7280" Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+
+                    <TextBlock Text="Từ ngày:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#4B5563" FontWeight="SemiBold"/>
+                    <DatePicker Width="150" Margin="0,0,24,0" Padding="4" SelectedDate="{Binding FromDate, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="Đến ngày:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#4B5563" FontWeight="SemiBold"/>
+                    <DatePicker Width="150" Margin="0,0,24,0" Padding="4" SelectedDate="{Binding ToDate, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBox Width="350" Margin="0,0,16,0" Padding="12,6" VerticalContentAlignment="Center" 
+                 BorderBrush="#D1D5DB" BorderThickness="1" 
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Button Content="Lọc" Width="90" Padding="0,8" Background="#2563EB" Foreground="White" 
+                BorderThickness="0" Margin="0,0,12,0" Cursor="Hand" Command="{Binding FilterCommand}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Content="Bỏ lọc" Width="100" Padding="0,8" Background="White" BorderBrush="#D1D5DB" 
+                BorderThickness="1" Cursor="Hand" Command="{Binding RefreshCommand}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
 
 		<Border Grid.Row="1" Margin="24,0,24,24" Background="White" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1">
 			<Border.Effect>
