@@ -15,7 +15,8 @@ namespace TamAnh_EMR_System.Model
         public string Dosage { get; set; }
         public string Frequency { get; set; }
         public string Notes { get; set; }
-
+        public string MedicineName { get; set; }
+        public string Category { get; set; }
         public MedicalRecords MedicalRecord { get; set; }
         public Medicines Medicine { get; set; }
     }
