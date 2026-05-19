@@ -77,6 +77,7 @@ namespace TamAnh_EMR_System.ViewModel
         public ICommand ShowReceptionistPanelViewCommand { get; }
         public ICommand ShowPatientPanelViewCommand { get; }
         public ICommand ShowAppointmentPanelViewCommand { get; }
+        public ICommand ShowMedicalRecordPanelViewCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public AdminViewModel()
@@ -88,6 +89,7 @@ namespace TamAnh_EMR_System.ViewModel
             ShowReceptionistPanelViewCommand = new ViewModelCommand(ExecuteShowReceptionistViewCommand);
             ShowPatientPanelViewCommand = new ViewModelCommand(ExecuteShowPatientViewCommand);
             ShowAppointmentPanelViewCommand = new ViewModelCommand(ExecuteShowAppointmentViewCommand);
+            ShowMedicalRecordPanelViewCommand = new ViewModelCommand(ExecuteShowMedicalRecordPanelViewCommand);
             LogoutCommand = new ViewModelCommand(ExecuteLogoutCommand);
 
             //Default View
@@ -133,6 +135,12 @@ namespace TamAnh_EMR_System.ViewModel
             CurrentChildView = new AppointmentPanelViewModel();
             Caption = "Lịch hẹn";
             Icon = IconChar.ClipboardList;
+        }
+        public void ExecuteShowMedicalRecordPanelViewCommand(object obj)
+        {
+            CurrentChildView = new MedicalRecordPanelViewModel();
+            Caption = "Hồ sơ bệnh án";
+            Icon = IconChar.FileMedical;
         }
         private void ExecuteLogoutCommand(object obj)
         {

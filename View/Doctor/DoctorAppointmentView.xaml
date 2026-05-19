@@ -156,7 +156,8 @@
 				<ListView Grid.Row="1" ItemsSource="{Binding Appointments}" SelectedItem="{Binding SelectedAppointment}"
                           BorderThickness="0" Background="Transparent" Padding="12,0"
                           ItemContainerStyle="{StaticResource TableListViewItem}"
-				   ScrollViewer.HorizontalScrollBarVisibility="Auto">
+						  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Hidden">
 					<ListView.View>
 						<GridView>
 							<GridViewColumn Header="THỜI GIAN" Width="120">

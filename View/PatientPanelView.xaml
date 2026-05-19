@@ -3,17 +3,14 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                xmlns:converters="clr-namespace:TamAnh_EMR_System.Converters"
+                 xmlns:converters="clr-namespace:TamAnh_EMR_System.Converters"
                  xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
                  xmlns:local="clr-namespace:TamAnh_EMR_System.View"
                  mc:Ignorable="d" 
                  d:DesignHeight="450" d:DesignWidth="800">
 
-    <!-- ================= RESOURCES ================= -->
     <UserControl.Resources>
-
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
-        <!-- ICON BUTTON STYLE -->
         <Style x:Key="IconButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -24,11 +21,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="bd"
-                                    Background="Transparent"
-                                    CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"/>
+                        <Border x:Name="bd" Background="Transparent" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
 
                         <ControlTemplate.Triggers>
@@ -247,35 +241,23 @@
                                     VerticalAlignment="Center">
 
                                         <Button Style="{StaticResource IconButtonStyle}"
-        Command="{Binding DataContext.OpenViewCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-        CommandParameter="{Binding}"
-        Margin="0,0,5,0">
-
-                                            <fa:IconImage Icon="Eye"
-                  Foreground="#2196F3"
-                  Width="18"
-                  Height="18"/>
+                                                Command="{Binding DataContext.OpenViewCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="0,0,5,0">
+                                            <fa:IconImage Icon="Eye" Foreground="#2196F3" Width="18" Height="18"/>
                                         </Button>
 
                                         <Button Style="{StaticResource IconButtonStyle}"
-                                    Command="{Binding DataContext.OpenEditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding}"
-                                    Margin="0,0,5,0">
-
-                                            <fa:IconImage Icon="PenToSquare"
-                                              Foreground="#4CAF50"
-                                              Width="18"
-                                              Height="18"/>
+                                                Command="{Binding DataContext.OpenEditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="0,0,5,0">
+                                            <fa:IconImage Icon="PenToSquare" Foreground="#4CAF50" Width="18" Height="18"/>
                                         </Button>
 
                                         <Button Style="{StaticResource IconButtonStyle}"
-                                    Command="{Binding DataContext.DeletePatientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding}">
-
-                                            <fa:IconImage Icon="RectangleXmark"
-                                              Foreground="#F44336"
-                                              Width="18"
-                                              Height="18"/>
+                                                Command="{Binding DataContext.DeletePatientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}">
+                                            <fa:IconImage Icon="RectangleXmark" Foreground="#F44336" Width="18" Height="18"/>
                                         </Button>
 
                                     </StackPanel>
@@ -289,14 +271,13 @@
             </Border>
         </Grid>
 
-        <Grid Visibility="{Binding IsPopupOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-        Background="Transparent">
+        <Grid Visibility="{Binding IsPopupOpen, Converter={StaticResource BooleanToVisibilityConverter}}" Background="Transparent">
             <Border Width="550"
-            Height="500"
-            CornerRadius="20"
-            Background="White"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+                    Height="500"
+                    CornerRadius="20"
+                    Background="White"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
 
                 <Grid>
                     <Grid.ColumnDefinitions>

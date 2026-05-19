@@ -147,7 +147,8 @@
 
                     <ListBox Grid.Row="2" ItemsSource="{Binding PatientQueue}" SelectedItem="{Binding SelectedPatient}" 
                              BorderThickness="0" Background="Transparent" 
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
+                             ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">

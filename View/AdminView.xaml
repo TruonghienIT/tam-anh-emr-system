@@ -38,6 +38,10 @@
         <DataTemplate DataType="{x:Type viewModel:AppointmentPanelViewModel}">
             <local:AppointmentPanelView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModel:MedicalRecordPanelViewModel}">
+            <local:MedicalRecordPanelView/>
+        </DataTemplate>
     </Window.Resources>
 
     <Border CornerRadius="10"
@@ -148,7 +152,25 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color5}"
+                                 Command="{Binding ShowMedicalRecordPanelViewCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="FileMedical" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Hồ sơ bệnh án" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource menuButton}"
                                  Tag="{StaticResource color6}"
+                                 Command="{Binding ShowPrescriptionPanelViewCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Capsules" Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Đơn thuốc" Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource menuButton}"
+                                 Tag="{StaticResource color7}"
                                  Command="{Binding LogoutCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="RightFromBracket" Style="{StaticResource menuButtonIcon}"/>

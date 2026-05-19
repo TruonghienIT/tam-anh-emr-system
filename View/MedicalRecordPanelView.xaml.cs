@@ -15,9 +15,12 @@ using System.Windows.Shapes;
 
 namespace TamAnh_EMR_System.View
 {
-    public partial class DoctorPanelView : UserControl
+    /// <summary>
+    /// Interaction logic for MedicalRecordPanelView.xaml
+    /// </summary>
+    public partial class MedicalRecordPanelView : UserControl
     {
-        public DoctorPanelView()
+        public MedicalRecordPanelView()
         {
             InitializeComponent();
         }

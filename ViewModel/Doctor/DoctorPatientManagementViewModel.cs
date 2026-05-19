@@ -523,102 +523,89 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             try
             {
                 var data = JsonSerializer.Deserialize<AppointmentQrDto>(qr);
-
                 if (data == null)
                 {
-                    MessageBox.Show(
-                        "QR không hợp lệ!",
-                        "QR Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
+                    MessageBox.Show( "QR không hợp lệ!", "QR Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                var patient = PatientQueue
-                    .FirstOrDefault(x => x.AppointmentId == data.appointmentId);
+                var patientData = await _repository.GetPatientByAppointmentIdAsync( data.appointmentId);
 
-                if (patient == null)
+                if (patientData == null)
                 {
-                    MessageBox.Show(
-                        $"Không tìm thấy lịch hẹn: {data.appointmentId}",
-                        "Không hợp lệ",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
+                    MessageBox.Show( $"Không tìm thấy lịch hẹn: {data.appointmentId}", "Không hợp lệ", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                SelectedPatient = patient;
-
-                var record = await _repository
-                    .GetMedicalRecordByAppointmentAsync(
-                        patient.AppointmentId);
-
-                if (record == null)
+                var patient = new PatientQueueItem
                 {
-                    MessageBox.Show(
-                        "Bệnh nhân chưa có bệnh án!",
-                        "Thông báo",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    AppointmentId = patientData.AppointmentId,
+                    PatientId = patientData.PatientId,
+                    DoctorId = patientData.DoctorId,
+                    Name = patientData.PatientName,
+                    PhoneNumber = patientData.PhoneNumber,
+                    BloodType = patientData.BloodType,
+                    Reason = patientData.Reason,
+                    Status = patientData.Status,
+                    DOBString = patientData.DOB.ToString("dd/MM/yyyy"),
+                    Time = patientData.AppointmentTime.ToString(@"hh\:mm"),
+                    Initials = patientData.PatientName .Split(' ').LastOrDefault()?.Substring(0, 1).ToUpper() ?? "U"
+                };
 
+                DateTime appointmentDate = patientData.AppointmentDate.Date;
+                DateTime today = DateTime.Today;
+
+                if (appointmentDate > today)
+                {
+                    MessageBox.Show( $"Lịch hẹn của bệnh nhân vào ngày {appointmentDate:dd/MM/yyyy}.\nChưa đến lịch khám!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
+
+                if (appointmentDate == today)
+                {
+                    var existedPatient = PatientQueue.FirstOrDefault( x => x.AppointmentId == patient.AppointmentId);
+                    if (existedPatient != null)
+                        SelectedPatient = existedPatient;
+                    else
+                        SelectedPatient = patient;
+                }
+                else
+                    MessageBox.Show( $"Đang xem hồ sơ khám ngày {appointmentDate:dd/MM/yyyy}", "Hồ sơ cũ", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                var record = await _repository .GetMedicalRecordByAppointmentAsync(patient.AppointmentId);
+                if (record == null) return;
 
                 DiseaseCode = record.IcdCode;
-
                 DiseaseName = record.Disease?.DiseaseName ?? "";
-
                 SelectedDisease = DiseaseList.FirstOrDefault(x => x.IcdCode == record.IcdCode);
-
                 DiagnosisDescription = record.Diagnosis;
-
                 TreatmentPlan = record.Treatment;
-
                 NotesText = record.Notes;
-
-
                 Pulse = record.Pulse;
-
                 BloodPressure = record.BloodPressure;
-
                 Temperature = record.Temperature;
-
                 SPO2 = record.SPO2;
 
-                var lab = record.LabResults?
-                    .FirstOrDefault();
-
+                var lab = record.LabResults? .FirstOrDefault();
                 LabTestName = lab?.TestName ?? "";
-
                 LabResult = lab?.Result ?? "";
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"QR không đúng định dạng!\n{ex.Message}",
-                    "QR Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show( $"QR không đúng định dạng!\n{ex.Message}", "QR Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private string DecodeQrFromPdf(string pdfPath)
         {
             using var pdf = PdfDocument.Load(pdfPath);
-
             using var image = pdf.Render(0, 300, 300, true);
-
             using var bitmap = new Bitmap(image);
-
             var barcodeReader = new BarcodeReader
             {
                 AutoRotate = true,
                 TryInverted = true
             };
-
             var result = barcodeReader.Decode(bitmap);
-
             return result?.Text;
         }
     }

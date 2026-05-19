@@ -317,11 +317,6 @@
                             Width="100"
                             ElementStyle="{StaticResource LeftText}" />
 
-                        <DataGridTextColumn Header="Lễ tân"
-                            Binding="{Binding Receptionist.FullName}"
-                            Width="*"
-                            ElementStyle="{StaticResource LeftText}" />
-
                         <DataGridTemplateColumn Header="Thao tác"
                                 Width="80">
 

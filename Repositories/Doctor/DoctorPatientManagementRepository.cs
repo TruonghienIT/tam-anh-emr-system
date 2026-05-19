@@ -18,6 +18,8 @@ namespace TamAnh_EMR_System.Repositories
         public string Gender { get; set; }
         public DateTime DOB { get; set; }
         public TimeSpan AppointmentTime { get; set; }
+
+        public DateTime AppointmentDate { get; set; }
         public string Status { get; set; }
         public string Reason { get; set; }
         public string BloodType { get; set; }
@@ -74,6 +76,7 @@ namespace TamAnh_EMR_System.Repositories
                         p.gender,
                         p.dob,
                         p.blood_type,
+                        a.appointment_date,
                         a.appointment_time,
                         a.status,
                         a.reason
@@ -95,9 +98,8 @@ namespace TamAnh_EMR_System.Repositories
                             PatientName = reader["PatientName"]?.ToString() ?? "N/A",
                             PhoneNumber = reader["PhoneNumber"]?.ToString() ?? "",
                             Gender = reader["gender"]?.ToString() ?? "N/A",
-                            DOB = reader["dob"] != DBNull.Value
-                                ? (DateTime)reader["dob"]
-                                : DateTime.Now,
+                            DOB = reader["dob"] != DBNull.Value ? (DateTime)reader["dob"] : DateTime.Now,
+                            AppointmentDate = reader["appointment_date"] != DBNull.Value ? (DateTime)reader["appointment_date"] : DateTime.Now,
                             BloodType = reader["blood_type"]?.ToString() ?? "N/A",
                             AppointmentTime = reader["appointment_time"] != DBNull.Value
                                 ? (TimeSpan)reader["appointment_time"]
@@ -133,21 +135,35 @@ namespace TamAnh_EMR_System.Repositories
             using (var connection = GetConnection())
             {
                 await connection.OpenAsync();
-                SqlTransaction transaction = connection.BeginTransaction();
+
+                SqlTransaction transaction =
+                    connection.BeginTransaction();
 
                 try
                 {
-                    string medicalRecordId = await GenerateIdAsync(connection, transaction, "medical_records", "MR");
-                    string labResultId = await GenerateIdAsync(connection, transaction, "lab_results", "LR");
+                    string medicalRecordId =
+                        await GenerateIdAsync(
+                            connection,
+                            transaction,
+                            "medical_records",
+                            "MR");
 
+                    string labResultId =
+                        await GenerateIdAsync(
+                            connection,
+                            transaction,
+                            "lab_results",
+                            "LR");
 
-                    // =====================================================
-                    // 1. INSERT MEDICAL RECORD (FULL VITAL SIGNS)
-                    // =====================================================
+                    // =========================================
+                    // INSERT MEDICAL RECORD
+                    // =========================================
+
                     string insertMedicalRecord = @"
                 INSERT INTO medical_records
                 (
                     id,
+                    appointment_id,
                     patient_id,
                     doctor_id,
                     icd_code,
@@ -163,6 +179,7 @@ namespace TamAnh_EMR_System.Repositories
                 VALUES
                 (
                     @id,
+                    @appointmentId,
                     @patientId,
                     @doctorId,
                     @icdCode,
@@ -176,36 +193,30 @@ namespace TamAnh_EMR_System.Repositories
                     GETDATE()
                 )";
 
-                    using (var cmd = new SqlCommand(insertMedicalRecord, connection, transaction))
+                    using (var cmd = new SqlCommand(
+                        insertMedicalRecord,
+                        connection,
+                        transaction))
                     {
-                        cmd.Parameters.AddWithValue("@id", medicalRecordId);
-                        cmd.Parameters.AddWithValue("@patientId", patientId);
-                        cmd.Parameters.AddWithValue("@doctorId", doctorId);
-                        cmd.Parameters.AddWithValue("@icdCode",
-                            string.IsNullOrWhiteSpace(icdCode) ? DBNull.Value : icdCode);
-
-                        cmd.Parameters.AddWithValue("@diagnosis", diagnosis ?? "");
-                        cmd.Parameters.AddWithValue("@treatment", treatment ?? "");
-                        cmd.Parameters.AddWithValue("@notes", notes ?? "");
-
-                        cmd.Parameters.AddWithValue("@pulse",
-                            int.TryParse(pulse, out int p) ? p : DBNull.Value);
-
-                        cmd.Parameters.AddWithValue("@bloodPressure",
-                            string.IsNullOrWhiteSpace(bloodPressure) ? DBNull.Value : bloodPressure);
-
-                        cmd.Parameters.AddWithValue("@temperature",
-                            decimal.TryParse(temperature, out decimal t) ? t : DBNull.Value);
-
-                        cmd.Parameters.AddWithValue("@spo2",
-                            int.TryParse(spo2, out int s) ? s : DBNull.Value);
-
+                        cmd.Parameters.AddWithValue( "@id", medicalRecordId);
+                        cmd.Parameters.AddWithValue("@appointmentId", appointmentId);
+                        cmd.Parameters.AddWithValue( "@patientId", patientId);
+                        cmd.Parameters.AddWithValue( "@doctorId", doctorId);
+                        cmd.Parameters.AddWithValue( "@icdCode", string.IsNullOrWhiteSpace(icdCode) ? DBNull.Value : icdCode);
+                        cmd.Parameters.AddWithValue( "@diagnosis", diagnosis ?? "");
+                        cmd.Parameters.AddWithValue( "@treatment", treatment ?? "");
+                        cmd.Parameters.AddWithValue( "@notes", notes ?? "");
+                        cmd.Parameters.AddWithValue( "@pulse", int.TryParse(pulse, out int p) ? p : DBNull.Value);
+                        cmd.Parameters.AddWithValue( "@bloodPressure", string.IsNullOrWhiteSpace(bloodPressure) ? DBNull.Value : bloodPressure);
+                        cmd.Parameters.AddWithValue( "@temperature", decimal.TryParse( temperature, out decimal t) ? t : DBNull.Value);
+                        cmd.Parameters.AddWithValue( "@spo2", int.TryParse(spo2, out int s) ? s : DBNull.Value);
                         await cmd.ExecuteNonQueryAsync();
                     }
 
-                    // =====================================================
-                    // 2. LAB RESULT
-                    // =====================================================
+                    // =========================================
+                    // INSERT LAB RESULT
+                    // =========================================
+
                     if (!string.IsNullOrWhiteSpace(labTestName))
                     {
                         string insertLab = @"
@@ -226,35 +237,54 @@ namespace TamAnh_EMR_System.Repositories
                         GETDATE()
                     )";
 
-                        using (var cmd = new SqlCommand(insertLab, connection, transaction))
+                        using (var cmd = new SqlCommand(
+                            insertLab,
+                            connection,
+                            transaction))
                         {
-                            cmd.Parameters.AddWithValue("@id", labResultId);
-                            cmd.Parameters.AddWithValue("@recordId", medicalRecordId);
-                            cmd.Parameters.AddWithValue("@testName", labTestName);
-                            cmd.Parameters.AddWithValue("@result", labResult ?? "");
+                            cmd.Parameters.AddWithValue(
+                                "@id",
+                                labResultId);
+
+                            cmd.Parameters.AddWithValue(
+                                "@recordId",
+                                medicalRecordId);
+
+                            cmd.Parameters.AddWithValue(
+                                "@testName",
+                                labTestName);
+
+                            cmd.Parameters.AddWithValue(
+                                "@result",
+                                labResult ?? "");
 
                             await cmd.ExecuteNonQueryAsync();
                         }
                     }
 
-                    // =====================================================
-                    // 3. UPDATE APPOINTMENT (CHỈ STATUS)
-                    // =====================================================
+                    // =========================================
+                    // UPDATE APPOINTMENT STATUS
+                    // =========================================
+
                     string updateAppointment = @"
                 UPDATE appointments
                 SET status = N'Hoàn thành'
                 WHERE id = @appointmentId";
 
-                    using (var cmd = new SqlCommand(updateAppointment, connection, transaction))
+                    using (var cmd = new SqlCommand(
+                        updateAppointment,
+                        connection,
+                        transaction))
                     {
-                        cmd.Parameters.AddWithValue("@appointmentId", appointmentId);
+                        cmd.Parameters.AddWithValue(
+                            "@appointmentId",
+                            appointmentId);
+
                         await cmd.ExecuteNonQueryAsync();
                     }
 
-                    // =====================================================
-                    // COMMIT
-                    // =====================================================
                     transaction.Commit();
+
                     return true;
                 }
                 catch (Exception ex)
@@ -265,8 +295,7 @@ namespace TamAnh_EMR_System.Repositories
                         $"Lỗi khi lưu bệnh án:\n{ex.Message}",
                         "Database Error",
                         MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                        MessageBoxImage.Error);
 
                     return false;
                 }
@@ -575,25 +604,22 @@ namespace TamAnh_EMR_System.Repositories
             await conn.OpenAsync();
 
             string query = @"
-        SELECT TOP 1
-            mr.*,
-            ds.disease_name,
-            lr.test_name,
-            lr.result
-        FROM medical_records mr
+            SELECT TOP 1
+                mr.*,
+                ds.disease_name,
+                lr.test_name,
+                lr.result
+            FROM medical_records mr
 
-        JOIN appointments a
-            ON mr.patient_id = a.patient_id
+            LEFT JOIN diseases ds
+                ON mr.icd_code = ds.icd_code
 
-        LEFT JOIN diseases ds
-            ON mr.icd_code = ds.icd_code
+            LEFT JOIN lab_results lr
+                ON lr.record_id = mr.id
 
-        LEFT JOIN lab_results lr
-            ON lr.record_id = mr.id
+            WHERE mr.appointment_id = @appointmentId
 
-        WHERE a.id = @appointmentId
-
-        ORDER BY mr.created_at DESC";
+            ORDER BY mr.created_at DESC";
 
             using var cmd = new SqlCommand(query, conn);
 
@@ -658,20 +684,20 @@ namespace TamAnh_EMR_System.Repositories
                 await conn.OpenAsync();
 
                 string query = @"
-            SELECT
-                mr.id, mr.patient_id, mr.doctor_id, mr.icd_code, mr.diagnosis,
-                mr.treatment, mr.notes, mr.created_at, mr.pulse, mr.blood_pressure,
-                mr.temperature, mr.spo2,
-                p.name AS patient_name, p.gender, p.dob, p.phone, p.address,
-                d.full_name AS doctor_name,
-                ds.disease_name,
-                lr.test_name, lr.result
-            FROM medical_records mr
-            LEFT JOIN patients p ON mr.patient_id = p.id
-            LEFT JOIN doctors d ON mr.doctor_id = d.id
-            LEFT JOIN diseases ds ON mr.icd_code = ds.icd_code
-            LEFT JOIN lab_results lr ON lr.record_id = mr.id
-            WHERE 1=1 ";
+                SELECT
+                    mr.id, mr.patient_id, mr.doctor_id, mr.icd_code, mr.diagnosis,
+                    mr.treatment, mr.notes, mr.created_at, mr.pulse, mr.blood_pressure,
+                    mr.temperature, mr.spo2,
+                    p.name AS patient_name, p.gender, p.dob, p.phone, p.address,
+                    d.full_name AS doctor_name,
+                    ds.disease_name,
+                    lr.test_name, lr.result
+                FROM medical_records mr
+                LEFT JOIN patients p ON mr.patient_id = p.id
+                LEFT JOIN doctors d ON mr.doctor_id = d.id
+                LEFT JOIN diseases ds ON mr.icd_code = ds.icd_code
+                LEFT JOIN lab_results lr ON lr.record_id = mr.id
+                WHERE 1=1 ";
 
                 // Điều kiện lọc theo từ khóa (Tìm theo Tên bệnh nhân, Mã ICD, hoặc Chẩn đoán)
                 if (!string.IsNullOrWhiteSpace(keyword))
@@ -746,6 +772,57 @@ namespace TamAnh_EMR_System.Repositories
                 }
             }
             return list;
+        }
+
+        public async Task<PatientQueueDTO> GetPatientByAppointmentIdAsync(string appointmentId)
+        {
+            using var connection = GetConnection();
+
+            await connection.OpenAsync();
+
+            string query = @"
+            SELECT 
+                a.id AS AppointmentId,
+                a.doctor_id AS DoctorId,
+                p.id AS PatientId,
+                p.name AS PatientName,
+                p.phone AS PhoneNumber,
+                p.gender,
+                p.dob,
+                p.blood_type,
+                a.appointment_date,
+                a.appointment_time,
+                a.status,
+                a.reason
+            FROM appointments a
+            JOIN patients p ON a.patient_id = p.id
+            WHERE a.id = @appointmentId";
+
+            using var command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue( "@appointmentId", appointmentId);
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new PatientQueueDTO
+                {
+                    AppointmentId = reader["AppointmentId"]?.ToString(),
+                    DoctorId = reader["DoctorId"]?.ToString(),
+                    PatientId = reader["PatientId"]?.ToString(),
+                    PatientName = reader["PatientName"]?.ToString(),
+                    PhoneNumber = reader["PhoneNumber"]?.ToString(),
+                    Gender = reader["gender"]?.ToString(),
+                    DOB = reader["dob"] != DBNull.Value ? (DateTime)reader["dob"] : DateTime.Now,
+                    AppointmentDate = reader["appointment_date"] != DBNull.Value ? (DateTime)reader["appointment_date"] : DateTime.Now,
+                    BloodType = reader["blood_type"]?.ToString(),
+                    AppointmentTime = reader["appointment_time"] != DBNull.Value ? (TimeSpan)reader["appointment_time"] : TimeSpan.Zero,
+                    Status = reader["status"]?.ToString(),
+                    Reason = reader["reason"]?.ToString()
+                };
+            }
+            return null;
         }
     }
 }

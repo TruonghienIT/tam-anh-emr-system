@@ -41,6 +41,7 @@
     <None Remove="Resource\Image\key-icon.png" />
     <None Remove="Resource\Image\logo-ta.png" />
     <None Remove="Resource\Image\Logo.png" />
+    <None Remove="Resource\Image\medical-record.jpg" />
     <None Remove="Resource\Image\patient.jpg" />
     <None Remove="Resource\Image\profile-picture.jpg" />
     <None Remove="Resource\Image\question.png" />
@@ -105,6 +106,7 @@
     <Resource Include="Resource\Image\Logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resource\Image\medical-record.jpg" />
     <Resource Include="Resource\Image\patient.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
