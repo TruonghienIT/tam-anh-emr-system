@@ -507,11 +507,11 @@ namespace TamAnh_EMR_System.Repositories
                 {
                     // 1. Cập nhật bảng medical_records
                     string queryMR = @"
-            UPDATE medical_records 
-            SET icd_code = @icd, diagnosis = @diagnosis, treatment = @treatment, 
-                notes = @notes, pulse = @pulse, blood_pressure = @bp, 
-                temperature = @temp, spo2 = @spo2
-            WHERE id = @id";
+                    UPDATE medical_records 
+                    SET icd_code = @icd, diagnosis = @diagnosis, treatment = @treatment, 
+                        notes = @notes, pulse = @pulse, blood_pressure = @bp, 
+                        temperature = @temp, spo2 = @spo2
+                    WHERE id = @id";
 
                     using (var cmd = new SqlCommand(queryMR, conn, transaction))
                     {

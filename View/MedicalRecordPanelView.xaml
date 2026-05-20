@@ -188,9 +188,7 @@
 
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Button Style="{StaticResource IconButtonStyle}"
                                             Command="{Binding DataContext.ViewMedicalRecordCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
@@ -239,17 +237,17 @@
                             </Ellipse>
 
                             <TextBlock Text="{Binding PopupTitle}"
-                               FontSize="18"
-                               FontFamily="Montserrat"
-                               FontWeight="Bold"
-                               Margin="0,20,0,5"
-                               TextAlignment="Center"/>
+                                       FontSize="18"
+                                       FontFamily="Montserrat"
+                                       FontWeight="Bold"
+                                       Margin="0,20,0,5"
+                                       TextAlignment="Center"/>
 
                             <TextBlock Text="Thông tin hồ sơ bệnh án"
-                               FontSize="12"
-                               FontFamily="Montserrat"
-                               TextAlignment="Center"
-                               Opacity="0.7"/>
+                                       FontSize="12"
+                                       FontFamily="Montserrat"
+                                       TextAlignment="Center"
+                                       Opacity="0.7"/>
 
                         </StackPanel>
 
@@ -271,10 +269,10 @@
                         </Button>
 
                         <ScrollViewer Grid.Row="1"
-                              Style="{StaticResource ModernScrollViewer}"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled"
-                              Margin="0,10,0,0">
+                                      Style="{StaticResource ModernScrollViewer}"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      Margin="0,10,0,0">
 
                             <StackPanel>
                                 <Border Background="#F3F6F9" CornerRadius="8" Padding="16" Margin="0,0,0,24">
@@ -318,22 +316,22 @@
 
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="Mạch (lần/phút)" FontSize="12" Foreground="#6B7280"/>
-                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.Pulse}"/>
+                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.Pulse}" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="2">
                                                 <TextBlock Text="Huyết áp (mmHg)" FontSize="12" Foreground="#6B7280"/>
-                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.BloodPressure}"/>
+                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.BloodPressure}" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="4">
                                                 <TextBlock Text="Nhiệt độ (°C)" FontSize="12" Foreground="#6B7280"/>
-                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.Temperature}"/>
+                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.Temperature}" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="6">
                                                 <TextBlock Text="SpO2 (%)" FontSize="12" Foreground="#6B7280"/>
-                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.SPO2}"/>
+                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding CurrentMedicalRecord.SPO2}" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                             </StackPanel>
                                         </Grid>
                                     </StackPanel>
@@ -353,9 +351,9 @@
                                                     <DataTemplate>
                                                         <StackPanel Margin="0,0,0,10">
                                                             <TextBlock Text="Tên xét nghiệm" FontSize="12" Foreground="#6B7280"/>
-                                                            <TextBox Style="{StaticResource InputTextBox}" Text="{Binding TestName}" Margin="0,4,0,8"/>
+                                                        <TextBox Style="{StaticResource InputTextBox}" Text="{Binding TestName}" Margin="0,4,0,8" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                                             <TextBlock Text="Kết quả" FontSize="12" Foreground="#6B7280"/>
-                                                            <TextBox Style="{StaticResource InputTextBox}" Height="60" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding Result}"/>
+                                                        <TextBox Style="{StaticResource InputTextBox}" Height="60" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding Result}" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
@@ -380,21 +378,20 @@
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="Mã bệnh (ICD)" FontSize="12" Foreground="#6B7280"/>
                                                 <ComboBox ItemsSource="{Binding DiseaseList}"
-                                                        SelectedValue="{Binding CurrentMedicalRecord.IcdCode, Mode=TwoWay}"
-                                                        SelectedValuePath="IcdCode"
-                                                        Background="White"
-                                                        BorderBrush="#E5E7EB"
-                                                        BorderThickness="1"
-                                                        Padding="14,8"
-                                                        Height="40"
-                                                        FontSize="12"
-                                                        Cursor="Hand">
-
+                                                          SelectedValue="{Binding SelectedIcdCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          SelectedValuePath="IcdCode"
+                                                          Background="White"
+                                                          BorderBrush="#E5E7EB"
+                                                          BorderThickness="1"
+                                                          Padding="14,8"
+                                                          Height="40"
+                                                          FontSize="12"
+                                                          Cursor="Hand">
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <TextBlock Text="{Binding IcdCode}" FontWeight="Bold"/>
-                                                                <TextBlock Text=" - " />
+                                                                <TextBlock Text=" - "/>
                                                                 <TextBlock Text="{Binding DiseaseName}"/>
                                                             </StackPanel>
                                                         </DataTemplate>
@@ -404,20 +401,19 @@
                                                         <ControlTemplate TargetType="ComboBox">
                                                             <Grid>
                                                                 <ToggleButton x:Name="ToggleButton" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Background="Transparent" BorderThickness="0" Focusable="False">
-
                                                                     <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
                                                                         <Grid>
                                                                             <Grid.ColumnDefinitions>
                                                                                 <ColumnDefinition Width="*"/>
                                                                                 <ColumnDefinition Width="28"/>
                                                                             </Grid.ColumnDefinitions>
-                                                                            <TextBlock VerticalAlignment="Center" Foreground="#111827" Text="{Binding SelectedItem.IcdCode, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                                            <TextBlock VerticalAlignment="Center" Foreground="#111827" Text="{Binding SelectedIcdCode}"/>
                                                                             <Path Grid.Column="1" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#6B7280" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                         </Grid>
                                                                     </Border>
                                                                 </ToggleButton>
-                                                                <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False">
 
+                                                                <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False">
                                                                     <Border Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                                                         <ScrollViewer MaxHeight="220">
                                                                             <ItemsPresenter/>
@@ -425,7 +421,6 @@
                                                                     </Border>
                                                                 </Popup>
                                                             </Grid>
-
                                                             <ControlTemplate.Triggers>
                                                                 <Trigger Property="IsMouseOver" Value="True">
                                                                     <Setter TargetName="Border" Property="BorderBrush" Value="#93C5FD"/>
@@ -439,19 +434,15 @@
                                                             </ControlTemplate.Triggers>
                                                         </ControlTemplate>
                                                     </ComboBox.Template>
-
                                                 </ComboBox>
                                             </StackPanel>
-
                                             <StackPanel Grid.Column="2">
                                                 <TextBlock Text="Tên bệnh" FontSize="12" Foreground="#6B7280"/>
-                                                <TextBox Style="{StaticResource InputTextBox}"
-                                                    Text="{Binding CurrentMedicalRecord.Disease.DiseaseName}"
-                                                    IsReadOnly="True"/>
+                                                <TextBox Style="{StaticResource InputTextBox}" Text="{Binding SelectedDiseaseName, Mode=OneWay}" IsReadOnly="True"/>
                                             </StackPanel>
                                         </Grid>
                                         <TextBlock Text="Mô tả bệnh" FontSize="12" Foreground="#6B7280"/>
-                                        <TextBox Style="{StaticResource InputTextBox}" Height="70" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding CurrentMedicalRecord.Diagnosis}"/>
+                                        <TextBox Style="{StaticResource InputTextBox}" Height="70" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding CurrentMedicalRecord.Diagnosis}" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                                     </StackPanel>
                                 </Border>
 
@@ -459,23 +450,26 @@
                                     <fa:IconImage Icon="NotesMedical" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
                                     <TextBlock Text="Phương pháp điều trị" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
                                 </StackPanel>
-                                <TextBox Style="{StaticResource InputTextBox}" Height="90" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding CurrentMedicalRecord.Treatment}" Margin="0,0,0,24"/>
+                                <TextBox Style="{StaticResource InputTextBox}" Height="90" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding CurrentMedicalRecord.Treatment}" Margin="0,0,0,24" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                                     <fa:IconImage Icon="PenToSquare" Width="16" Height="16" Foreground="#2563EB" Margin="0,0,8,0"/>
                                     <TextBlock Text="Ghi chú / Lời dặn" FontSize="15" FontWeight="Bold" Foreground="#111827"/>
                                 </StackPanel>
-                                <TextBox Style="{StaticResource InputTextBox}" Height="80" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding CurrentMedicalRecord.Notes}" Margin="0,0,0,24"/>
+                                <TextBox Style="{StaticResource InputTextBox}" Height="80" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding CurrentMedicalRecord.Notes}" Margin="0,0,0,24" IsReadOnly="{Binding DataContext.IsViewMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                             </StackPanel>
                         </ScrollViewer>
 
-                        <StackPanel Grid.Row="2"
-                                    Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    Margin="0,15,0,0"
-                                    Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <Button Content="Hủy" Command="{Binding ClosePopupCommand}" Width="80" Height="30" Margin="0,0,10,0"/>
-                            <Button Content="Lưu" Command="{Binding SaveMedicalRecordCommand}" Width="80" Height="30" Background="#28C76F" Foreground="White"/>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Button Content="Hủy" 
+                                    Command="{Binding ClosePopupCommand}" 
+                                    Width="80" Height="30" 
+                                    Margin="0,0,10,0"/>
+                            <Button Content="Lưu" 
+                                    Command="{Binding SaveMedicalRecordCommand}" 
+                                    Width="80" Height="30" 
+                                    Background="#28C76F" 
+                                    Foreground="White"/>
                         </StackPanel>
                     </Grid>
                 </Grid>

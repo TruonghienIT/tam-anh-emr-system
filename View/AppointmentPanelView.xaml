@@ -9,49 +9,38 @@
                  mc:Ignorable="d" 
                  d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <!-- ICON BUTTON STYLE -->
         <Style x:Key="IconButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Padding" Value="4"/>
             <Setter Property="OverridesDefaultStyle" Value="True"/>
-
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="bd"
-                                    Background="Transparent"
-                                    CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"/>
+                        <Border x:Name="bd" Background="Transparent" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="bd" Property="Background" Value="#1FFFFFFF"/>
                             </Trigger>
-
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="bd" Property="Background" Value="#2FFFFFFF"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="CenterText" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextAlignment" Value="Center"/>
         </Style>
-
         <Style x:Key="LeftText" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextAlignment" Value="Left"/>
         </Style>
-
     </UserControl.Resources>
 
     <Grid>
@@ -60,17 +49,9 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-
             <Grid>
-                <StackPanel Orientation="Horizontal"
-                            VerticalAlignment="Top"
-                            Grid.Column="0">
-
-                    <fa:IconImage Icon="Search"
-                                  Height="20"
-                                  Width="20"
-                                  Foreground="{StaticResource plainTextColor3}"/>
-
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Grid.Column="0">
+                    <fa:IconImage Icon="Search" Height="20" Width="20" Foreground="{StaticResource plainTextColor3}"/>
                     <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                              FontSize="13"
                              Width="400"
@@ -84,7 +65,6 @@
                              BorderThickness="0,0,0,1"
                              VerticalContentAlignment="Center"
                              Margin="5,5,0,0"/>
-
                     <ComboBox Width="180"
                               Height="36"
                               Margin="20,0,0,0"
@@ -130,28 +110,21 @@
                                             <ColumnDefinition/>
                                             <ColumnDefinition Width="40"/>
                                         </Grid.ColumnDefinitions>
-                                        <ContentPresenter Margin="12,0,0,0"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalAlignment="Left"
-                                                          Content="{TemplateBinding SelectionBoxItem}"/>
+                                        <ContentPresenter Margin="12,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="{TemplateBinding SelectionBoxItem}"/>
                                         <Grid Grid.Column="1">
-                                            <Path Data="M 0 0 L 4 4 L 8 0"
-                                                    Stroke="{StaticResource plainTextColor3}"
-                                                    StrokeThickness="2"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"/>
+                                            <Path Data="M 0 0 L 4 4 L 8 0" Stroke="{StaticResource plainTextColor3}" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Grid>
                                         
                                         <ToggleButton Grid.ColumnSpan="2"
-                                                    Background="Transparent"
-                                                    BorderBrush="Transparent"
-                                                    BorderThickness="0"
-                                                    Focusable="False"
-                                                    OverridesDefaultStyle="True"
-                                                    Cursor="Hand"
-                                                    IsChecked="{Binding IsDropDownOpen,
-                                                    RelativeSource={RelativeSource TemplatedParent},
-                                                    Mode=TwoWay}">
+                                                      Background="Transparent"
+                                                      BorderBrush="Transparent"
+                                                      BorderThickness="0"
+                                                      Focusable="False"
+                                                      OverridesDefaultStyle="True"
+                                                      Cursor="Hand"
+                                                      IsChecked="{Binding IsDropDownOpen,
+                                                      RelativeSource={RelativeSource TemplatedParent},
+                                                      Mode=TwoWay}">
                                             <ToggleButton.Template>
                                                 <ControlTemplate TargetType="ToggleButton">
                                                     <Border Background="Transparent"/>
@@ -164,13 +137,11 @@
                                                AllowsTransparency="True"
                                                Focusable="False"
                                                PopupAnimation="Slide">
-
                                             <Border Margin="0,5,0,0"
                                                     Background="{StaticResource panelColor}"
                                                     CornerRadius="10"
                                                     BorderBrush="{StaticResource plainTextColor3}"
                                                     BorderThickness="1">
-
                                                 <ScrollViewer Margin="4" SnapsToDevicePixels="True">
                                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
                                                 </ScrollViewer>
@@ -211,7 +182,6 @@
                     
                     <DataGrid.Resources>
                         <Style TargetType="ScrollViewer" BasedOn="{StaticResource ModernScrollViewer}"/>
-
                         <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
                     </DataGrid.Resources>
 
@@ -231,16 +201,12 @@
                         <Style TargetType="DataGridRow">
                             <Setter Property="Background" Value="Transparent"/>
                             <Setter Property="BorderThickness" Value="0"/>
-
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background"
-                            Value="{StaticResource panelOverColor}"/>
+                                    <Setter Property="Background" Value="{StaticResource panelOverColor}"/>
                                 </Trigger>
-
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background"
-                            Value="{StaticResource panelActiveColor}"/>
+                                    <Setter Property="Background" Value="{StaticResource panelActiveColor}"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -248,44 +214,19 @@
 
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
-                            <Setter Property="Foreground"
-                    Value="{StaticResource color8}"/>
-
-                            <Setter Property="BorderThickness"
-                    Value="0"/>
-
-                            <Setter Property="FontSize"
-                    Value="15"/>
-
-                            <Setter Property="FontFamily"
-                    Value="Montserrat"/>
-
-                            <Setter Property="Margin"
-                    Value="10,0,0,0"/>
+                            <Setter Property="Foreground" Value="{StaticResource color8}"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FontSize" Value="15"/>
+                            <Setter Property="FontFamily" Value="Montserrat"/>
+                            <Setter Property="Margin" Value="10,0,0,0"/>
                         </Style>
                     </DataGrid.CellStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID"
-                            Binding="{Binding Id}"
-                            Width="80"
-                            ElementStyle="{StaticResource LeftText}" />
-
-                        <DataGridTextColumn Header="Bệnh nhân"
-                            Binding="{Binding Patient.Name}"
-                            Width="*"
-                            ElementStyle="{StaticResource LeftText}" />
-
-                        <DataGridTextColumn Header="Bác sĩ"
-                            Binding="{Binding Doctor.FullName}"
-                            Width="*"
-                            ElementStyle="{StaticResource LeftText}" />
-
-                        <DataGridTextColumn Header="Dịch vụ"
-                            Binding="{Binding Reason}"
-                            Width="*"
-                            ElementStyle="{StaticResource LeftText}" />
-
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80" ElementStyle="{StaticResource LeftText}" />
+                        <DataGridTextColumn Header="Bệnh nhân" Binding="{Binding Patient.Name}" Width="*" ElementStyle="{StaticResource LeftText}" />
+                        <DataGridTextColumn Header="Bác sĩ" Binding="{Binding Doctor.FullName}" Width="*" ElementStyle="{StaticResource LeftText}" />
+                        <DataGridTextColumn Header="Dịch vụ" Binding="{Binding Reason}" Width="*" ElementStyle="{StaticResource LeftText}" />
                         <DataGridTemplateColumn Header="Thời gian" Width="260" SortMemberPath="AppointmentDateTime">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -297,12 +238,10 @@
                                                     Foreground="{StaticResource color8}"
                                                     Margin="0,0,10,0"
                                                     VerticalAlignment="Center"/>
-
                                         <TextBlock FontFamily="Montserrat"
                                                    FontSize="13"
                                                    Foreground="{StaticResource color8}"
                                                    VerticalAlignment="Center">
-
                                             <Run Text="{Binding AppointmentDate, Converter={StaticResource VietnameseDayConverter}}"/>
                                             <Run Text=", "/>
                                             <Run Text="{Binding AppointmentDate, StringFormat='{}{0:dd/MM/yyyy}'}"/>
@@ -312,126 +251,83 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="Trạng thái"
-                            Binding="{Binding Status}"
-                            Width="100"
-                            ElementStyle="{StaticResource LeftText}" />
-
-                        <DataGridTemplateColumn Header="Thao tác"
-                                Width="80">
-
+                        <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="100" ElementStyle="{StaticResource LeftText}" />
+                        <DataGridTemplateColumn Header="Thao tác" Width="80">
                             <DataGridTemplateColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="HorizontalContentAlignment"
-                            Value="Center"/>
-
-                                    <Setter Property="VerticalContentAlignment"
-                            Value="Center"/>
-
-                                    <Setter Property="Background"
-                            Value="Transparent"/>
-
-                                    <Setter Property="FontFamily"
-                            Value="Montserrat"/>
-
-                                    <Setter Property="FontSize"
-                            Value="15"/>
-
-                                    <Setter Property="Foreground"
-                            Value="{StaticResource plainTextColor3}"/>
-
-                                    <Setter Property="FontWeight"
-                            Value="SemiBold"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="FontFamily" Value="Montserrat"/>
+                                    <Setter Property="FontSize" Value="15"/>
+                                    <Setter Property="Foreground" Value="{StaticResource plainTextColor3}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
                                 </Style>
                             </DataGridTemplateColumn.HeaderStyle>
 
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-
-                                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <!-- EDIT --><!--
                                         <Button Style="{StaticResource IconButtonStyle}"
-                                Command="{Binding DataContext.OpenEditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                CommandParameter="{Binding}"
-                                Margin="0,0,5,0">
-
-                                            <fa:IconImage Icon="PenToSquare"
-                                          Foreground="#4CAF50"
-                                          Width="18"
-                                          Height="18"/>
+                                                Command="{Binding DataContext.OpenEditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="0,0,5,0">
+                                            <fa:IconImage Icon="PenToSquare" Foreground="#4CAF50" Width="18" Height="18"/>
                                         </Button>-->
 
                                         <!-- DELETE -->
                                         <Button Style="{StaticResource IconButtonStyle}"
-                                Command="{Binding DataContext.DeleteAppointmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                CommandParameter="{Binding}">
-
-                                            <fa:IconImage Icon="RectangleXmark"
-                                          Foreground="#F44336"
-                                          Width="18"
-                                          Height="18"/>
+                                                Command="{Binding DataContext.DeleteAppointmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}">
+                                            <fa:IconImage Icon="RectangleXmark" Foreground="#F44336" Width="18" Height="18"/>
                                         </Button>
-
                                     </StackPanel>
-
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
         </Grid>
 
         <!--<Grid Visibility="{Binding IsPopupOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-        Background="Transparent">
+                  Background="Transparent">
             <Border Width="550"
-            Height="350"
-            CornerRadius="20"
-            Background="White"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-
+                    Height="350"
+                    CornerRadius="20"
+                    Background="White"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
                     --><!-- ===== LEFT PANEL ===== --><!--
-                    <Border Background="{StaticResource color8}"
-                    CornerRadius="20,0,0,20"
-                    Padding="20">
-
+                    <Border Background="{StaticResource color8}" CornerRadius="20,0,0,20" Padding="20">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-
                             <Ellipse Width="120" Height="120">
                                 <Ellipse.Fill>
                                     <ImageBrush ImageSource="/Resource/Image/doctor.jpg" Stretch="UniformToFill"/>
                                 </Ellipse.Fill>
                             </Ellipse>
                             <TextBlock Text="{Binding PopupTitle}"
-                               FontSize="20"
-                               FontFamily="Montserrat"
-                               FontWeight="Bold"
-                               Margin="0,20,0,5"
-                               TextAlignment="Center"/>
-
+                                       FontSize="20"
+                                       FontFamily="Montserrat"
+                                       FontWeight="Bold"
+                                       Margin="0,20,0,5"
+                                       TextAlignment="Center"/>
                             <TextBlock Text="Nhập thông tin bác sĩ"
-                               FontSize="12"
-                               FontFamily="Montserrat"
-                               TextAlignment="Center"
-                               Opacity="0.7"/>
-
+                                       FontSize="12"
+                                       FontFamily="Montserrat"
+                                       TextAlignment="Center"
+                                       Opacity="0.7"/>
                         </StackPanel>
                     </Border>
 
                     --><!-- ===== RIGHT FORM ===== --><!--
                     <Grid Grid.Column="1" Margin="30">
-
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
@@ -439,54 +335,44 @@
                         </Grid.RowDefinitions>
 
                         --><!-- CLOSE --><!--
-                        <Button
-                        Style="{StaticResource controlButton}"
-                        Command="{Binding ClosePopupCommand}"
-                        Tag="{StaticResource color4}"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        BorderThickness="0">
+                        <Button Style="{StaticResource controlButton}"
+                                Command="{Binding ClosePopupCommand}"
+                                Tag="{StaticResource color4}"
+                                HorizontalAlignment="Right"
+                                Background="Transparent"
+                                BorderThickness="0">
                             <fa:IconImage Icon="CircleXmark" Style="{StaticResource controlButtonIcon}" Height="20" Width="20"/>
                         </Button>
 
 
                         --><!-- FORM --><!--
                         <StackPanel Grid.Row="1" Margin="0,9,0,0">
-
                             <TextBlock Text="Họ tên" FontFamily="Montserrat"/>
                             <TextBox Text="{Binding CurrentDoctor.FullName}" Height="30" Margin="0,5" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource color8}" Foreground="White" Background="{StaticResource color8}" FontSize="13"/>
-
                             <TextBlock Text="Chuyên khoa" FontFamily="Montserrat"/>
                             <TextBox Text="{Binding CurrentDoctor.Specialization}" Height="30" Margin="0,5" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource color8}" Foreground="White" Background="{StaticResource color8}" FontSize="13"/>
-
                             <TextBlock Text="Email" FontFamily="Montserrat"/>
                             <TextBox Text="{Binding CurrentDoctor.Email}" Height="30" Margin="0,5" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource color8}" Foreground="White" Background="{StaticResource color8}" FontSize="13"/>
-
                             <TextBlock Text="Số điện thoại" FontFamily="Montserrat"/>
                             <TextBox Text="{Binding CurrentDoctor.Phone}" Height="30" Margin="0,5" FontFamily="Montserrat" VerticalContentAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource color8}" Foreground="White" Background="{StaticResource color8}" FontSize="13"/>
-
                         </StackPanel>
 
                         --><!-- BUTTON --><!--
                         <StackPanel Grid.Row="2"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            Margin="0,20,0,0">
-
-                            <Button 
-                                Content="Hủy" 
-                                Command="{Binding ClosePopupCommand}" 
-                                FontFamily="Montserrat" 
-                                Width="80" Height="20" 
-                                Margin="0,0,10,0"/>
-
-                            <Button 
-                                Content="Lưu" 
-                                FontFamily="Montserrat" 
-                                Command="{Binding SaveDoctorCommand}" 
-                                Width="80" Height="20" 
-                                Background="#28C76F" 
-                                Foreground="White"/>
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,20,0,0">
+                            <Button Content="Hủy" 
+                                    Command="{Binding ClosePopupCommand}" 
+                                    FontFamily="Montserrat" 
+                                    Width="80" Height="20" 
+                                    Margin="0,0,10,0"/>
+                            <Button Content="Lưu" 
+                                    FontFamily="Montserrat" 
+                                    Command="{Binding SaveDoctorCommand}" 
+                                    Width="80" Height="20" 
+                                    Background="#28C76F" 
+                                    Foreground="White"/>
                         </StackPanel>
                     </Grid>
                 </Grid>

@@ -92,30 +92,68 @@ namespace TamAnh_EMR_System.Repositories
         {
             using var connection = GetConnection();
             connection.Open();
+            using var transaction = connection.BeginTransaction();
 
-            using var command = new SqlCommand(@"
+            try
+            {
+                using (var command = new SqlCommand(@"
                 UPDATE medical_records
-                SET icd_code=@icd_code,
-                    diagnosis=@diagnosis,
-                    treatment=@treatment,
-                    notes=@notes,
-                    pulse=@pulse,
-                    blood_pressure=@blood_pressure,
-                    temperature=@temperature,
-                    spo2=@spo2
-                WHERE id=@id", connection);
+                SET icd_code = @icd_code,
+                    diagnosis = @diagnosis,
+                    treatment = @treatment,
+                    notes = @notes,
+                    pulse = @pulse,
+                    blood_pressure = @blood_pressure,
+                    temperature = @temperature,
+                    spo2 = @spo2
+                WHERE id = @id", connection, transaction))
+                {
+                    command.Parameters.AddWithValue("@id", record.Id);
+                    command.Parameters.AddWithValue( "@icd_code", (object?)record.IcdCode ?? DBNull.Value);
+                    command.Parameters.AddWithValue( "@diagnosis", (object?)record.Diagnosis ?? DBNull.Value);
+                    command.Parameters.AddWithValue( "@treatment", (object?)record.Treatment ?? DBNull.Value);
+                    command.Parameters.AddWithValue( "@notes", (object?)record.Notes ?? DBNull.Value);
+                    command.Parameters.AddWithValue( "@pulse", (object?)record.Pulse ?? DBNull.Value);
+                    command.Parameters.AddWithValue( "@blood_pressure", (object?)record.BloodPressure ?? DBNull.Value);
+                    command.Parameters.AddWithValue( "@temperature", (object?)record.Temperature ?? DBNull.Value);
+                    command.Parameters.AddWithValue( "@spo2", (object?)record.SPO2 ?? DBNull.Value);
+                    command.ExecuteNonQuery();
+                }
 
-            command.Parameters.AddWithValue("@id", record.Id);
-            command.Parameters.AddWithValue("@icd_code", (object?)record.IcdCode ?? DBNull.Value);
-            command.Parameters.AddWithValue("@diagnosis", (object?)record.Diagnosis ?? DBNull.Value);
-            command.Parameters.AddWithValue("@treatment", (object?)record.Treatment ?? DBNull.Value);
-            command.Parameters.AddWithValue("@notes", (object?)record.Notes ?? DBNull.Value);
-            command.Parameters.AddWithValue("@pulse", (object?)record.Pulse ?? DBNull.Value);
-            command.Parameters.AddWithValue("@blood_pressure", (object?)record.BloodPressure ?? DBNull.Value);
-            command.Parameters.AddWithValue("@temperature", (object?)record.Temperature ?? DBNull.Value);
-            command.Parameters.AddWithValue("@spo2", (object?)record.SPO2 ?? DBNull.Value);
-
-            command.ExecuteNonQuery();
+                var lab = record.LabResults?.FirstOrDefault();
+                if (lab != null)
+                {
+                    string checkQuery = @" SELECT COUNT(*) FROM lab_results WHERE record_id = @record_id";
+                    int count = 0;
+                    using (var checkCmd = new SqlCommand(checkQuery, connection, transaction))
+                    {
+                        checkCmd.Parameters.AddWithValue("@record_id", record.Id);
+                        count = (int)checkCmd.ExecuteScalar();
+                    }
+                    if (count > 0)
+                    {
+                        using var updateLabCmd = new SqlCommand(@" UPDATE lab_results SET test_name = @test_name, result = @result WHERE record_id = @record_id", connection, transaction);
+                        updateLabCmd.Parameters.AddWithValue("@record_id", record.Id);
+                        updateLabCmd.Parameters.AddWithValue("@test_name", (object?)lab.TestName ?? DBNull.Value);
+                        updateLabCmd.Parameters.AddWithValue("@result", (object?)lab.Result ?? DBNull.Value);
+                        updateLabCmd.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        using var insertLabCmd = new SqlCommand(@" INSERT INTO lab_results ( record_id, test_name, result) VALUES (@record_id, @test_name, @result)", connection, transaction);
+                        insertLabCmd.Parameters.AddWithValue( "@record_id", record.Id);
+                        insertLabCmd.Parameters.AddWithValue( "@test_name", (object?)lab.TestName ?? DBNull.Value);
+                        insertLabCmd.Parameters.AddWithValue( "@result", (object?)lab.Result ?? DBNull.Value);
+                        insertLabCmd.ExecuteNonQuery();
+                    }
+                }
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
 
 

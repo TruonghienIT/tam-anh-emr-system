@@ -43,6 +43,7 @@
     <None Remove="Resource\Image\Logo.png" />
     <None Remove="Resource\Image\medical-record.jpg" />
     <None Remove="Resource\Image\patient.jpg" />
+    <None Remove="Resource\Image\prescription.jpg" />
     <None Remove="Resource\Image\profile-picture.jpg" />
     <None Remove="Resource\Image\question.png" />
     <None Remove="Resource\Image\receptionist.jpg" />
@@ -108,6 +109,9 @@
     </Resource>
     <Resource Include="Resource\Image\medical-record.jpg" />
     <Resource Include="Resource\Image\patient.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resource\Image\prescription.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resource\Image\profile-picture.jpg">

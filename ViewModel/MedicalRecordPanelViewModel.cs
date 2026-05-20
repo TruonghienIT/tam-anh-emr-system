@@ -13,7 +13,6 @@ namespace TamAnh_EMR_System.ViewModel
     public class MedicalRecordPanelViewModel : ViewModelBase
     {
         private readonly MedicalRecordPanelRepository _repository;
-
         public ObservableCollection<MedicalRecords> MedicalRecords { get; set; }
 
         private ObservableCollection<MedicalRecords> _allRecords;
@@ -94,31 +93,48 @@ namespace TamAnh_EMR_System.ViewModel
             {
                 _currentMedicalRecord = value;
                 OnPropertyChanged(nameof(CurrentMedicalRecord));
+
+                OnPropertyChanged(nameof(SelectedIcdCode));
+                OnPropertyChanged(nameof(SelectedDiseaseName));
             }
         }
 
         public string SelectedIcdCode
         {
             get => CurrentMedicalRecord?.IcdCode;
+
             set
             {
-                if (CurrentMedicalRecord == null) return;
+                if (CurrentMedicalRecord == null)
+                    return;
+
+                if (CurrentMedicalRecord.IcdCode == value)
+                    return;
 
                 CurrentMedicalRecord.IcdCode = value;
 
-                var disease = DiseaseList.FirstOrDefault(x => x.IcdCode == value);
+                var disease = DiseaseList
+                    .FirstOrDefault(x => x.IcdCode == value);
+
                 if (disease != null)
-                {
-                    CurrentMedicalRecord.Disease = new Diseases
-                    {
-                        IcdCode = disease.IcdCode,
-                        DiseaseName = disease.DiseaseName
-                    };
-                }
+                    CurrentMedicalRecord.Disease = disease;
 
                 OnPropertyChanged(nameof(SelectedIcdCode));
+                OnPropertyChanged(nameof(SelectedDiseaseName));
                 OnPropertyChanged(nameof(CurrentMedicalRecord));
-                OnPropertyChanged(nameof(CurrentMedicalRecord.Disease));
+            }
+        }
+
+        public string SelectedDiseaseName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(SelectedIcdCode))
+                    return "";
+
+                return DiseaseList
+                    .FirstOrDefault(x => x.IcdCode == SelectedIcdCode)
+                    ?.DiseaseName ?? "";
             }
         }
         public ObservableCollection<Diseases> DiseaseList { get; set; }
@@ -179,7 +195,6 @@ namespace TamAnh_EMR_System.ViewModel
                     (x.Disease?.DiseaseName ?? "").ToLower().Contains(key) ||
                     (x.Diagnosis ?? "").ToLower().Contains(key)
                 );
-
                 MedicalRecords = new ObservableCollection<MedicalRecords>(filtered);
             }
             OnPropertyChanged(nameof(MedicalRecords));

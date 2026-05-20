@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using TamAnh_EMR_System.Helper;
 using TamAnh_EMR_System.Model;
+using TamAnh_EMR_System.Model.Doctor;
 using TamAnh_EMR_System.Repositories;
 using TamAnh_EMR_System.View;
 
@@ -78,11 +79,11 @@ namespace TamAnh_EMR_System.ViewModel
         public ICommand ShowPatientPanelViewCommand { get; }
         public ICommand ShowAppointmentPanelViewCommand { get; }
         public ICommand ShowMedicalRecordPanelViewCommand { get; }
+        public ICommand ShowPrescriptionPanelViewCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public AdminViewModel()
         {
-            //Initialize commands
             ShowHomeViewCommand = new ViewModelCommand(ExecuteShowHomeViewCommand);
             ShowUserPanelViewCommand = new ViewModelCommand(ExecuteShowUserViewCommand);
             ShowDoctorPanelViewCommand = new ViewModelCommand(ExecuteShowDoctorViewCommand);
@@ -90,11 +91,10 @@ namespace TamAnh_EMR_System.ViewModel
             ShowPatientPanelViewCommand = new ViewModelCommand(ExecuteShowPatientViewCommand);
             ShowAppointmentPanelViewCommand = new ViewModelCommand(ExecuteShowAppointmentViewCommand);
             ShowMedicalRecordPanelViewCommand = new ViewModelCommand(ExecuteShowMedicalRecordPanelViewCommand);
+            ShowPrescriptionPanelViewCommand = new ViewModelCommand(ExecuteShowPrescriptionPanelViewCommand);
             LogoutCommand = new ViewModelCommand(ExecuteLogoutCommand);
 
-            //Default View
             ExecuteShowHomeViewCommand(null);
-
             LoadCurrentUserData();
         }
 
@@ -116,14 +116,12 @@ namespace TamAnh_EMR_System.ViewModel
             Caption = "Bác sĩ";
             Icon = IconChar.UserDoctor;
         }
-
         private void ExecuteShowReceptionistViewCommand(object obj)
         {
             CurrentChildView = new ReceptionistPanelViewModel();
             Caption = "Lễ tân";
             Icon = IconChar.UserAstronaut;
         }
-
         private void ExecuteShowPatientViewCommand(object obj)
         {
             CurrentChildView = new PatientPanelViewModel();
@@ -141,6 +139,12 @@ namespace TamAnh_EMR_System.ViewModel
             CurrentChildView = new MedicalRecordPanelViewModel();
             Caption = "Hồ sơ bệnh án";
             Icon = IconChar.FileMedical;
+        }
+        public void ExecuteShowPrescriptionPanelViewCommand(object obj)
+        {
+            CurrentChildView = new PrescriptionPanelViewModel();
+            Caption = "Đơn thuốc";
+            Icon = IconChar.Capsules;
         }
         private void ExecuteLogoutCommand(object obj)
         {
