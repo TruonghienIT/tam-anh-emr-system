@@ -30,6 +30,7 @@ namespace TamAnh_EMR_System.Model.Doctor
     /// <summary>Medicine line item within a prescription.</summary>
     public class MedicineItem
     {
+        public string MedicineId { get; set; }
         public string Name { get; set; }
         public string Dosage { get; set; }
         public string Instruction { get; set; }

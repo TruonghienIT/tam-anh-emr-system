@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PdfiumViewer;
+using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.Win32;
-using System.Text.Json;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model;
+using TamAnh_EMR_System.Model.Doctor;
 using TamAnh_EMR_System.Repositories;
 using TamAnh_EMR_System.Services;
-using PdfiumViewer;
-using System.Drawing;
 using ZXing;
 using ZXing.Windows.Compatibility;
 
@@ -236,7 +237,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         public ICommand ScanQrCommand { get; }
         public ICommand SaveRecordCommand { get; }
         public ICommand ImportQrImageCommand { get; }
-
+        public ObservableCollection<MedicineItem> CurrentPrescription { get; set; } = new ObservableCollection<MedicineItem>();
         public DoctorPatientManagementViewModel()
         {
             _repository = new DoctorPatientManagementRepository();
@@ -421,6 +422,23 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 return;
             }
 
+            var dbPrescriptionList = new List<TamAnh_EMR_System.Model.PrescriptionDetails>();
+            foreach (var item in CurrentPrescription)
+            {
+                var parts = item.Instruction.Split('|');
+                string freq = parts.Length > 0 ? parts[0].Trim() : "";
+                string note = parts.Length > 1 ? parts[1].Trim() : "";
+                var detail = new TamAnh_EMR_System.Model.PrescriptionDetails
+                {
+                    MedicineId = item.MedicineId,
+                    Quantity = item.Quantity,
+                    Dosage = item.Dosage,
+                    Frequency = freq,
+                    Notes = note
+                };
+                dbPrescriptionList.Add(detail);
+            }
+
             bool isSuccess = await _repository.SaveMedicalRecordAsync(
                 SelectedPatient.PatientId,
                 SelectedPatient.AppointmentId,
@@ -434,7 +452,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 Temperature,
                 SPO2,
                 LabTestName,
-                LabResult
+                LabResult,
+                dbPrescriptionList
             );
 
             if (isSuccess)
@@ -449,6 +468,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 );
 
                 ClearMedicalForm();
+                CurrentPrescription.Clear();
 
                 OnPropertyChanged(nameof(WaitingCount));
             }
@@ -481,6 +501,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
             TreatmentPlan = "";
             NotesText = "";
+            CurrentPrescription.Clear();
         }
         #endregion
 
@@ -573,6 +594,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                     MessageBox.Show( $"Đang xem hồ sơ khám ngày {appointmentDate:dd/MM/yyyy}", "Hồ sơ cũ", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 var record = await _repository .GetMedicalRecordByAppointmentAsync(patient.AppointmentId);
+                CurrentPrescription.Clear();
                 if (record == null) return;
 
                 DiseaseCode = record.IcdCode;
@@ -589,6 +611,23 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 var lab = record.LabResults? .FirstOrDefault();
                 LabTestName = lab?.TestName ?? "";
                 LabResult = lab?.Result ?? "";
+
+               
+
+                if (record.PrescriptionDetails != null)
+                {
+                    foreach (var item in record.PrescriptionDetails)
+                    {
+                        CurrentPrescription.Add(new MedicineItem
+                        {
+                            MedicineId = item.MedicineId,
+                            Name = item.MedicineName,
+                            Quantity = item.Quantity,
+                            Dosage = item.Dosage,
+                            Instruction = $"{item.Frequency} | {item.Notes}"
+                        });
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -130,7 +130,9 @@ namespace TamAnh_EMR_System.Repositories
             string temperature,
             string spo2,
             string labTestName,
-            string labResult)
+            string labResult,
+            List<TamAnh_EMR_System.Model.PrescriptionDetails> prescriptions = null)
+            
         {
             using (var connection = GetConnection())
             {
@@ -259,6 +261,54 @@ namespace TamAnh_EMR_System.Repositories
                                 labResult ?? "");
 
                             await cmd.ExecuteNonQueryAsync();
+                        }
+                    }
+
+                    if (prescriptions != null && prescriptions.Any())
+                    {
+                        foreach (var item in prescriptions)
+                        {
+                            string prescriptionDetailId =
+                                await GenerateIdAsync(
+                                    connection,
+                                    transaction,
+                                    "prescription_details",
+                                    "PD");
+
+                            string insertPrescription = @"
+            INSERT INTO prescription_details
+            (
+                id,
+                record_id,
+                medicine_id,
+                quantity,
+                dosage,
+                frequency,
+                notes
+            )
+            VALUES
+            (
+                @id,
+                @recordId,
+                @medicineId,
+                @quantity,
+                @dosage,
+                @frequency,
+                @notes
+            )";
+
+                            using (var cmd = new SqlCommand(insertPrescription, connection, transaction))
+                            {
+                                cmd.Parameters.AddWithValue("@id", prescriptionDetailId);
+                                cmd.Parameters.AddWithValue("@recordId", medicalRecordId);
+                                cmd.Parameters.AddWithValue("@medicineId", item.MedicineId);
+                                cmd.Parameters.AddWithValue("@quantity", item.Quantity);
+                                cmd.Parameters.AddWithValue("@dosage", item.Dosage ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@frequency", item.Frequency ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@notes", item.Notes ?? (object)DBNull.Value);
+
+                                await cmd.ExecuteNonQueryAsync();
+                            }
                         }
                     }
 
@@ -604,73 +654,194 @@ namespace TamAnh_EMR_System.Repositories
             await conn.OpenAsync();
 
             string query = @"
-            SELECT TOP 1
-                mr.*,
-                ds.disease_name,
-                lr.test_name,
-                lr.result
-            FROM medical_records mr
+SELECT
+    mr.*,
+    ds.disease_name,
+    lr.test_name,
+    lr.result,
 
-            LEFT JOIN diseases ds
-                ON mr.icd_code = ds.icd_code
+    pd.id AS prescription_detail_id,
+    pd.medicine_id,
+    pd.quantity,
+    pd.dosage,
+    pd.frequency,
+    pd.notes AS prescription_notes,
 
-            LEFT JOIN lab_results lr
-                ON lr.record_id = mr.id
+    m.name AS medicine_name,
+    m.category,
+    m.unit,
+    m.price,
+    m.instruction
+FROM medical_records mr
 
-            WHERE mr.appointment_id = @appointmentId
+LEFT JOIN diseases ds
+    ON mr.icd_code = ds.icd_code
 
-            ORDER BY mr.created_at DESC";
+LEFT JOIN lab_results lr
+    ON lr.record_id = mr.id
+
+LEFT JOIN prescription_details pd
+    ON pd.record_id = mr.id
+
+LEFT JOIN medicines m
+    ON pd.medicine_id = m.id
+
+WHERE mr.appointment_id = @appointmentId
+
+ORDER BY mr.created_at DESC";
 
             using var cmd = new SqlCommand(query, conn);
-
-            cmd.Parameters.AddWithValue(
-                "@appointmentId",
-                appointmentId);
+            cmd.Parameters.AddWithValue("@appointmentId", appointmentId);
 
             using var reader = await cmd.ExecuteReaderAsync();
 
-            if (await reader.ReadAsync())
+            MedicalRecords record = null;
+
+            while (await reader.ReadAsync())
             {
-                return new MedicalRecords
+                if (record == null)
                 {
-                    Id = reader["id"]?.ToString(),
-
-                    IcdCode = reader["icd_code"]?.ToString(),
-
-                    Diagnosis = reader["diagnosis"]?.ToString(),
-
-                    Treatment = reader["treatment"]?.ToString(),
-
-                    Notes = reader["notes"]?.ToString(),
-
-                    Pulse = reader["pulse"]?.ToString(),
-
-                    BloodPressure = reader["blood_pressure"]?.ToString(),
-
-                    Temperature = reader["temperature"]?.ToString(),
-
-                    SPO2 = reader["spo2"]?.ToString(),
-
-
-                    Disease = new Diseases
+                    record = new MedicalRecords
                     {
-                        DiseaseName = reader["disease_name"]?.ToString()
-                    },
+                        Id = reader["id"]?.ToString(),
 
-                    LabResults = new List<LabResults>
-            {
-                new LabResults
+                        PatientId = reader["patient_id"]?.ToString(),
+                        DoctorId = reader["doctor_id"]?.ToString(),
+                        IcdCode = reader["icd_code"]?.ToString(),
+
+                        Diagnosis = reader["diagnosis"]?.ToString(),
+                        Treatment = reader["treatment"]?.ToString(),
+                        Notes = reader["notes"]?.ToString(),
+
+                        Pulse = reader["pulse"]?.ToString(),
+                        BloodPressure = reader["blood_pressure"]?.ToString(),
+                        Temperature = reader["temperature"]?.ToString(),
+                        SPO2 = reader["spo2"]?.ToString(),
+
+                        CreatedAt = reader["created_at"] != DBNull.Value
+                            ? Convert.ToDateTime(reader["created_at"])
+                            : DateTime.MinValue,
+
+                        Disease = new Diseases
+                        {
+                            DiseaseName = reader["disease_name"]?.ToString()
+                        },
+
+                        LabResults = new List<LabResults>(),
+                        PrescriptionDetails = new List<PrescriptionDetails>()
+                    };
+
+                    string testName = reader["test_name"]?.ToString();
+
+                    if (!string.IsNullOrWhiteSpace(testName))
+                    {
+                        record.LabResults.Add(new LabResults
+                        {
+                            TestName = testName,
+                            Result = reader["result"]?.ToString()
+                        });
+                    }
+                }
+
+                string medicineName = reader["medicine_name"]?.ToString();
+
+                if (!string.IsNullOrWhiteSpace(medicineName))
                 {
-                    TestName = reader["test_name"]?.ToString(),
+                    record.PrescriptionDetails.Add(new PrescriptionDetails
+                    {
+                        Id = reader["prescription_detail_id"]?.ToString(),
+                        MedicineId = reader["medicine_id"]?.ToString(),
+                        MedicineName = medicineName,
+                        Category = reader["category"]?.ToString(),
 
-                    Result = reader["result"]?.ToString()
+                        Quantity = reader["quantity"] != DBNull.Value
+                            ? Convert.ToInt32(reader["quantity"])
+                            : 0,
+
+                        Dosage = reader["dosage"]?.ToString(),
+                        Frequency = reader["frequency"]?.ToString(),
+                        Notes = reader["prescription_notes"]?.ToString()
+                    });
                 }
             }
-                };
-            }
 
-            return null;
+            return record;
         }
+
+        //public async Task<MedicalRecords> GetMedicalRecordByAppointmentAsync(string appointmentId)
+        //{
+        //    using var conn = GetConnection();
+
+        //    await conn.OpenAsync();
+
+        //    string query = @"
+        //    SELECT TOP 1
+        //        mr.*,
+        //        ds.disease_name,
+        //        lr.test_name,
+        //        lr.result
+        //    FROM medical_records mr
+
+        //    LEFT JOIN diseases ds
+        //        ON mr.icd_code = ds.icd_code
+
+        //    LEFT JOIN lab_results lr
+        //        ON lr.record_id = mr.id
+
+        //    WHERE mr.appointment_id = @appointmentId
+
+        //    ORDER BY mr.created_at DESC";
+
+        //    using var cmd = new SqlCommand(query, conn);
+
+        //    cmd.Parameters.AddWithValue(
+        //        "@appointmentId",
+        //        appointmentId);
+
+        //    using var reader = await cmd.ExecuteReaderAsync();
+
+        //    if (await reader.ReadAsync())
+        //    {
+        //        return new MedicalRecords
+        //        {
+        //            Id = reader["id"]?.ToString(),
+
+        //            IcdCode = reader["icd_code"]?.ToString(),
+
+        //            Diagnosis = reader["diagnosis"]?.ToString(),
+
+        //            Treatment = reader["treatment"]?.ToString(),
+
+        //            Notes = reader["notes"]?.ToString(),
+
+        //            Pulse = reader["pulse"]?.ToString(),
+
+        //            BloodPressure = reader["blood_pressure"]?.ToString(),
+
+        //            Temperature = reader["temperature"]?.ToString(),
+
+        //            SPO2 = reader["spo2"]?.ToString(),
+
+
+        //            Disease = new Diseases
+        //            {
+        //                DiseaseName = reader["disease_name"]?.ToString()
+        //            },
+
+        //            LabResults = new List<LabResults>
+        //    {
+        //        new LabResults
+        //        {
+        //            TestName = reader["test_name"]?.ToString(),
+
+        //            Result = reader["result"]?.ToString()
+        //        }
+        //    }
+        //        };
+        //    }
+
+        //    return null;
+        //}
 
         // =========================================================
         // TÌM KIẾM VÀ LỌC HỒ SƠ BỆNH ÁN (THEO NGÀY & TỪ KHÓA)
@@ -823,6 +994,37 @@ namespace TamAnh_EMR_System.Repositories
                 };
             }
             return null;
+        }
+
+        public async Task<List<Medicines>> GetMedicinesAsync()
+        {
+            var list = new List<Medicines>();
+
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+                // Câu lệnh SQL truy vấn danh mục thuốc của bạn
+                string sql = "SELECT id, name, category, unit, price, instruction FROM medicines";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                using (var r = await cmd.ExecuteReaderAsync())
+                {
+                    while (await r.ReadAsync())
+                    {
+                        list.Add(new Medicines
+                        {
+                            Id = r["id"].ToString(),
+                            Name = r["name"].ToString(),
+                            Category = r["category"]?.ToString(),
+                            Unit = r["unit"]?.ToString(),
+                            Price = r["price"] != DBNull.Value ? Convert.ToDecimal(r["price"]) : 0,
+                            Instruction = r["instruction"]?.ToString()
+                        });
+                    }
+                }
+            }
+
+            return list;
         }
     }
 }

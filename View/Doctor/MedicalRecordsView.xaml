@@ -194,7 +194,7 @@
                         </Button.Resources>
                     </Button>
 
-                    <Button Content="Bỏ lọc" Width="100" Padding="0,8" Background="White" BorderBrush="#D1D5DB" 
+                    <Button Content="Làm mới" Width="100" Padding="0,8" Background="White" BorderBrush="#D1D5DB" 
                 BorderThickness="1" Cursor="Hand" Command="{Binding RefreshCommand}">
                         <Button.Resources>
                             <Style TargetType="Border">

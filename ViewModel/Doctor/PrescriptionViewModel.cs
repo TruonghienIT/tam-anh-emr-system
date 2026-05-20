@@ -64,7 +64,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             _ = LoadPrescriptionsAsync();
         }
 
-        private async Task LoadPrescriptionsAsync()
+        public async Task LoadPrescriptionsAsync()
         {
             var data = await _repository.GetAllPrescriptionsAsync();
             Application.Current.Dispatcher.Invoke(() =>
