@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using TamAnh_EMR_System.Helper;
 using TamAnh_EMR_System.Model;
 
 namespace TamAnh_EMR_System.Repositories
@@ -16,6 +17,26 @@ namespace TamAnh_EMR_System.Repositories
     /// </summary>
     public class AppointmentRepository : RepositoryBase, IAppointmentRepository
     {
+        // =========================================================
+        // MAP USER -> DOCTOR
+        // =========================================================
+        private async Task<string> GetDoctorIdByUserIdAsync(string userId)
+        {
+            using var conn = GetConnection();
+            await conn.OpenAsync();
+
+            string sql = "SELECT id FROM doctors WHERE user_id = @userId";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@userId", userId);
+
+            var result = await cmd.ExecuteScalarAsync();
+
+            if (result == null)
+                throw new Exception("User này chưa được gán bác sĩ (doctors)");
+
+            return result.ToString();
+        }
         // ================= CREATE =================
         public async Task CreateAsync(Appointment appointment, SqlConnection conn, SqlTransaction txn)
         {
@@ -196,8 +217,8 @@ namespace TamAnh_EMR_System.Repositories
 
         // ================= GENERATE NEXT ID =================
         public async Task<string> GenerateNextIdAsync(
-    SqlConnection conn,
-    SqlTransaction txn)
+        SqlConnection conn,
+        SqlTransaction txn)
         {
             using (var cmd = new SqlCommand())
             {
@@ -205,17 +226,17 @@ namespace TamAnh_EMR_System.Repositories
                 cmd.Transaction = txn;
 
                 cmd.CommandText = @"
-SELECT 
-    ISNULL(
-        MAX(
-            TRY_CAST(
-                SUBSTRING(id, 2, LEN(id) - 1)
-            AS INT)
-        ),
-    0
-) + 1
-FROM appointments
-WHERE id LIKE 'A%'";
+                SELECT 
+                    ISNULL(
+                        MAX(
+                            TRY_CAST(
+                                SUBSTRING(id, 2, LEN(id) - 1)
+                            AS INT)
+                        ),
+                    0
+                ) + 1
+                FROM appointments
+                WHERE id LIKE 'A%'";
 
                 var result = await cmd.ExecuteScalarAsync();
 
@@ -277,17 +298,17 @@ WHERE id LIKE 'A%'";
                 await conn.OpenAsync();
 
                 string query = @"
-SELECT 
-    ISNULL(
-        MAX(
-            TRY_CAST(
-                SUBSTRING(id, 2, LEN(id) - 1)
-            AS INT)
-        ),
-    0
-) + 1
-FROM appointments
-WHERE id LIKE 'A%'";
+                SELECT 
+                    ISNULL(
+                        MAX(
+                            TRY_CAST(
+                                SUBSTRING(id, 2, LEN(id) - 1)
+                            AS INT)
+                        ),
+                    0
+                ) + 1
+                FROM appointments
+                WHERE id LIKE 'A%'";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -307,28 +328,28 @@ WHERE id LIKE 'A%'";
                 await conn.OpenAsync();
 
                 string query = @"
-        INSERT INTO appointments
-        (
-            id,
-            patient_id,
-            doctor_id,
-            appointment_date,
-            appointment_time,
-            status,
-            reason,
-            created_by
-        )
-        VALUES
-        (
-            @id,
-            @patient_id,
-            @doctor_id,
-            @appointment_date,
-            @appointment_time,
-            @status,
-            @reason,
-            @created_by
-        )";
+                INSERT INTO appointments
+                (
+                    id,
+                    patient_id,
+                    doctor_id,
+                    appointment_date,
+                    appointment_time,
+                    status,
+                    reason,
+                    created_by
+                )
+                VALUES
+                (
+                    @id,
+                    @patient_id,
+                    @doctor_id,
+                    @appointment_date,
+                    @appointment_time,
+                    @status,
+                    @reason,
+                    @created_by
+                )";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -458,6 +479,7 @@ WHERE id LIKE 'A%'";
             using (var conn = GetConnection())
             {
                 await conn.OpenAsync();
+                string doctorId = await GetDoctorIdByUserIdAsync(UserSession.CurrentUser.Id);
 
                 string query = @"
                 SELECT
@@ -475,34 +497,38 @@ WHERE id LIKE 'A%'";
                 FROM appointments a
                 INNER JOIN patients p ON p.id = a.patient_id
                 INNER JOIN doctors d ON d.id = a.doctor_id
-
+                WHERE a.doctor_id = @doctorId  
                 ORDER BY 
                 a.appointment_date ASC,
                 a.appointment_time ASC";
 
                 using (var cmd = new SqlCommand(query, conn))
-                using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    while (await reader.ReadAsync())
+                    cmd.Parameters.AddWithValue("@doctorId", doctorId);
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        var time =
-                            reader["appointment_time"] is TimeSpan ts
-                            ? ts.ToString(@"hh\:mm")
-                            : reader["appointment_time"]?.ToString() ?? "";
-
-                        list.Add(new AppointmentDisplay
+                        while (await reader.ReadAsync())
                         {
-                            Id = reader["id"]?.ToString() ?? "",
-                            PatientId = reader["patient_id"]?.ToString() ?? "",
-                            DoctorId = reader["doctor_id"]?.ToString() ?? "",
-                            PatientName = reader["patient_name"]?.ToString() ?? "",
-                            PhoneNumber = reader["phone_number"]?.ToString() ?? "",
-                            DoctorName = reader["doctor_name"]?.ToString() ?? "",
-                            Department = reader["specialization"]?.ToString() ?? "",
-                            AppointmentDate = reader["appointment_date"] == DBNull.Value ? DateTime.Today : Convert.ToDateTime( reader["appointment_date"]),
-                            AppointmentTime = time, Status = reader["status"]?.ToString() ?? "Đang chờ",
-                            Reason = reader["reason"]?.ToString() ?? ""
-                        });
+                            var time =
+                                reader["appointment_time"] is TimeSpan ts
+                                ? ts.ToString(@"hh\:mm")
+                                : reader["appointment_time"]?.ToString() ?? "";
+
+                            list.Add(new AppointmentDisplay
+                            {
+                                Id = reader["id"]?.ToString() ?? "",
+                                PatientId = reader["patient_id"]?.ToString() ?? "",
+                                DoctorId = reader["doctor_id"]?.ToString() ?? "",
+                                PatientName = reader["patient_name"]?.ToString() ?? "",
+                                PhoneNumber = reader["phone_number"]?.ToString() ?? "",
+                                DoctorName = reader["doctor_name"]?.ToString() ?? "",
+                                Department = reader["specialization"]?.ToString() ?? "",
+                                AppointmentDate = reader["appointment_date"] == DBNull.Value ? DateTime.Today : Convert.ToDateTime(reader["appointment_date"]),
+                                AppointmentTime = time,
+                                Status = reader["status"]?.ToString() ?? "Đang chờ",
+                                Reason = reader["reason"]?.ToString() ?? ""
+                            });
+                        }
                     }
                 }
             }

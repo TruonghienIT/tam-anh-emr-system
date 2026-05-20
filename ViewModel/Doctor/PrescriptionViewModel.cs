@@ -11,14 +11,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
     public class PrescriptionViewModel : ViewModelBase
     {
         private readonly PrescriptionRepository _repository;
-
-        // Danh sách Đơn thuốc (Trái)
         public ObservableCollection<Prescription> Prescriptions { get; set; }
-
-        // Danh sách Thuốc chi tiết (Phải)
         public ObservableCollection<MedicineItem> SelectedPrescriptionDetails { get; set; }
-
-        // Biến lưu Đơn thuốc đang được chọn
         private Prescription _selectedPrescription;
         public Prescription SelectedPrescription
         {
@@ -28,7 +22,6 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 _selectedPrescription = value;
                 OnPropertyChanged(nameof(SelectedPrescription));
 
-                // Khi click chọn toa thuốc khác, lập tức tải danh sách thuốc tương ứng
                 if (_selectedPrescription != null)
                 {
                     _ = LoadMedicineDetailsAsync(_selectedPrescription.RecordId);
@@ -51,8 +44,6 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
             PrintCommand = new RelayCommand(_ => MessageBox.Show("Đang kết nối máy in...", "In Đơn Thuốc"));
             AddPatientCommand = new RelayCommand(_ => MessageBox.Show("Mở form thêm hồ sơ mới", "Tra Cứu"));
-
-            // THÊM DÒNG NÀY ĐỂ XỬ LÝ KHI CLICK CHỌN TOA THUỐC
             SelectPrescriptionCommand = new RelayCommand(p =>
             {
                 if (p is Prescription selected)
@@ -64,7 +55,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             _ = LoadPrescriptionsAsync();
         }
 
-        private async Task LoadPrescriptionsAsync()
+        public async Task LoadPrescriptionsAsync()
         {
             var data = await _repository.GetAllPrescriptionsAsync();
             Application.Current.Dispatcher.Invoke(() =>

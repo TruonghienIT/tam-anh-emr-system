@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using TamAnh_EMR_System.Commands;
+using TamAnh_EMR_System.Helper;
 using TamAnh_EMR_System.Model.Doctor;
 using TamAnh_EMR_System.Repositories;
 using TamAnh_EMR_System.View;
@@ -190,20 +191,25 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             }
         }
 
-        private void ExecuteLogoutCommand (object obj)
+        private void ExecuteLogoutCommand(object obj)
         {
-            var result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận",
+            var result = MessageBox.Show(
+                "Bạn có chắc muốn đăng xuất?",
+                "Xác nhận",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
-                LoginView loginView = new LoginView();
-                loginView.Show();
-                Application.Current.Windows
-                    .OfType<Window>()
-                    .SingleOrDefault(w => w is DoctorView)
-                    ?.Close();
+                UserSession.CurrentUser = null;
+                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                var login = new LoginView();
+                Application.Current.MainWindow = login;
+                login.Show();
+                foreach (var w in Application.Current.Windows.OfType<DoctorView>().ToList())
+                {
+                    w.Close();
+                }
             }
         }
     }

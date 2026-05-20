@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PdfiumViewer;
+using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.Win32;
-using System.Text.Json;
 using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model;
+using TamAnh_EMR_System.Model.Doctor;
 using TamAnh_EMR_System.Repositories;
 using TamAnh_EMR_System.Services;
-using PdfiumViewer;
-using System.Drawing;
 using ZXing;
 using ZXing.Windows.Compatibility;
 
@@ -96,7 +97,14 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
                 OnPropertyChanged(nameof(SelectedPatient));
 
-                ClearMedicalForm();
+                if (_selectedPatient != null)
+                {
+                    _ = LoadMedicalRecordAsync(_selectedPatient.AppointmentId);
+                }
+                else
+                {
+                    ClearMedicalForm();
+                }
             }
         }
         #endregion
@@ -236,7 +244,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         public ICommand ScanQrCommand { get; }
         public ICommand SaveRecordCommand { get; }
         public ICommand ImportQrImageCommand { get; }
-
+        public ObservableCollection<MedicineItem> CurrentPrescription { get; set; } = new ObservableCollection<MedicineItem>();
         public DoctorPatientManagementViewModel()
         {
             _repository = new DoctorPatientManagementRepository();
@@ -421,6 +429,23 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 return;
             }
 
+            var dbPrescriptionList = new List<TamAnh_EMR_System.Model.PrescriptionDetails>();
+            foreach (var item in CurrentPrescription)
+            {
+                var parts = item.Instruction.Split('|');
+                string freq = parts.Length > 0 ? parts[0].Trim() : "";
+                string note = parts.Length > 1 ? parts[1].Trim() : "";
+                var detail = new TamAnh_EMR_System.Model.PrescriptionDetails
+                {
+                    MedicineId = item.MedicineId,
+                    Quantity = item.Quantity,
+                    Dosage = item.Dosage,
+                    Frequency = freq,
+                    Notes = note
+                };
+                dbPrescriptionList.Add(detail);
+            }
+
             bool isSuccess = await _repository.SaveMedicalRecordAsync(
                 SelectedPatient.PatientId,
                 SelectedPatient.AppointmentId,
@@ -434,7 +459,8 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 Temperature,
                 SPO2,
                 LabTestName,
-                LabResult
+                LabResult,
+                dbPrescriptionList
             );
 
             if (isSuccess)
@@ -449,6 +475,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 );
 
                 ClearMedicalForm();
+                CurrentPrescription.Clear();
 
                 OnPropertyChanged(nameof(WaitingCount));
             }
@@ -481,6 +508,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
             TreatmentPlan = "";
             NotesText = "";
+            CurrentPrescription.Clear();
         }
         #endregion
 
@@ -488,7 +516,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "PDF files (*.pdf)|*.pdf|Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg"  
+                Filter = "PDF files (*.pdf)|*.pdf|Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg"
             };
 
             if (dialog.ShowDialog() == true)
@@ -525,15 +553,15 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 var data = JsonSerializer.Deserialize<AppointmentQrDto>(qr);
                 if (data == null)
                 {
-                    MessageBox.Show( "QR không hợp lệ!", "QR Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("QR không hợp lệ!", "QR Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                var patientData = await _repository.GetPatientByAppointmentIdAsync( data.appointmentId);
+                var patientData = await _repository.GetPatientByAppointmentIdAsync(data.appointmentId);
 
                 if (patientData == null)
                 {
-                    MessageBox.Show( $"Không tìm thấy lịch hẹn: {data.appointmentId}", "Không hợp lệ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show($"Không tìm thấy lịch hẹn: {data.appointmentId}", "Không hợp lệ", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -549,7 +577,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                     Status = patientData.Status,
                     DOBString = patientData.DOB.ToString("dd/MM/yyyy"),
                     Time = patientData.AppointmentTime.ToString(@"hh\:mm"),
-                    Initials = patientData.PatientName .Split(' ').LastOrDefault()?.Substring(0, 1).ToUpper() ?? "U"
+                    Initials = patientData.PatientName.Split(' ').LastOrDefault()?.Substring(0, 1).ToUpper() ?? "U"
                 };
 
                 DateTime appointmentDate = patientData.AppointmentDate.Date;
@@ -557,22 +585,26 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
                 if (appointmentDate > today)
                 {
-                    MessageBox.Show( $"Lịch hẹn của bệnh nhân vào ngày {appointmentDate:dd/MM/yyyy}.\nChưa đến lịch khám!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"Lịch hẹn của bệnh nhân vào ngày {appointmentDate:dd/MM/yyyy}.\nChưa đến lịch khám!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
                 if (appointmentDate == today)
                 {
-                    var existedPatient = PatientQueue.FirstOrDefault( x => x.AppointmentId == patient.AppointmentId);
+                    var existedPatient = PatientQueue.FirstOrDefault(x => x.AppointmentId == patient.AppointmentId);
                     if (existedPatient != null)
                         SelectedPatient = existedPatient;
                     else
                         SelectedPatient = patient;
                 }
                 else
-                    MessageBox.Show( $"Đang xem hồ sơ khám ngày {appointmentDate:dd/MM/yyyy}", "Hồ sơ cũ", MessageBoxButton.OK, MessageBoxImage.Information);
+                {
+                    MessageBox.Show($"Đang xem hồ sơ khám ngày {appointmentDate:dd/MM/yyyy}", "Hồ sơ cũ", MessageBoxButton.OK, MessageBoxImage.Information);
+                    SelectedPatient = null;
+                }
 
-                var record = await _repository .GetMedicalRecordByAppointmentAsync(patient.AppointmentId);
+                var record = await _repository.GetMedicalRecordByAppointmentAsync(patient.AppointmentId);
+                CurrentPrescription.Clear();
                 if (record == null) return;
 
                 DiseaseCode = record.IcdCode;
@@ -586,13 +618,30 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 Temperature = record.Temperature;
                 SPO2 = record.SPO2;
 
-                var lab = record.LabResults? .FirstOrDefault();
+                var lab = record.LabResults?.FirstOrDefault();
                 LabTestName = lab?.TestName ?? "";
                 LabResult = lab?.Result ?? "";
+
+
+
+                if (record.PrescriptionDetails != null)
+                {
+                    foreach (var item in record.PrescriptionDetails)
+                    {
+                        CurrentPrescription.Add(new MedicineItem
+                        {
+                            MedicineId = item.MedicineId,
+                            Name = item.MedicineName,
+                            Quantity = item.Quantity,
+                            Dosage = item.Dosage,
+                            Instruction = $"{item.Frequency} | {item.Notes}"
+                        });
+                    }
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show( $"QR không đúng định dạng!\n{ex.Message}", "QR Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"QR không đúng định dạng!\n{ex.Message}", "QR Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private string DecodeQrFromPdf(string pdfPath)
@@ -607,6 +656,49 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             };
             var result = barcodeReader.Decode(bitmap);
             return result?.Text;
+        }
+        private async Task LoadMedicalRecordAsync(string appointmentId)
+        {
+            ClearMedicalForm();
+
+            var record = await _repository.GetMedicalRecordByAppointmentAsync(appointmentId);
+
+            if (record == null)
+                return;
+
+            DiseaseCode = record.IcdCode;
+            DiseaseName = record.Disease?.DiseaseName ?? "";
+            SelectedDisease = DiseaseList.FirstOrDefault(x => x.IcdCode == record.IcdCode);
+
+            DiagnosisDescription = record.Diagnosis;
+            TreatmentPlan = record.Treatment;
+            NotesText = record.Notes;
+
+            Pulse = record.Pulse;
+            BloodPressure = record.BloodPressure;
+            Temperature = record.Temperature;
+            SPO2 = record.SPO2;
+
+            var lab = record.LabResults?.FirstOrDefault();
+            LabTestName = lab?.TestName ?? "";
+            LabResult = lab?.Result ?? "";
+
+            CurrentPrescription.Clear();
+
+            if (record.PrescriptionDetails != null)
+            {
+                foreach (var item in record.PrescriptionDetails)
+                {
+                    CurrentPrescription.Add(new MedicineItem
+                    {
+                        MedicineId = item.MedicineId,
+                        Name = item.MedicineName,
+                        Quantity = item.Quantity,
+                        Dosage = item.Dosage,
+                        Instruction = $"{item.Frequency} | {item.Notes}"
+                    });
+                }
+            }
         }
     }
 }

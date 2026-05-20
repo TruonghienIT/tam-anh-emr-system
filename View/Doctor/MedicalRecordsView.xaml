@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="#F8F9FC" FontFamily="Segoe UI">
 
-	<UserControl.Resources>
-		<SolidColorBrush x:Key="PrimaryBrush" Color="#2563EB"/>
-		<SolidColorBrush x:Key="TextMainBrush" Color="#111827"/>
-		<SolidColorBrush x:Key="TextMutedBrush" Color="#6B7280"/>
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#2563EB"/>
+        <SolidColorBrush x:Key="TextMainBrush" Color="#111827"/>
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#6B7280"/>
 
         <Style x:Key="ModernSearchBox" TargetType="TextBox">
             <Setter Property="Height" Value="40"/>
@@ -52,119 +52,119 @@
         </Style>
 
         <Style x:Key="ModernFlatButton" TargetType="Button">
-			<Setter Property="Background" Value="White"/>
-			<Setter Property="BorderBrush" Value="#D1D5DB"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="Foreground" Value="#374151"/>
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}"
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="8">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver" Value="True">
-					<Setter Property="Background" Value="#F3F4F6"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F3F4F6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-		<Style x:Key="ActionTextButton" TargetType="Button">
-			<Setter Property="Background" Value="#EFF6FF"/>
-			<Setter Property="BorderBrush" Value="Transparent"/>
-			<Setter Property="Foreground" Value="#2563EB"/>
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Padding" Value="12,6"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}"
+        <Style x:Key="ActionTextButton" TargetType="Button">
+            <Setter Property="Background" Value="#EFF6FF"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#2563EB"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
 								CornerRadius="6"
 								Padding="{TemplateBinding Padding}">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver" Value="True">
-					<Setter Property="Background" Value="#DBEAFE"/>
-					<Setter Property="Foreground" Value="#1D4ED8"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#DBEAFE"/>
+                    <Setter Property="Foreground" Value="#1D4ED8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-		<Style TargetType="GridViewColumnHeader">
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="Foreground" Value="#6B7280"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="12"/>
-			<Setter Property="Padding" Value="12,16"/>
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-			<Setter Property="BorderThickness" Value="0,0,0,1"/>
-			<Setter Property="BorderBrush" Value="#E5E7EB"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="GridViewColumnHeader">
-						<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+        <Style TargetType="GridViewColumnHeader">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="12,16"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewColumnHeader">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-		<Style x:Key="TableListViewItem" TargetType="ListViewItem">
-			<Setter Property="Background" Value="White"/>
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Padding" Value="0,12"/>
-			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-			<Setter Property="BorderThickness" Value="0,0,0,1"/>
-			<Setter Property="BorderBrush" Value="#F3F4F6"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="ListViewItem">
-						<Border BorderThickness="{TemplateBinding BorderThickness}"
+        <Style x:Key="TableListViewItem" TargetType="ListViewItem">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0,12"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#F3F4F6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Border BorderThickness="{TemplateBinding BorderThickness}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 Background="{TemplateBinding Background}"
                                 Padding="{TemplateBinding Padding}">
-							<GridViewRowPresenter Content="{TemplateBinding Content}" Columns="{TemplateBinding GridView.ColumnCollection}"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver" Value="True">
-					<Setter Property="Background" Value="#F9FAFB"/>
-				</Trigger>
-				<Trigger Property="IsSelected" Value="True">
-					<Setter Property="Background" Value="#EFF6FF"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
-	</UserControl.Resources>
+                            <GridViewRowPresenter Content="{TemplateBinding Content}" Columns="{TemplateBinding GridView.ColumnCollection}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F9FAFB"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#EFF6FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-		<Grid Grid.Row="0" Margin="24,24,24,20">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="Auto"/>
-			</Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Margin="24,24,24,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
             <StackPanel Margin="0,0,0,20">
 
@@ -194,7 +194,7 @@
                         </Button.Resources>
                     </Button>
 
-                    <Button Content="Bỏ lọc" Width="100" Padding="0,8" Background="White" BorderBrush="#D1D5DB" 
+                    <Button Content="Làm mới" Width="100" Padding="0,8" Background="White" BorderBrush="#D1D5DB" 
                 BorderThickness="1" Cursor="Hand" Command="{Binding RefreshCommand}">
                         <Button.Resources>
                             <Style TargetType="Border">
@@ -207,144 +207,144 @@
             </StackPanel>
         </Grid>
 
-		<Border Grid.Row="1" Margin="24,0,24,24" Background="White" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1">
-			<Border.Effect>
-				<DropShadowEffect Color="#000000" Opacity="0.03" BlurRadius="10" ShadowDepth="2"/>
-			</Border.Effect>
+        <Border Grid.Row="1" Margin="24,0,24,24" Background="White" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.03" BlurRadius="10" ShadowDepth="2"/>
+            </Border.Effect>
 
-			<ListView ItemsSource="{Binding MedicalRecordsList}" SelectedItem="{Binding SelectedRecord}"
+            <ListView ItemsSource="{Binding MedicalRecordsList}" SelectedItem="{Binding SelectedRecord}"
                       BorderThickness="0" Background="Transparent" Padding="12,0"
                       ItemContainerStyle="{StaticResource TableListViewItem}"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
-				<ListView.View>
-					<GridView>
-						<GridViewColumn Header="BỆNH NHÂN" Width="180">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding Patient.Name}" FontWeight="Bold" FontSize="14" Foreground="#111827" Margin="12,0,0,0" VerticalAlignment="Center"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="BỆNH NHÂN" Width="180">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Patient.Name}" FontWeight="Bold" FontSize="14" Foreground="#111827" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="BÁC SĨ PHỤ TRÁCH" Width="180">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding Doctor.FullName}" FontSize="14" Foreground="#374151" VerticalAlignment="Center"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                        <GridViewColumn Header="BÁC SĨ PHỤ TRÁCH" Width="180">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Doctor.FullName}" FontSize="14" Foreground="#374151" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="MÃ ICD" Width="100">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<Border Background="#F3F4F6" CornerRadius="6" Padding="8,4" HorizontalAlignment="Left">
-										<TextBlock Text="{Binding IcdCode}" FontWeight="SemiBold" FontSize="12" Foreground="#4B5563"/>
-									</Border>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                        <GridViewColumn Header="MÃ ICD" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F3F4F6" CornerRadius="6" Padding="8,4" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding IcdCode}" FontWeight="SemiBold" FontSize="12" Foreground="#4B5563"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="CHẨN ĐOÁN" Width="220">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding Diagnosis}" FontSize="13" Foreground="#4B5563" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip="{Binding Diagnosis}"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                        <GridViewColumn Header="CHẨN ĐOÁN" Width="220">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Diagnosis}" FontSize="13" Foreground="#4B5563" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip="{Binding Diagnosis}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="NHỊP TIM" Width="90">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding Pulse}" FontWeight="Medium" Foreground="#111827" VerticalAlignment="Center"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                        <GridViewColumn Header="NHỊP TIM" Width="90">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Pulse}" FontWeight="Medium" Foreground="#111827" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="HUYẾT ÁP" Width="100">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding BloodPressure}" FontWeight="Medium" Foreground="#111827" VerticalAlignment="Center"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                        <GridViewColumn Header="HUYẾT ÁP" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding BloodPressure}" FontWeight="Medium" Foreground="#111827" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="T°C / SpO2" Width="110">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<TextBlock Text="{Binding Temperature}" Foreground="#374151"/>
-										<TextBlock Text="°C - " Foreground="#9CA3AF" Margin="2,0"/>
-										<TextBlock Text="{Binding SPO2}" FontWeight="Medium" Foreground="#059669"/>
-										<TextBlock Text="%" Foreground="#059669"/>
-									</StackPanel>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                        <GridViewColumn Header="T°C / SpO2" Width="110">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Temperature}" Foreground="#374151"/>
+                                        <TextBlock Text="°C - " Foreground="#9CA3AF" Margin="2,0"/>
+                                        <TextBlock Text="{Binding SPO2}" FontWeight="Medium" Foreground="#059669"/>
+                                        <TextBlock Text="%" Foreground="#059669"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="NGÀY TẠO" Width="110">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" FontSize="13" Foreground="#6B7280" VerticalAlignment="Center"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                        <GridViewColumn Header="NGÀY TẠO" Width="110">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" FontSize="13" Foreground="#6B7280" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-						<GridViewColumn Header="THAO TÁC" Width="340">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <GridViewColumn Header="THAO TÁC" Width="340">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
 
-										<Button Content="Chi tiết"
+                                        <Button Content="Chi tiết"
 												Command="{Binding DataContext.ViewDetailCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}"
 												CommandParameter="{Binding}"
 												Style="{StaticResource ActionTextButton}"
 												Padding="24,12" FontSize="14" MinWidth="90" Margin="0,0,12,0"/>
 
-										<Button Content="Sửa"
+                                        <Button Content="Sửa"
 												Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}"
 												CommandParameter="{Binding}"
 												Padding="24,12" FontSize="14" MinWidth="90" Margin="0,0,12,0">
-											<Button.Style>
-												<Style TargetType="Button" BasedOn="{StaticResource ActionTextButton}">
-													<Setter Property="Background" Value="#FEF3C7"/>
-													<Setter Property="Foreground" Value="#D97706"/>
-													<Style.Triggers>
-														<Trigger Property="IsMouseOver" Value="True">
-															<Setter Property="Background" Value="#FDE68A"/>
-															<Setter Property="Foreground" Value="#B45309"/>
-														</Trigger>
-													</Style.Triggers>
-												</Style>
-											</Button.Style>
-										</Button>
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource ActionTextButton}">
+                                                    <Setter Property="Background" Value="#FEF3C7"/>
+                                                    <Setter Property="Foreground" Value="#D97706"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#FDE68A"/>
+                                                            <Setter Property="Foreground" Value="#B45309"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
 
-										<Button Content="Xóa"
+                                        <Button Content="Xóa"
 												Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=ListView}}"
 												CommandParameter="{Binding}"
 												Padding="24,12" FontSize="14" MinWidth="90">
-											<Button.Style>
-												<Style TargetType="Button" BasedOn="{StaticResource ActionTextButton}">
-													<Setter Property="Background" Value="#FEE2E2"/>
-													<Setter Property="Foreground" Value="#DC2626"/>
-													<Style.Triggers>
-														<Trigger Property="IsMouseOver" Value="True">
-															<Setter Property="Background" Value="#FECACA"/>
-															<Setter Property="Foreground" Value="#B91C1C"/>
-														</Trigger>
-													</Style.Triggers>
-												</Style>
-											</Button.Style>
-										</Button>
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource ActionTextButton}">
+                                                    <Setter Property="Background" Value="#FEE2E2"/>
+                                                    <Setter Property="Foreground" Value="#DC2626"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#FECACA"/>
+                                                            <Setter Property="Foreground" Value="#B91C1C"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
 
-									</StackPanel>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-					</GridView>
-				</ListView.View>
-			</ListView>
-		</Border>
-	</Grid>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </Grid>
 </UserControl>

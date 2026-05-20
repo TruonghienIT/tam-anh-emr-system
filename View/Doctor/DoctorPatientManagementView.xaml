@@ -663,25 +663,51 @@
                                 <fa:IconImage Icon="PenToSquare" Width="16" Height="16" Foreground="#2563EB" Margin="0,0,8,0"/>
                                 <TextBlock Text="Ghi chú / Lời dặn" FontSize="15" FontWeight="Bold" Foreground="#111827"/>
                             </StackPanel>
+                            
                             <TextBox Style="{StaticResource InputTextBox}" Height="80" TextWrapping="Wrap" VerticalContentAlignment="Top" Text="{Binding NotesText}" Margin="0,0,0,24"/>
 
+                            <StackPanel Margin="0,0,0,24">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <fa:IconImage Icon="PrescriptionBottleMedical" Width="18" Height="18" Foreground="#2563EB" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Đơn thuốc đã kê" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
+                                </StackPanel>
+
+                                <Border Background="White" CornerRadius="8" BorderBrush="#E5E7EB" BorderThickness="1" MinHeight="80">
+                                    <DataGrid ItemsSource="{Binding CurrentPrescription}" 
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True" 
+                          Background="Transparent" 
+                          BorderThickness="0" 
+                          RowHeight="35" 
+                          HeadersVisibility="Column" 
+                          GridLinesVisibility="Horizontal" 
+                          HorizontalGridLinesBrush="#F3F6F9">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Tên thuốc" Binding="{Binding Name}" Width="2*"/>
+                                            <DataGridTextColumn Header="Số lượng" Binding="{Binding QuantityDisplay}" Width="1*"/>
+                                            <DataGridTextColumn Header="Liều dùng" Binding="{Binding Dosage}" Width="1.5*"/>
+                                            <DataGridTextColumn Header="Hướng dẫn &amp; Lời dặn" Binding="{Binding Instruction}" Width="3*"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                            </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <Button Style="{StaticResource BaseButton}"
-                                        Background="White"
-                                        BorderBrush="#E5E7EB"
-                                        BorderThickness="1"
-                                        Padding="16,10"
-                                        Margin="0,0,12,0">
-
+                                    Background="White"
+                                    BorderBrush="#E5E7EB"
+                                    BorderThickness="1"
+                                    Padding="16,10"
+                                    Margin="0,0,12,0"
+                                    Click="BtnOpenPrescription_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <fa:IconImage Icon="PrescriptionBottleMedical"
-                                                      Width="14"
-                                                      Height="14"
-                                                      Foreground="#2563EB"
-                                                      Margin="0,0,8,0"/>
+                                              Width="14"
+                                              Height="14"
+                                              Foreground="#2563EB"
+                                              Margin="0,0,8,0"/>
                                         <TextBlock Text="Kê toa thuốc"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="#2563EB"/>
+                                       FontWeight="SemiBold"
+                                       Foreground="#2563EB"/>
                                     </StackPanel>
                                 </Button>
 

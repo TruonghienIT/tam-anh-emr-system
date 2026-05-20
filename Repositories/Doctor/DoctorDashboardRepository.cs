@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.Data.SqlClient;
+using TamAnh_EMR_System.Helper;
 
 namespace TamAnh_EMR_System.Repositories
 {
@@ -22,10 +24,22 @@ namespace TamAnh_EMR_System.Repositories
         public async Task<List<AppointmentDTO>> GetTodaysAppointmentsAsync()
         {
             var list = new List<AppointmentDTO>();
+            string doctorId;
 
             using (var connection = GetConnection())
             {
                 await connection.OpenAsync();
+                string getDoctorSql = @"
+                    SELECT id 
+                    FROM doctors 
+                    WHERE user_id = @userId";
+
+                using (var cmdDoctor = new SqlCommand(getDoctorSql, connection))
+                {
+                    cmdDoctor.Parameters.AddWithValue("@userId", UserSession.CurrentUser.Id);
+                    var result = await cmdDoctor.ExecuteScalarAsync();
+                    doctorId = result.ToString();
+                }
 
                 // Câu lệnh SQL: Lọc theo ngày hiện tại và sắp xếp theo giờ hẹn
                 string query = @"
@@ -37,22 +51,25 @@ namespace TamAnh_EMR_System.Repositories
                     FROM appointments a
                     LEFT JOIN patients p ON a.patient_id = p.id
                     LEFT JOIN doctors d ON a.doctor_id = d.id
-                    WHERE CAST(a.appointment_date AS DATE) = CAST(GETDATE() AS DATE)
+                    WHERE CAST(a.appointment_date AS DATE) = CAST(GETDATE() AS DATE) AND a.doctor_id = @doctorId
                     ORDER BY a.appointment_time ASC";
 
                 using (var command = new SqlCommand(query, connection))
-                using (var reader = await command.ExecuteReaderAsync())
                 {
-                    while (await reader.ReadAsync())
+                    command.Parameters.AddWithValue("@doctorId", doctorId);
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        list.Add(new AppointmentDTO
+                        while (await reader.ReadAsync())
                         {
-                            // Kiểm tra DBNull để tránh lỗi văng app nếu dữ liệu trong SQL bị rỗng
-                            PatientName = reader["PatientName"] != DBNull.Value ? reader["PatientName"].ToString() : "Khách vãng lai",
-                            DoctorName = reader["DoctorName"] != DBNull.Value ? reader["DoctorName"].ToString() : "Chưa xếp bác sĩ",
-                            AppointmentTime = reader["AppointmentTime"] != DBNull.Value ? (TimeSpan)reader["AppointmentTime"] : TimeSpan.Zero,
-                            Status = reader["Status"] != DBNull.Value ? reader["Status"].ToString() : "Đang chờ"
-                        });
+                            list.Add(new AppointmentDTO
+                            {
+                                // Kiểm tra DBNull để tránh lỗi văng app nếu dữ liệu trong SQL bị rỗng
+                                PatientName = reader["PatientName"] != DBNull.Value ? reader["PatientName"].ToString() : "Khách vãng lai",
+                                DoctorName = reader["DoctorName"] != DBNull.Value ? reader["DoctorName"].ToString() : "Chưa xếp bác sĩ",
+                                AppointmentTime = reader["AppointmentTime"] != DBNull.Value ? (TimeSpan)reader["AppointmentTime"] : TimeSpan.Zero,
+                                Status = reader["Status"] != DBNull.Value ? reader["Status"].ToString() : "Đang chờ"
+                            });
+                        }
                     }
                 }
             }
