@@ -30,6 +30,13 @@ namespace TamAnh_EMR_System.Repositories
         /// </summary>
         Task<bool> CheckDoctorScheduleConflictAsync(string doctorId, DateTime date, string timeSlot);
 
+        Task<bool> HasPatientAppointmentSameDayAsync(
+            string patientId,
+            DateTime date);
+
+        Task<bool> HasPatientAppointmentSameWeekAsync(
+            string patientId,
+            DateTime date);
         /// <summary>
         /// Generates the next appointment ID in AP000001 format.
         /// </summary>
@@ -40,7 +47,9 @@ namespace TamAnh_EMR_System.Repositories
         /// </summary>
         Task<Dictionary<string, int>> GetTodayStatisticsAsync();
         Task<List<AppointmentDisplay>> GetAllDisplayAsync();
-
+        Task<List<string>> GetDoctorBusySlotsAsync(
+            string doctorId,
+            DateTime date);
         Task UpdateStatusAsync(string id, string status);
 
         Task DeleteAsync(string id);

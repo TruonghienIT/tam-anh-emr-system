@@ -567,6 +567,130 @@ namespace TamAnh_EMR_System.Repositories
                 }
             }
         }
+        public async Task<bool> HasPatientAppointmentSameDayAsync(
+    string patientId,
+    DateTime date)
+        {
+            using var conn = GetConnection();
+
+            await conn.OpenAsync();
+
+            string sql = @"
+    SELECT COUNT(*)
+    FROM appointments
+    WHERE patient_id=@patientId
+    AND appointment_date=@date
+    AND status<>N'Đã hủy'";
+
+            using var cmd = new SqlCommand(sql, conn);
+
+            cmd.Parameters.AddWithValue(
+                "@patientId",
+                patientId);
+
+            cmd.Parameters.AddWithValue(
+                "@date",
+                date.Date);
+
+            int count =
+                Convert.ToInt32(
+                await cmd.ExecuteScalarAsync());
+
+            return count > 0;
+        }
+
+        public async Task<bool>
+        HasPatientAppointmentSameWeekAsync(
+        string patientId,
+        DateTime date)
+        {
+            using var conn = GetConnection();
+
+            await conn.OpenAsync();
+
+            string sql = @"
+    SELECT COUNT(*)
+    FROM appointments
+    WHERE patient_id=@patientId
+    AND DATEPART(WEEK,
+        appointment_date)
+    =
+    DATEPART(WEEK,@date)
+    AND YEAR(appointment_date)
+    =
+    YEAR(@date)
+    AND status<>N'Đã hủy'
+    ";
+
+            using var cmd =
+                new SqlCommand(
+                    sql,
+                    conn);
+
+            cmd.Parameters.AddWithValue(
+                "@patientId",
+                patientId);
+
+            cmd.Parameters.AddWithValue(
+                "@date",
+                date.Date);
+
+            int count =
+                Convert.ToInt32(
+                await cmd.ExecuteScalarAsync());
+
+            return count > 0;
+        }
+
+        public async Task<List<string>>
+        GetDoctorBusySlotsAsync(
+        string doctorId,
+        DateTime date)
+        {
+            List<string> slots =
+                new();
+
+            using var conn =
+                GetConnection();
+
+            await conn.OpenAsync();
+
+            string sql = @"
+                SELECT appointment_time
+                FROM appointments
+                WHERE doctor_id=@doctorId
+                AND appointment_date=@date
+                AND status<>N'Đã hủy'
+                ";
+
+            using var cmd =
+                new SqlCommand(
+                    sql,
+                    conn);
+
+            cmd.Parameters.AddWithValue(
+                "@doctorId",
+                doctorId);
+
+            cmd.Parameters.AddWithValue(
+                "@date",
+                date.Date);
+
+            using var reader =
+                await cmd.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                TimeSpan time =
+                (TimeSpan)
+                reader["appointment_time"];
+
+                slots.Add(
+                $"{time:hh\\:mm}");
+            }
+
+            return slots;
+        }
     }
 
 }

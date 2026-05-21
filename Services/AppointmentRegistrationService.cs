@@ -106,15 +106,19 @@ namespace TamAnh_EMR_System.Services
                         }
 
                         // ===== STEP 3: Check doctor schedule conflict =====
-                        bool hasConflict = await CheckConflictWithTransaction(
-                            appointment.DoctorId, appointment.AppointmentDate,
-                            appointment.AppointmentTime, conn, txn);
+                        string businessError =
+                            await ValidateBusinessRules(
+                            appointment);
 
-                        if (hasConflict)
+                        if (
+                        !string.IsNullOrWhiteSpace(
+                        businessError))
                         {
                             await txn.RollbackAsync();
-                            return RegistrationResult.Failure(
-                                "Bác sĩ đã có lịch khám trong khung giờ này. Vui lòng chọn giờ khác.");
+
+                            return RegistrationResult
+                            .Failure(
+                            businessError);
                         }
 
                         // ===== STEP 4: Create appointment =====
@@ -219,6 +223,38 @@ namespace TamAnh_EMR_System.Services
                 var count = (int)await cmd.ExecuteScalarAsync();
                 return count > 0;
             }
+        }
+        private async Task<string>
+            ValidateBusinessRules(
+            Appointment appointment)
+        {
+            if (
+                !string.IsNullOrWhiteSpace(
+                appointment.PatientId)
+                &&
+                await _appointmentRepo
+                .HasPatientAppointmentSameDayAsync(
+                appointment.PatientId,
+                appointment.AppointmentDate))
+            {
+                return
+                "Bệnh nhân đã có lịch khám trong ngày.";
+            }
+
+            bool doctorBusy =
+            await _appointmentRepo
+            .CheckDoctorScheduleConflictAsync(
+                appointment.DoctorId,
+                appointment.AppointmentDate,
+                appointment.AppointmentTime);
+
+            if (doctorBusy)
+            {
+                return
+                "Bác sĩ đã kín ca này.";
+            }
+
+            return null;
         }
 
         private Patients MapPatient(SqlDataReader reader)

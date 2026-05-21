@@ -273,6 +273,7 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                 OnPropertyChanged(nameof(TodayText));
                 OnPropertyChanged(nameof(SummaryTime));
                 BuildCalendarDays();
+                _ = RefreshBusySlots();
             }
         }
 
@@ -543,10 +544,9 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
                     // Generate patient ID
                     patient.Id = await _patientRepo.GenerateNextIdAsync();
 
-                    // Save patient to DB
-                    await _patientRepo.AddAsync(patient);
+                    appointmentPatientId =
+                    patient.Id;
 
-                    appointmentPatientId = patient.Id;
                 }
 
                 // ===== GET DOCTOR =====
@@ -579,9 +579,27 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
 
                     CreatedBy = UserSession.CurrentUser?.ReceptionistId
                 };
+                var result =
+                    await _registrationService
+                    .RegisterAppointmentAsync(
+                    patient,
+                    appointment);
+
+                if (!result.IsSuccess)
+                {
+                    ErrorMessage =
+                    result.Message;
+
+                    MessageBox.Show(
+                        result.Message,
+                        "Không thể tạo lịch hẹn",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return;
+                }
 
                 // ===== SAVE APPOINTMENT =====
-                await _appointmentRepo.AddAsync(appointment);
 
 
                 // ===== AUTO EXPORT PDF =====
@@ -650,6 +668,48 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
             finally
             {
                 IsLoading = false;
+            }
+        }
+        private async Task
+RefreshBusySlots()
+        {
+            string doctorId =
+            GetSelectedDoctorId();
+
+            if (
+            string.IsNullOrWhiteSpace(
+            doctorId))
+                return;
+
+            var busy =
+            await _appointmentRepo
+            .GetDoctorBusySlotsAsync(
+                doctorId,
+                SelectedDate);
+
+            foreach (
+            var slot
+            in TimeSlots)
+            {
+                string start =
+                slot.Text
+                .Split('-')[0]
+                .Trim();
+
+                slot.IsAvailable =
+                !busy.Contains(start);
+
+                if (
+                !slot.IsAvailable
+                &&
+                slot.IsSelected)
+                {
+                    slot.IsSelected =
+                    false;
+
+                    SelectedTimeSlot =
+                    null;
+                }
             }
         }
 
@@ -942,6 +1002,7 @@ Appointment.PatientInitials = GenerateInitials(patient.Name);
 
             // reset selected doctor
             Appointment.Doctor = null;
+            _ = RefreshBusySlots();
         }
     }
 
