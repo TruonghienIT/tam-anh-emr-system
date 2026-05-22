@@ -499,8 +499,8 @@ namespace TamAnh_EMR_System.Repositories
                 INNER JOIN doctors d ON d.id = a.doctor_id
                 WHERE a.doctor_id = @doctorId  
                 ORDER BY 
-                a.appointment_date ASC,
-                a.appointment_time ASC";
+                    a.appointment_date ASC,
+                    a.appointment_time ASC";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -535,11 +535,74 @@ namespace TamAnh_EMR_System.Repositories
             return list;
         }
 
+        public async Task<List<AppointmentDisplay>> GetAllAppointmentsAsync()
+        {
+            var list = new List<AppointmentDisplay>();
+
+            using (var conn = GetConnection())
+            {
+                await conn.OpenAsync();
+
+                string query = @"
+                SELECT
+                    a.id,
+                    a.patient_id,
+                    a.doctor_id,
+                    p.name AS patient_name,
+                    p.phone AS phone_number,
+                    d.full_name AS doctor_name,
+                    d.specialization,
+                    a.appointment_date,
+                    a.appointment_time,
+                    a.status,
+                    a.reason
+                FROM appointments a
+                INNER JOIN patients p ON p.id = a.patient_id
+                INNER JOIN doctors d ON d.id = a.doctor_id
+                ORDER BY
+                    a.appointment_date ASC,
+                    a.appointment_time ASC";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var time =
+                                reader["appointment_time"] is TimeSpan ts
+                                ? ts.ToString(@"hh\:mm")
+                                : reader["appointment_time"]?.ToString() ?? "";
+
+                            list.Add(new AppointmentDisplay
+                            {
+                                Id = reader["id"]?.ToString() ?? "",
+                                PatientId = reader["patient_id"]?.ToString() ?? "",
+                                DoctorId = reader["doctor_id"]?.ToString() ?? "",
+                                PatientName = reader["patient_name"]?.ToString() ?? "",
+                                PhoneNumber = reader["phone_number"]?.ToString() ?? "",
+                                DoctorName = reader["doctor_name"]?.ToString() ?? "",
+                                Department = reader["specialization"]?.ToString() ?? "",
+                                AppointmentDate =
+                                    reader["appointment_date"] == DBNull.Value
+                                    ? DateTime.Today
+                                    : Convert.ToDateTime(reader["appointment_date"]),
+                                AppointmentTime = time,
+                                Status = reader["status"]?.ToString() ?? "Đang chờ",
+                                Reason = reader["reason"]?.ToString() ?? ""
+                            });
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+
         public async Task DeleteAsync(string id)
         {
             await UpdateStatusAsync(id, "Đã hủy");
         }
-
 
         public async Task UpdateAppointmentDateTimeAsync(string id, DateTime newDate, string newTime)
         {

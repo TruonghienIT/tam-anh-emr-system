@@ -196,7 +196,7 @@ namespace TamAnh_EMR_System.ViewModel.Receptionist
             }
 
             var data =
-                await _repo.GetAllDisplayAsync();
+                await _repo.GetAllAppointmentsAsync();
 
             foreach (var item in data)
             {
