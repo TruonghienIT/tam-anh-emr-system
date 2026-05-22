@@ -78,7 +78,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Style="{StaticResource InputTextBox}" Background="#F3F4F6" BorderThickness="0"
-                                 Text="Nhập / quét mã vạch..." Foreground="#9CA3AF" FontSize="14"/>
+                                 Foreground="#9CA3AF" FontSize="14"/>
                         <Button Grid.Column="2"
                                 Style="{StaticResource BaseButton}"
                                 Background="#2563EB"
