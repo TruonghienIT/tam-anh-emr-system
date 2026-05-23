@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -43,25 +44,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             Prescriptions = new ObservableCollection<Prescription>();
             SelectedPrescriptionDetails = new ObservableCollection<MedicineItem>();
 
-            PrintCommand = new RelayCommand(_ =>
-            {
-                if (SelectedPrescription == null)
-                {
-                    MessageBox.Show(
-                        "Vui lòng chọn toa thuốc!",
-                        "Thông báo",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
-                    return;
-                }
-
-                var pdfService = new PrescriptionPdfService();
-
-                pdfService.Export(
-                    SelectedPrescription,
-                    SelectedPrescriptionDetails.ToList());
-            });
+            PrintCommand = new RelayCommand(_ => PrintPrescription(), _ => CanPrint());
             AddPatientCommand = new RelayCommand(_ => MessageBox.Show("Mở form thêm hồ sơ mới", "Tra Cứu"));
             SelectPrescriptionCommand = new RelayCommand(p =>
             {
@@ -98,6 +81,33 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                     SelectedPrescriptionDetails.Add(item);
                 }
             });
+        }
+
+        private bool CanPrint()
+        {
+            return SelectedPrescription != null;
+        }
+
+        private void PrintPrescription()
+        {
+            if (SelectedPrescription == null)
+            {
+                MessageBox.Show("Vui lòng chọn một đơn thuốc để in", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                var medicines = SelectedPrescriptionDetails.ToList();
+                var pdfService = new PrescriptionPdfService();
+                pdfService.Export(SelectedPrescription, medicines);
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi in đơn thuốc: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

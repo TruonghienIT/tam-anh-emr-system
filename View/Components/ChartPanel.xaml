@@ -43,144 +43,74 @@
             <!-- CHART AREA -->
             <!-- ========================================================= -->
 
-            <Grid Height="260">
+            <Grid Height="280">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="35" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                <!-- ===================================================== -->
-                <!-- LOADING SKELETON -->
-                <!-- ===================================================== -->
+                <Grid Grid.Column="0" Margin="0,0,5,40">
+                    <TextBlock Text="Max" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="11" Foreground="#9CA3AF" Margin="0,15,0,0"/>
+                    <TextBlock Text="50%" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="11" Foreground="#9CA3AF" Margin="0,0,0,-20"/>
+                    <TextBlock Text="0" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="11" Foreground="#9CA3AF" Margin="0,0,0,0"/>
+                </Grid>
 
-                <Border
-                    Background="#F3F4F6"
-                    CornerRadius="12"
-                    Padding="20">
+                <Grid Grid.Column="1" Margin="0,20,0,40">
+                    <Rectangle Height="1" Fill="#E5E7EB" VerticalAlignment="Top" StrokeDashArray="4 4"/>
+                    <Rectangle Height="1" Fill="#E5E7EB" VerticalAlignment="Center" Margin="0,0,0,-20"/>
+                    <Rectangle Height="1" Fill="#9CA3AF" VerticalAlignment="Bottom"/>
+                </Grid>
 
-                    <Border.Style>
-                        <Style TargetType="Border">
-
-                            <Setter Property="Visibility"
-                                    Value="Collapsed"/>
-
-                            <Style.Triggers>
-
-                                <DataTrigger
-                                    Binding="{Binding IsChartLoading}"
-                                    Value="True">
-
-                                    <Setter Property="Visibility"
-                                            Value="Visible"/>
-
-                                </DataTrigger>
-
-                            </Style.Triggers>
-
-                        </Style>
-                    </Border.Style>
-
-                    <StackPanel>
-
-                        <Rectangle
-                            Height="20"
-                            RadiusX="4"
-                            RadiusY="4"
-                            Fill="#E5E7EB"
-                            Margin="0,0,0,16"/>
-
-                        <Rectangle
-                            Height="180"
-                            RadiusX="8"
-                            RadiusY="8"
-                            Fill="#E5E7EB"/>
-
-                    </StackPanel>
-
-                </Border>
-
-                <!-- ===================================================== -->
-                <!-- REAL CHART -->
-                <!-- ===================================================== -->
-
-                <ItemsControl
-                    ItemsSource="{Binding ChartData}">
-
-                    <ItemsControl.Style>
-
-                        <Style TargetType="ItemsControl">
-
-                            <Setter Property="Visibility"
-                                    Value="Visible"/>
-
-                            <Style.Triggers>
-
-                                <DataTrigger
-                                    Binding="{Binding IsChartLoading}"
-                                    Value="True">
-
-                                    <Setter Property="Visibility"
-                                            Value="Collapsed"/>
-
-                                </DataTrigger>
-
-                            </Style.Triggers>
-
-                        </Style>
-
-                    </ItemsControl.Style>
-
-                    <!-- HORIZONTAL LAYOUT -->
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding ChartBars}">
                     <ItemsControl.ItemsPanel>
-
                         <ItemsPanelTemplate>
                             <UniformGrid Rows="1"/>
                         </ItemsPanelTemplate>
-
                     </ItemsControl.ItemsPanel>
 
-                    <!-- ITEM TEMPLATE -->
                     <ItemsControl.ItemTemplate>
-
                         <DataTemplate>
-
-                            <Grid Margin="6">
-
+                            <Grid Margin="4,0,4,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="40" />
                                 </Grid.RowDefinitions>
 
-                                <!-- BAR AREA -->
-                                <Grid Grid.Row="0"
-                                      VerticalAlignment="Bottom"
-                                      Height="190">
+                                <Grid Grid.Row="0" VerticalAlignment="Bottom" Height="220">
+                                    <StackPanel VerticalAlignment="Bottom">
 
-                                    <Border
-                                        Width="32"
-                                        Height="{Binding Height}"
-                                        MinHeight="12"
-                                        MaxHeight="180"
-                                        Background="#3B82F6"
-                                        CornerRadius="6,6,0,0"
-                                        VerticalAlignment="Bottom"
-                                        HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Value}" 
+                                                   HorizontalAlignment="Center" 
+                                                   FontSize="11" 
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#4B5563"
+                                                   Margin="0,0,0,4"/>
 
+                                        <Border Width="32"
+                                                Height="{Binding BarHeight}"
+                                                MinHeight="4"
+                                                MaxHeight="180"
+                                                Background="#3B82F6"
+                                                CornerRadius="4,4,0,0"
+                                                HorizontalAlignment="Center"
+                                                ToolTip="{Binding Tooltip}"/>
+                                    </StackPanel>
                                 </Grid>
 
-                                <!-- LABEL -->
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Text="{Binding Label}"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,10,0,0"
-                                    FontSize="11"
-                                    Foreground="#6B7280"/>
-
+                                <TextBlock Grid.Row="1"
+                                           Text="{Binding Label}"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="2,8,2,0"
+                                           FontSize="11"
+                                           Foreground="#6B7280"
+                                           ToolTip="{Binding Label}"/>
                             </Grid>
-
                         </DataTemplate>
-
                     </ItemsControl.ItemTemplate>
-
                 </ItemsControl>
-
             </Grid>
 
         </StackPanel>
