@@ -5,6 +5,7 @@ using System.Windows.Input;
 using TamAnh_EMR_System.Commands;
 using TamAnh_EMR_System.Model.Doctor;
 using TamAnh_EMR_System.Repositories;
+using TamAnh_EMR_System.Services.Pdf;
 
 namespace TamAnh_EMR_System.ViewModel.Doctor
 {
@@ -42,7 +43,25 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
             Prescriptions = new ObservableCollection<Prescription>();
             SelectedPrescriptionDetails = new ObservableCollection<MedicineItem>();
 
-            PrintCommand = new RelayCommand(_ => MessageBox.Show("Đang kết nối máy in...", "In Đơn Thuốc"));
+            PrintCommand = new RelayCommand(_ =>
+            {
+                if (SelectedPrescription == null)
+                {
+                    MessageBox.Show(
+                        "Vui lòng chọn toa thuốc!",
+                        "Thông báo",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return;
+                }
+
+                var pdfService = new PrescriptionPdfService();
+
+                pdfService.Export(
+                    SelectedPrescription,
+                    SelectedPrescriptionDetails.ToList());
+            });
             AddPatientCommand = new RelayCommand(_ => MessageBox.Show("Mở form thêm hồ sơ mới", "Tra Cứu"));
             SelectPrescriptionCommand = new RelayCommand(p =>
             {
