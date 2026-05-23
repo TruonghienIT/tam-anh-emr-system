@@ -1,263 +1,330 @@
 using Microsoft.Win32;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using System;
+using QuestPDF.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
-using QuestPDF.Infrastructure;
+using System.Windows;
 using TamAnh_EMR_System.Model.Doctor;
 
 namespace TamAnh_EMR_System.Services.Pdf
 {
     public class PrescriptionPdfService
     {
-        public void Export(Prescription prescription, List<MedicineItem> medicines)
+        public void Export(
+    Prescription prescription,
+    List<MedicineItem> medicines)
         {
-            if (prescription == null)
-                throw new ArgumentNullException(nameof(prescription));
+            QuestPDF.Settings.License = LicenseType.Community;
 
             var document = Document.Create(container =>
             {
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
-                    page.Margin(20);
-                    page.PageColor("#F8FAFC");
+                    page.Margin(25);
+
+                    page.PageColor("#F3F6FB");
+
                     page.DefaultTextStyle(x =>
-                        x.FontSize(12)
-                         .FontColor("#111827"));
+                        x.FontSize(11)
+                         .FontFamily(Fonts.Arial)
+                         .FontColor("#1F2937"));
 
-                    // ================= HEADER =================
-                    page.Header().Row(row =>
+                    // =====================================================
+                    // HEADER
+                    // =====================================================
+
+                    page.Header().Column(header =>
                     {
-                        row.RelativeItem().Column(col =>
+                        header.Item().Row(row =>
                         {
-                            col.Item()
-                                .Text("TÂM ANH HOSPITAL")
-                                .Bold()
-                                .FontSize(24)
-                                .FontColor("#2563EB");
-
-                            col.Item()
-                                .PaddingTop(4)
-                                .Text("ĐƠN KHAI THUỐC")
-                                .SemiBold()
-                                .FontSize(14)
-                                .FontColor("#6B7280");
-                        });
-
-                        row.ConstantItem(120)
-                            .AlignRight()
-                            .Column(col =>
+                            row.RelativeItem().Column(col =>
                             {
                                 col.Item()
-                                    .Text($"#{prescription.RecordId}")
+                                    .Text("PHÒNG KHÁM ĐA KHOA TÂM ANH")
                                     .Bold()
-                                    .FontSize(18)
-                                    .FontColor("#9CA3AF");
+                                    .FontSize(20)
+                                    .FontColor("#2563EB");
 
                                 col.Item()
                                     .PaddingTop(4)
-                                    .Text($"{DateTime.Now:dd/MM/yyyy}")
-                                    .FontSize(11)
-                                    .FontColor("#6B7280");
+                                    .Text("ĐƠN THUỐC")
+                                    .SemiBold()
+                                    .FontSize(14)
+                                    .FontColor("#4B5563");
                             });
+
+                            row.ConstantItem(140)
+                                .AlignRight()
+                                .Column(col =>
+                                {
+                                    col.Item()
+                                        .AlignRight()
+                                        .Text($"#{prescription.RecordId}")
+                                        .Bold()
+                                        .FontSize(18)
+                                        .FontColor("#2563EB");
+
+                                    col.Item()
+                                        .PaddingTop(5)
+                                        .AlignRight()
+                                        .Text(prescription.Date.ToString("dd/MM/yyyy"))
+                                        .FontSize(11)
+                                        .FontColor("#4B5563");
+                                });
+                        });
+                        header.Item()
+                            .PaddingTop(15)
+                            .LineHorizontal(1)
+                            .LineColor("#E5E7EB");
                     });
 
-                    // ================= CONTENT =================
-                    page.Content().PaddingVertical(24).Column(col =>
+
+                    // =====================================================
+                    // CONTENT
+                    // =====================================================
+                    page.Content().Column(content =>
                     {
-                        // PATIENT INFO CARD
-                        col.Item()
+                        // =================================================
+                        // PATIENT INFO
+                        // =================================================
+                        content.Item()
                             .Background(Colors.White)
                             .Border(1)
                             .BorderColor("#E5E7EB")
-                            .CornerRadius(8)
-                            .Padding(20)
+                            .CornerRadius(14)
+                            .Padding(24)
                             .Column(info =>
                             {
                                 info.Item()
                                     .Text("THÔNG TIN BỆNH NHÂN")
-                                    .SemiBold()
-                                    .FontSize(13)
-                                    .FontColor("#6B7280");
+                                    .Bold()
+                                    .FontSize(15)
+                                    .FontColor("#111827");
 
-                                info.Item().PaddingTop(12);
+                                info.Item().PaddingTop(18);
 
-                                info.Item()
-                                    .Row(row =>
+                                info.Item().Table(table =>
+                                {
+                                    table.ColumnsDefinition(columns =>
                                     {
-                                        row.RelativeItem()
-                                            .Column(c =>
-                                            {
-                                                c.Item().Text("Tên bệnh nhân:").FontSize(11).FontColor("#6B7280");
-                                                c.Item().PaddingTop(2).Text(prescription.PatientName)
-                                                    .Bold().FontSize(13).FontColor("#111827");
-                                            });
-
-                                        row.RelativeItem()
-                                            .Column(c =>
-                                            {
-                                                c.Item().Text("Mã bệnh nhân:").FontSize(11).FontColor("#6B7280");
-                                                c.Item().PaddingTop(2).Text(prescription.PatientId)
-                                                    .Bold().FontSize(13).FontColor("#111827");
-                                            });
+                                        columns.RelativeColumn(1.2f);
+                                        columns.RelativeColumn(2f);
+                                        columns.RelativeColumn(1.2f);
+                                        columns.RelativeColumn(2f);
                                     });
 
-                                info.Item()
-                                    .PaddingTop(12)
-                                    .Row(row =>
-                                    {
-                                        row.RelativeItem()
-                                            .Column(c =>
-                                            {
-                                                c.Item().Text("Ngày khám:").FontSize(11).FontColor("#6B7280");
-                                                c.Item().PaddingTop(2).Text($"{prescription.Date:dd/MM/yyyy HH:mm}")
-                                                    .Bold().FontSize(13).FontColor("#111827");
-                                            });
+                                    void Label(string text) =>
+                                        table.Cell()
+                                            .PaddingBottom(14)
+                                            .Text(text)
+                                            .SemiBold()
+                                            .FontColor("#6B7280");
 
-                                        row.RelativeItem()
-                                            .Column(c =>
-                                            {
-                                                c.Item().Text("Bác sĩ điều trị:").FontSize(11).FontColor("#6B7280");
-                                                c.Item().PaddingTop(2).Text(prescription.DoctorName)
-                                                    .Bold().FontSize(13).FontColor("#111827");
-                                            });
-                                    });
+                                    void Value(string text) =>
+                                        table.Cell()
+                                            .PaddingBottom(14)
+                                            .Text(text)
+                                            .FontColor("#111827");
+
+                                    Label("Mã bệnh nhân");
+                                    Value(prescription.PatientId);
+
+                                    Label("Ngày kê");
+                                    Value(prescription.Date.ToString("dd/MM/yyyy HH:mm"));
+
+                                    Label("Bệnh nhân");
+                                    Value(prescription.PatientName);
+
+                                    Label("Bác sĩ điều trị");
+                                    Value(prescription.DoctorName);
+                                });
                             });
 
-                        // MEDICINE LIST
-                        col.Item().PaddingTop(24)
-                            .Text("CHI TIẾT THUỐC")
-                            .SemiBold()
-                            .FontSize(13)
-                            .FontColor("#6B7280");
+                        // =================================================
+                        // MEDICINE TABLE
+                        // =================================================
+                        content.Item().PaddingTop(20);
 
-                        col.Item().PaddingTop(12)
+                        content.Item()
                             .Background(Colors.White)
                             .Border(1)
                             .BorderColor("#E5E7EB")
-                            .CornerRadius(8)
-                            .Padding(20)
-                            .Column(medicineCol =>
+                            .CornerRadius(14)
+                            .Padding(24)
+                            .Column(medicine =>
                             {
-                                if (medicines == null || medicines.Count == 0)
+                                medicine.Item()
+                                    .Text("DANH SÁCH THUỐC")
+                                    .Bold()
+                                    .FontSize(15)
+                                    .FontColor("#111827");
+
+                                medicine.Item().PaddingTop(18);
+
+                                if (medicines != null && medicines.Any())
                                 {
-                                    medicineCol.Item()
-                                        .Text("Không có thuốc nào trong đơn này")
-                                        .FontSize(12)
-                                        .FontColor("#9CA3AF");
+                                    medicine.Item().Table(table =>
+                                    {
+                                        table.ColumnsDefinition(columns =>
+                                        {
+                                            // Đã điều chỉnh lại tỷ lệ để nhét thêm cột Tần suất
+                                            columns.RelativeColumn(2.0f); // Tên thuốc
+                                            columns.RelativeColumn(1.3f); // Liều dùng
+                                            columns.RelativeColumn(1.3f); // Tần suất
+                                            columns.RelativeColumn(2.0f); // Hướng dẫn
+                                            columns.RelativeColumn(0.7f); // SL
+                                        });
+
+                                        // HEADER
+                                        table.Header(header =>
+                                        {
+                                            void HeaderCell(string text)
+                                            {
+                                                header.Cell()
+                                                    .PaddingVertical(10)
+                                                    .PaddingHorizontal(8)
+                                                    .Text(text)
+                                                    .SemiBold()
+                                                    .FontSize(11)
+                                                    .FontColor("#1D4ED8");
+                                            }
+
+                                            HeaderCell("Tên thuốc");
+                                            HeaderCell("Liều dùng");
+                                            HeaderCell("Tần suất"); // Thêm header Tần suất
+                                            HeaderCell("Hướng dẫn");
+                                            HeaderCell("SL");
+                                        });
+
+                                        // ROWS
+                                        foreach (var item in medicines)
+                                        {
+                                            void BodyCell(string text)
+                                            {
+                                                table.Cell()
+                                                    .PaddingVertical(10)
+                                                    .PaddingHorizontal(8)
+                                                    .BorderBottom(0.5f)
+                                                    .BorderColor("#E5E7EB")
+                                                    .Text(text)
+                                                    .FontColor("#374151");
+                                            }
+
+                                            BodyCell(item.Name);
+
+                                            BodyCell(
+                                                string.IsNullOrWhiteSpace(item.Dosage)
+                                                ? "Không có"
+                                                : item.Dosage);
+
+                                            // Thêm dữ liệu cột Tần suất (Frequency)
+                                            BodyCell(
+                                                string.IsNullOrWhiteSpace(item.Frequency)
+                                                ? "Không có"
+                                                : item.Frequency);
+
+                                            BodyCell(
+                                                string.IsNullOrWhiteSpace(item.Instruction)
+                                                ? "Không có"
+                                                : item.Instruction);
+
+                                            BodyCell(item.Quantity.ToString());
+                                        }
+                                    });
                                 }
                                 else
                                 {
-                                    // Header row
-                                    medicineCol.Item()
-                                        .BorderBottom(1)
-                                        .BorderColor("#F3F4F6")
-                                        .PaddingBottom(10)
-                                        .Row(headerRow =>
-                                        {
-                                            headerRow.RelativeItem(2).Text("Tên thuốc")
-                                                .SemiBold().FontSize(11).FontColor("#6B7280");
-                                            headerRow.RelativeItem(1).Text("Liều dùng")
-                                                .SemiBold().FontSize(11).FontColor("#6B7280");
-                                            headerRow.RelativeItem(1).Text("Tần suất")
-                                                .SemiBold().FontSize(11).FontColor("#6B7280");
-                                            headerRow.RelativeItem(1).Text("Số lượng")
-                                                .SemiBold().FontSize(11).FontColor("#6B7280");
-                                            headerRow.RelativeItem(2).Text("Hướng dẫn")
-                                                .SemiBold().FontSize(11).FontColor("#6B7280");
-                                        });
-
-                                    // Medicine items
-                                    for (int i = 0; i < medicines.Count; i++)
-                                    {
-                                        var medicine = medicines[i];
-                                        medicineCol.Item()
-                                            .PaddingVertical(10)
-                                            .BorderBottom(i < medicines.Count - 1 ? 1 : 0)
-                                            .BorderColor("#F3F4F6")
-                                            .Row(row =>
-                                            {
-                                                row.RelativeItem(2).Column(c =>
-                                                {
-                                                    c.Item().Text(medicine.Name)
-                                                        .SemiBold().FontSize(11).FontColor("#111827");
-                                                });
-
-                                                row.RelativeItem(1).Column(c =>
-                                                {
-                                                    c.Item().Text(medicine.Dosage ?? "-")
-                                                        .FontSize(11).FontColor("#374151");
-                                                });
-
-                                                row.RelativeItem(1).Column(c =>
-                                                {
-                                                    c.Item().Text(medicine.Frequency ?? "-")
-                                                        .FontSize(11).FontColor("#374151");
-                                                });
-
-                                                row.RelativeItem(1).Column(c =>
-                                                {
-                                                    c.Item().Text($"{medicine.Quantity} viên")
-                                                        .FontSize(11).FontColor("#374151");
-                                                });
-
-                                                row.RelativeItem(2).Column(c =>
-                                                {
-                                                    c.Item().Text(medicine.Instruction ?? "-")
-                                                        .FontSize(10).FontColor("#6B7280");
-                                                });
-                                            });
-                                    }
+                                    medicine.Item()
+                                        .Padding(20)
+                                        .AlignCenter()
+                                        .Text("Không có thuốc trong đơn")
+                                        .Italic()
+                                        .FontColor("#9CA3AF");
                                 }
+                            });
+
+                        // =================================================
+                        // NOTE
+                        // =================================================
+                        content.Item().PaddingTop(20);
+
+                        content.Item()
+                            .Background("#EFF6FF")
+                            .Border(1)
+                            .BorderColor("#BFDBFE")
+                            .CornerRadius(12)
+                            .Padding(16)
+                            .Column(note =>
+                            {
+                                note.Item()
+                                    .Text("LƯU Ý")
+                                    .Bold()
+                                    .FontSize(13)
+                                    .FontColor("#1D4ED8");
+
+                                note.Item()
+                                    .PaddingTop(8)
+                                    .Text("• Uống thuốc đúng liều lượng được kê.\n" +
+                                          "• Không tự ý ngưng thuốc.\n" +
+                                          "• Đi khám lại nếu có dấu hiệu bất thường.")
+                                    .FontSize(11)
+                                    .FontColor("#374151");
+                            });
+
+                        // =================================================
+                        // SIGNATURE
+                        // =================================================
+                        content.Item().PaddingTop(40);
+
+                        content.Item().AlignRight().Width(220)
+                            .Column(sign =>
+                            {
+                                sign.Item()
+                                    .AlignCenter()
+                                    .Text("Bác sĩ điều trị")
+                                    .SemiBold()
+                                    .FontColor("#6B7280");
+
+                                sign.Item()
+                                    .PaddingTop(60)
+                                    .AlignCenter()
+                                    .Text(prescription.DoctorName)
+                                    .Bold()
+                                    .FontSize(13)
+                                    .FontColor("#111827");
                             });
                     });
 
-                    // ================= FOOTER =================
-                    page.Footer()
-                        .BorderTop(1)
-                        .BorderColor("#E5E7EB")
-                        .PaddingTop(12)
-                        .Row(row =>
-                        {
-                            row.RelativeItem()
-                                .Column(col =>
-                                {
-                                    col.Item().Text("Tâm Anh Hospital - Chăm sóc sức khỏe toàn diện")
-                                        .FontSize(10).FontColor("#9CA3AF");
-                                    col.Item().PaddingTop(2)
-                                        .Text($"In lúc: {DateTime.Now:dd/MM/yyyy HH:mm:ss}")
-                                        .FontSize(9).FontColor("#D1D5DB");
-                                });
-
-                            row.ConstantItem(60)
-                                .AlignRight()
-                                .Column(col =>
-                                {
-                                    col.Item().Text("Trang {page}")
-                                        .FontSize(10).FontColor("#9CA3AF");
-                                });
-                        });
+                    // =====================================================
+                    // FOOTER
+                    // =====================================================
+                    page.Footer().PaddingTop(10).AlignCenter().Text(text =>
+                    {
+                        text.Span("Phòng khám Đa khoa Tâm Anh • Hệ thống EMR")
+                            .FontSize(10)
+                            .FontColor("#9CA3AF");
+                    });
                 });
             });
 
-            // Generate PDF
-            var pdfBytes = document.GeneratePdf();
-
-            // Open SaveFileDialog
-            var saveFileDialog = new SaveFileDialog
+            var saveDialog = new SaveFileDialog
             {
-                Filter = "PDF Files (*.pdf)|*.pdf",
-                FileName = $"DonThuoc_{prescription.PatientName}_{prescription.Date:yyyyMMdd_HHmmss}.pdf",
-                DefaultExt = ".pdf"
+                FileName = $"DonThuoc_{prescription.PatientName}_{prescription.RecordId}",
+                DefaultExt = ".pdf",
+                Filter = "PDF files (*.pdf)|*.pdf"
             };
 
-            if (saveFileDialog.ShowDialog() == true)
+            if (saveDialog.ShowDialog() == true)
             {
-                System.IO.File.WriteAllBytes(saveFileDialog.FileName, pdfBytes);
-                System.Windows.MessageBox.Show($"Đơn thuốc đã được in thành công!\n\nFile: {saveFileDialog.FileName}", 
-                    "Thành công", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                document.GeneratePdf(saveDialog.FileName);
+
+                MessageBox.Show(
+                    "Xuất đơn thuốc PDF thành công!",
+                    "Thành công",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
         }
     }
