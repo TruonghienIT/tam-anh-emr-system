@@ -34,6 +34,21 @@ namespace TamAnh_EMR_System.Model.Doctor
     public class DoctorDashboardData
     {
         public double Value { get; set; }
-        public double BarHeight => Value * 1.2;
+        public string Label { get; set; }
+        public string Tooltip { get; set; }
+        public double BarHeight { get; set; }
+
+        public DoctorDashboardData()
+        {
+        }
+
+        public DoctorDashboardData(string label, double value, double maxValue = 100)
+        {
+            Label = label;
+            Value = value;
+            Tooltip = $"{label}: {value:F0} bệnh nhân";
+            // Normalize height để fit trong chart (max 180px)
+            BarHeight = maxValue > 0 ? (value / maxValue) * 180 : 0;
+        }
     }
 }
