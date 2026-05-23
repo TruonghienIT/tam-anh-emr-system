@@ -36,8 +36,20 @@ namespace TamAnh_EMR_System.Repositories
 
                 using (var cmdDoctor = new SqlCommand(getDoctorSql, connection))
                 {
+                    if (UserSession.CurrentUser == null)
+                    {
+                        return new List<AppointmentDTO>();
+                    }
+
                     cmdDoctor.Parameters.AddWithValue("@userId", UserSession.CurrentUser.Id);
+
                     var result = await cmdDoctor.ExecuteScalarAsync();
+
+                    if (result == null || result == DBNull.Value)
+                    {
+                        return new List<AppointmentDTO>();
+                    }
+
                     doctorId = result.ToString();
                 }
 

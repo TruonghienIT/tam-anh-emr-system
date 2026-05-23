@@ -201,6 +201,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
 
             if (result == MessageBoxResult.Yes)
             {
+                _refreshTimer?.Stop();
                 UserSession.CurrentUser = null;
                 Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
                 var login = new LoginView();
