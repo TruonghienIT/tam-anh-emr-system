@@ -600,7 +600,7 @@ namespace TamAnh_EMR_System.ViewModel.Doctor
                 else
                 {
                     MessageBox.Show($"Đang xem hồ sơ khám ngày {appointmentDate:dd/MM/yyyy}", "Hồ sơ cũ", MessageBoxButton.OK, MessageBoxImage.Information);
-                    SelectedPatient = null;
+                    SelectedPatient = patient;
                 }
 
                 var record = await _repository.GetMedicalRecordByAppointmentAsync(patient.AppointmentId);
