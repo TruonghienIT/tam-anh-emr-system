@@ -37,6 +37,7 @@
     <None Remove="Resource\Image\email.png" />
     <None Remove="Resource\Image\error.png" />
     <None Remove="Resource\Image\exclamation.png" />
+    <None Remove="Resource\Image\icon.jpg" />
     <None Remove="Resource\Image\information.png" />
     <None Remove="Resource\Image\key-icon.png" />
     <None Remove="Resource\Image\logo-ta.png" />
@@ -93,6 +94,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resource\Image\exclamation.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resource\Image\icon.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resource\Image\information.png">

@@ -7,6 +7,7 @@
         xmlns:converter="clr-namespace:TamAnh_EMR_System.Converters"
         xmlns:viewModel="clr-namespace:TamAnh_EMR_System.ViewModel" xmlns:customcontrol="clr-namespace:TamAnh_EMR_System.CustomControl"
         mc:Ignorable="d"
+        Icon="/Resource/Image/icon.jpg"
         Title="LoginView" Height="550" Width="800"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -36,9 +37,7 @@
             <ImageBrush ImageSource="/Resource/Image/back-image.jpg"/>
         </Border.Background>
         
-        <Border CornerRadius="10"
-            BorderThickness="2"
-            Opacity="0.95">
+        <Border CornerRadius="10" BorderThickness="2" Opacity="0.95">
 
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">

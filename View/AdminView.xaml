@@ -7,6 +7,7 @@
             xmlns:viewModel="clr-namespace:TamAnh_EMR_System.ViewModel"
             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
             mc:Ignorable="d"
+            Icon="/Resource/Image/icon.jpg"
             Title="AdminView" Height="700" Width="1300"
             WindowStartupLocation="CenterScreen"
             WindowStyle="None"
@@ -48,8 +49,7 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Border CornerRadius="10"
-            BorderThickness="2">
+    <Border CornerRadius="10" BorderThickness="2">
 
         <Border.BorderBrush>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">

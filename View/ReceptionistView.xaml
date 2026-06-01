@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:components="clr-namespace:TamAnh_EMR_System.View.Components"
         mc:Ignorable="d"
+        Icon="/Resource/Image/icon.jpg"
         Title="TâmAnh Hospital - ReceptionistView"
         Height="700" Width="1300"
         WindowStartupLocation="CenterScreen"

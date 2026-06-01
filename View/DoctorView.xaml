@@ -4,6 +4,7 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:TamAnh_EMR_System.View.Doctor"
         xmlns:viewModel="clr-namespace:TamAnh_EMR_System.ViewModel.Doctor"
+        Icon="/Resource/Image/icon.jpg"
         Title="Doctor Dashboard"
         Height="900"
         Width="1440"
