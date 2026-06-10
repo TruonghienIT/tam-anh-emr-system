@@ -46,11 +46,24 @@ namespace TamAnh_EMR_System.Services
 
                 from: new PhoneNumber(fromPhone),
 
-                to: new PhoneNumber(toPhone)
+                to: new PhoneNumber(FormatPhoneNumber(toPhone))
             );
 
             System.Diagnostics.Debug.WriteLine(
                 $"SMS SENT: {message.Sid}");
+        }
+
+        private static string FormatPhoneNumber(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone))
+                throw new Exception("Phone number is empty");
+
+            phone = phone.Trim();
+
+            if (phone.StartsWith("0"))
+                phone = "+84" + phone.Substring(1);
+
+            return phone;
         }
     }
 }

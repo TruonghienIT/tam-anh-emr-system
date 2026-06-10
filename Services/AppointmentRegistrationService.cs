@@ -56,6 +56,34 @@ namespace TamAnh_EMR_System.Services
             _appointmentRepo = new AppointmentRepository();
         }
 
+        private async Task<(string FullName, string TelegramChatId)> GetDoctorInfoAsync(string doctorId)
+        {
+            using var conn = _patientRepo.GetPublicConnection();
+
+            await conn.OpenAsync();
+
+            string sql = @"
+                SELECT full_name, telegram_chat_id
+                FROM doctors
+                WHERE id = @doctorId";
+
+            using var cmd = new SqlCommand(sql, conn);
+
+            cmd.Parameters.AddWithValue("@doctorId", doctorId);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return (
+                    reader["full_name"]?.ToString(),
+                    reader["telegram_chat_id"]?.ToString()
+                );
+            }
+
+            return (null, null);
+        }
+
         /// <summary>
         /// Registers a new appointment, creating the patient if needed.
         /// All operations run within a single SQL transaction.
@@ -126,6 +154,21 @@ namespace TamAnh_EMR_System.Services
 
                         // ===== STEP 5: COMMIT =====
                         await txn.CommitAsync();
+
+                        var doctorInfo = await GetDoctorInfoAsync(appointment.DoctorId);
+                        if (!string.IsNullOrWhiteSpace(doctorInfo.TelegramChatId))
+                        {
+                            await TelegramService.SendMessageAsync(
+                                doctorInfo.TelegramChatId,
+                                doctorInfo.FullName,
+                                patient.Name,
+                                patient.Phone,
+                                appointment.Id,
+                                appointment.AppointmentDate,
+                                appointment.AppointmentTime,
+                                appointment.Reason
+                            );
+                        }
 
                         string msg = isExistingPatient
                             ? $"Đã tạo lịch hẹn cho bệnh nhân {patient.Name} (ID: {patient.Id})"
