@@ -2,6 +2,7 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows;
 using TamAnh_EMR_System.Model;
 using TamAnh_EMR_System.Repositories;
 
@@ -155,18 +156,47 @@ namespace TamAnh_EMR_System.Services
                         // ===== STEP 5: COMMIT =====
                         await txn.CommitAsync();
 
-                        var doctorInfo = await GetDoctorInfoAsync(appointment.DoctorId);
-                        if (!string.IsNullOrWhiteSpace(doctorInfo.TelegramChatId))
+                        try
                         {
-                            await TelegramService.SendMessageAsync(
-                                doctorInfo.TelegramChatId,
-                                doctorInfo.FullName,
-                                patient.Name,
-                                patient.Phone,
-                                appointment.Id,
-                                appointment.AppointmentDate,
-                                appointment.AppointmentTime,
-                                appointment.Reason
+                            var doctorInfo = await GetDoctorInfoAsync(appointment.DoctorId);
+
+                            if (!string.IsNullOrWhiteSpace(doctorInfo.TelegramChatId))
+                            {
+                                await TelegramService.SendMessageAsync(
+                                    doctorInfo.TelegramChatId,
+                                    doctorInfo.FullName,
+                                    patient.Name,
+                                    patient.Phone,
+                                    appointment.Id,
+                                    appointment.AppointmentDate,
+                                    appointment.AppointmentTime,
+                                    appointment.Reason
+                                );
+
+                                MessageBox.Show(
+                                    "Đã gửi thông báo lịch hẹn qua Telegram thành công!",
+                                    "Telegram",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information
+                                );
+                            }
+                            else
+                            {
+                                MessageBox.Show(
+                                    "Bác sĩ chưa liên kết Telegram.",
+                                    "Telegram",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Warning
+                                );
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(
+                                $"Gửi Telegram thất bại:\n{ex.Message}",
+                                "Telegram Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error
                             );
                         }
 
